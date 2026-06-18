@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Web3Forms access key — replace with the real key after signing up at https://web3forms.com/
+const WEB3FORMS_ACCESS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
+---
+<BaseLayout title="Contact — As-Built Company">
+  <section class="hero hero-compact">
+    <div class="container">
+      <div class="eyebrow">Contact</div>
+      <h1>Tell us about <span class="accent">your project.</span></h1>
+      <p class="lead">Send us a few details and we&rsquo;ll respond within one business day with next steps and a quote.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="grid grid-3" style="margin-bottom: 3rem;">
+        <div class="icon-card">
+          <div class="icon">☎</div>
+          <h3>Call us</h3>
+          <p><a href="tel:+16266259249">+1 (626) 625-9249</a></p>
+          <p style="font-size: 0.85rem;">Mon–Fri, 8am–6pm PT</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">✉</div>
+          <h3>Email us</h3>
+          <p><a href="mailto:hello@asbuiltcompany.com">hello@asbuiltcompany.com</a></p>
+          <p style="font-size: 0.85rem;">We reply within 1 business day</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">◎</div>
+          <h3>Service area</h3>
+          <p>Serving California</p>
+          <p style="font-size: 0.85rem;">On-site capture available statewide</p>
+        </div>
+      </div>
+
+      <form class="form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
+        <input type="hidden" name="subject" value="New inquiry from asbuiltcompany.com" />
+        <input type="hidden" name="from_name" value="As-Built Company Website" />
+        <input type="checkbox" name="botcheck" style="display:none;" />
+
+        <div class="form-row">
+          <div>
+            <label for="name">Your name</label>
+            <input id="name" name="name" type="text" required />
+          </div>
+          <div>
+            <label for="company">Company (optional)</label>
+            <input id="company" name="company" type="text" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required />
+          </div>
+          <div>
+            <label for="phone">Phone (optional)</label>
+            <input id="phone" name="phone" type="tel" />
+          </div>
+        </div>
+
+        <label for="service">Service you&rsquo;re interested in</label>
+        <select id="service" name="service">
+          <option value="">Select a service…</option>
+          <option>3D Laser Scanning</option>
+          <option>As-Built Drawings</option>
+          <option>Virtual Tour</option>
+          <option>BIM / 3D Modeling</option>
+          <option>Real Estate Floor Plans</option>
+          <option>Construction Progress Documentation</option>
+          <option>Other / Not Sure</option>
+        </select>
+
+        <label for="message">Project details</label>
+        <textarea id="message" name="message" required placeholder="Location, square footage, deliverable format, timeline — whatever you've got."></textarea>
+
+        <button type="submit" class="btn">Send Message <span class="arrow">→</span></button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>

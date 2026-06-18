@@ -1,0 +1,136 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'As-Built Company — 3D Scanning & As-Built Documentation',
+  description = 'Precision 3D laser scanning, as-built documentation, and virtual tours for architects, contractors, and property owners in California.',
+} = Astro.props;
+
+const path = Astro.url.pathname;
+function isActive(href: string): boolean {
+  if (href === '/') return path === '/' || path === '';
+  return path.startsWith(href);
+}
+
+const year = new Date().getFullYear();
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a href="/" class="brand" aria-label="As-Built Company home">
+          <span class="brand-top">AS-BUILT</span>
+          <span class="brand-bottom">COMPANY</span>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a href="/" class={isActive('/') ? 'active' : ''}>Home</a>
+          <a href="/about/" class={isActive('/about') ? 'active' : ''}>About</a>
+          <a href="/services/" class={isActive('/services') ? 'active' : ''}>Services</a>
+          <a href="/projects/" class={isActive('/projects') ? 'active' : ''}>Projects</a>
+          <a href="/pricing/" class={isActive('/pricing') ? 'active' : ''}>Pricing</a>
+          <a href="/resources/" class={isActive('/resources') ? 'active' : ''}>Resources</a>
+          <a href="/contact/" class={isActive('/contact') ? 'active' : ''}>Contact</a>
+        </nav>
+        <div class="header-cta">
+          <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="/" class="brand">
+              <span class="brand-top">AS-BUILT</span>
+              <span class="brand-bottom">COMPANY</span>
+            </a>
+            <p>Precision measurements.<br />Smarter data. Better builds.</p>
+            <div class="social-icons">
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="Facebook">f</a>
+              <a href="#" aria-label="Instagram">ig</a>
+              <a href="#" aria-label="YouTube">yt</a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/about/">About</a></li>
+              <li><a href="/services/">Services</a></li>
+              <li><a href="/projects/">Projects</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Resources</h4>
+            <ul>
+              <li><a href="/resources/">All Resources</a></li>
+              <li><a href="/pricing/">Pricing</a></li>
+              <li><a href="/contact/">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Contact Us</h4>
+            <div class="contact-item">
+              <span class="contact-icon">☎</span>
+              <a href="tel:+16266259249">+1 (626) 625-9249</a>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon">✉</span>
+              <a href="mailto:hello@asbuiltcompany.com">hello@asbuiltcompany.com</a>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon">◎</span>
+              <span>Serving California</span>
+            </div>
+          </div>
+
+          <div class="footer-col footer-newsletter">
+            <h4>Newsletter</h4>
+            <p>Get the latest insights and updates straight to your inbox.</p>
+            <form class="newsletter-form" action="#" method="POST">
+              <input type="email" placeholder="Your email address" required aria-label="Email address" />
+              <button type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <div>&copy; {year} As-Built Company. All rights reserved.</div>
+          <div>
+            <a href="/privacy/">Privacy Policy</a>
+            <a href="/terms/">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
