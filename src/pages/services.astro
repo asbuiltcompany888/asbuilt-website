@@ -1,12 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="Services — As-Built Company">
+<BaseLayout
+  title="Services — As-Built Company"
+  description="Full-service 3D laser scanning, as-built drawings, BIM modeling, and virtual tours. Survey-grade accuracy, in days not weeks."
+>
   <section class="hero hero-compact">
     <div class="container">
       <div class="eyebrow">Services</div>
       <h1>Capture, document, <span class="accent">deliver.</span></h1>
-      <p class="lead">From a single scan to a full as-built documentation package — choose the deliverables you need, or let us scope the right combination for your project.</p>
+      <p class="lead">From a single scan to a full as-built documentation package — pick the deliverables you need, or let us scope the right combination for your project.</p>
     </div>
   </section>
 
@@ -16,53 +19,89 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="icon-card">
           <div class="icon">◧</div>
           <h3>3D Laser Scanning</h3>
-          <p>Survey-grade point clouds with the Leica BLK2GO for fast, mobile-mapping accuracy on sites of any size. Ideal for renovations, retrofits, and existing-conditions documentation.</p>
+          <span class="accuracy-badge">2&ndash;4mm positional accuracy</span>
+          <p>Survey-grade point clouds captured with the Leica BLK2GO mobile scanner. Fast, accurate, and ideal for renovations, retrofits, and existing-conditions documentation at any scale.</p>
         </div>
         <div class="icon-card">
           <div class="icon">▤</div>
           <h3>As-Built Drawings</h3>
-          <p>Floor plans, reflected ceiling plans, elevations, sections, and details — produced in AutoCAD or Revit from registered scan data.</p>
+          <span class="accuracy-badge">AutoCAD &amp; Revit deliverables</span>
+          <p>Floor plans, reflected ceiling plans, elevations, sections, and details &mdash; produced from registered scan data, ready for your design or construction team.</p>
         </div>
         <div class="icon-card">
           <div class="icon">◉</div>
           <h3>360&deg; Virtual Tours</h3>
+          <span class="accuracy-badge">Insta360 capture, web-hosted</span>
           <p>Stitched and stop-tagged walkthroughs from Insta360 captures, hosted as shareable browser tours your clients can navigate without an app.</p>
         </div>
         <div class="icon-card">
           <div class="icon">▦</div>
           <h3>BIM Modeling (Revit / Rhino)</h3>
-          <p>LOD 200 to LOD 400 models built from registered scan data, ready for coordination, clash detection, or design development.</p>
+          <span class="accuracy-badge">LOD 200&ndash;400</span>
+          <p>Coordination-ready models built from registered scan data &mdash; clash detection, design development, or facility management baselines.</p>
         </div>
         <div class="icon-card">
           <div class="icon">⌬</div>
           <h3>Point Cloud Processing</h3>
-          <p>Registration, decimation, and conversion (E57, RCS/RCP, LAS, PTS) to fit your downstream software workflow.</p>
+          <span class="accuracy-badge">E57, RCS/RCP, LAS, PTS</span>
+          <p>Registration, decimation, and format conversion to fit your downstream software workflow. Clean, optimized clouds delivered in the format your team uses.</p>
         </div>
         <div class="icon-card">
           <div class="icon">△</div>
           <h3>Volumetric &amp; Quantity Surveys</h3>
-          <p>Cut/fill calculations, stockpile volumes, and area takeoffs derived from scan data.</p>
+          <span class="accuracy-badge">Cubic-yard precision</span>
+          <p>Cut/fill calculations, stockpile volumes, and area takeoffs derived from scan data &mdash; defensible numbers for contracts and audits.</p>
         </div>
         <div class="icon-card">
           <div class="icon">⌂</div>
           <h3>Real Estate Floor Plans</h3>
-          <p>Dimensioned 2D floor plans for listings, lease drawings, and property records &mdash; typically delivered within 48 hours.</p>
+          <span class="accuracy-badge">48-hour delivery</span>
+          <p>Dimensioned 2D floor plans for listings, lease drawings, and property records &mdash; typically delivered within 48 hours of the on-site capture.</p>
         </div>
         <div class="icon-card">
           <div class="icon">⊞</div>
           <h3>Construction Progress Capture</h3>
-          <p>Recurring site scans for milestone documentation, dispute mitigation, and remote stakeholder updates.</p>
+          <span class="accuracy-badge">Scheduled recurring scans</span>
+          <p>Recurring site scans for milestone documentation, dispute mitigation, and remote stakeholder updates during active construction.</p>
         </div>
         <div class="icon-card">
           <div class="icon">⌖</div>
           <h3>Custom Deliverables</h3>
-          <p>Don&rsquo;t see exactly what you need? Tell us the goal and we&rsquo;ll scope the right combination of deliverables.</p>
+          <span class="accuracy-badge">Scoped to your project</span>
+          <p>Don&rsquo;t see exactly what you need? Most projects are custom &mdash; tell us your goals and we&rsquo;ll scope the right combination of deliverables.</p>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- 3-step process -->
   <section class="section-surface">
+    <div class="container">
+      <div class="section-title-centered">
+        <span class="eyebrow">How It Works</span>
+        <h2>Scan. Process. Deliver.</h2>
+      </div>
+      <div class="process-grid">
+        <div class="process-step">
+          <div class="step-number">1</div>
+          <h3>Scan</h3>
+          <p>On-site capture in hours, scheduled around your project. Mobile-mapping scanners minimize disruption to active sites.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">2</div>
+          <h3>Process</h3>
+          <p>Registration, decimation, and QC in-house. Tied to control where required, exported in your team&rsquo;s preferred format.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">3</div>
+          <h3>Deliver</h3>
+          <p>CAD, Revit, virtual tours &mdash; whatever your project needs &mdash; typically within 3&ndash;7 business days of the on-site visit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
     <div class="container">
       <div class="cta-strip">
         <div class="text">

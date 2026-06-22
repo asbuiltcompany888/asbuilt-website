@@ -1,14 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="As-Built Company — 3D Scanning & As-Built Documentation">
+<BaseLayout
+  title="As-Built Company — Millimeter-Accurate 3D Scanning Across California"
+  description="Survey-grade 3D laser scanning and as-built documentation across California. Leica BLK2GO and Insta360 capture, delivered in days as CAD, Revit, point clouds, and virtual tours."
+>
   <section class="hero">
     <div class="container">
-      <div class="eyebrow">3D Scanning · As-Built Documentation</div>
-      <h1>Precision data. <span class="accent">Smarter builds.</span></h1>
+      <div class="eyebrow">3D Laser Scanning · As-Built Documentation</div>
+      <h1>Millimeter-accurate as-builts <span class="accent">across California.</span></h1>
       <p class="lead">
-        We capture buildings, sites, and interiors with survey-grade 3D laser scanning and deliver the drawings, models,
-        and 360&deg; walkthroughs your project actually needs.
+        Survey-grade 3D laser scanning and 360&deg; capture for architects, contractors, and property owners.
+        We deliver the drawings, models, and walkthroughs your project actually needs &mdash; in days, not weeks.
       </p>
       <div class="actions">
         <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
@@ -17,6 +20,44 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
+  <!-- Trust strip: equipment + credentials -->
+  <div class="trust-strip-wrapper">
+    <div class="container">
+      <div class="trust-strip-content">
+        <span class="strip-label">Trusted by Design &amp; Construction Teams</span>
+        <span class="trust-item"><span class="trust-icon">◆</span> Leica BLK2GO</span>
+        <span class="trust-item"><span class="trust-icon">◉</span> Insta360 Pro</span>
+        <span class="trust-item"><span class="trust-icon">⚡</span> 2&ndash;4 mm Accuracy</span>
+        <span class="trust-item"><span class="trust-icon">◎</span> California-Wide</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stat block -->
+  <section class="stat-block-section">
+    <div class="container">
+      <div class="stat-grid">
+        <div class="stat-item">
+          <span class="number">2&ndash;4mm</span>
+          <span class="label">Positional accuracy<br />with Leica BLK2GO</span>
+        </div>
+        <div class="stat-item">
+          <span class="number">24 hr</span>
+          <span class="label">Quote response<br />for new projects</span>
+        </div>
+        <div class="stat-item">
+          <span class="number">3&ndash;7 days</span>
+          <span class="label">Typical turnaround<br />from scan to deliverable</span>
+        </div>
+        <div class="stat-item">
+          <span class="number">100%</span>
+          <span class="label">California-served<br />on-site coverage</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What we do -->
   <section>
     <div class="container">
       <div class="section-title-centered">
@@ -28,36 +69,42 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="icon-card">
           <div class="icon">◧</div>
           <h3>3D Laser Scanning</h3>
-          <p>High-density point clouds captured with Leica BLK2GO and other survey-grade equipment.</p>
+          <span class="accuracy-badge">2&ndash;4mm accuracy</span>
+          <p>High-density point clouds captured with the Leica BLK2GO mobile scanner. Fast, complete, survey-grade.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
         <div class="icon-card">
           <div class="icon">▤</div>
           <h3>As-Built Drawings</h3>
+          <span class="accuracy-badge">CAD &amp; Revit</span>
           <p>Floor plans, elevations, and sections drawn to the conditions actually on site &mdash; not design intent.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
         <div class="icon-card">
           <div class="icon">◉</div>
-          <h3>Virtual Tours</h3>
-          <p>Interactive 360&deg; walkthroughs from Insta360 captures &mdash; share a site without leaving your desk.</p>
+          <h3>360&deg; Virtual Tours</h3>
+          <span class="accuracy-badge">Insta360 capture</span>
+          <p>Interactive walkthroughs from Insta360 captures &mdash; share a site without leaving your desk.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
         <div class="icon-card">
           <div class="icon">▦</div>
           <h3>BIM &amp; 3D Modeling</h3>
+          <span class="accuracy-badge">LOD 200&ndash;400</span>
           <p>Revit and Rhino models built from scan data, ready for coordination or design development.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
         <div class="icon-card">
           <div class="icon">⊞</div>
           <h3>Construction Documentation</h3>
-          <p>Recurring site capture for milestone documentation and remote stakeholder updates.</p>
+          <span class="accuracy-badge">Recurring capture</span>
+          <p>Repeat site scans for milestone documentation and remote stakeholder updates.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
         <div class="icon-card">
           <div class="icon">⌂</div>
           <h3>Real Estate Floor Plans</h3>
+          <span class="accuracy-badge">48-hour delivery</span>
           <p>Fast, dimensioned floor plans for listings, lease drawings, and property records.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
@@ -65,32 +112,125 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
+  <!-- 3-step process -->
   <section class="section-surface">
     <div class="container">
       <div class="section-title-centered">
-        <span class="eyebrow">Why As-Built Company</span>
-        <h2>Built for accuracy. Designed for speed.</h2>
+        <span class="eyebrow">Our Process</span>
+        <h2>From site visit to deliverable in days.</h2>
+        <p>A straightforward three-step workflow that fits your project schedule.</p>
       </div>
-      <div class="grid grid-3">
-        <div class="icon-card">
-          <div class="icon">⚡</div>
-          <h3>Fast turnaround</h3>
-          <p>Site capture in hours, deliverables in days &mdash; not weeks. We move at the pace of your project.</p>
+      <div class="process-grid">
+        <div class="process-step">
+          <div class="step-number">1</div>
+          <h3>Scan</h3>
+          <p>On-site capture in hours, not days. Leica BLK2GO mobile scanning for interiors and exteriors, Insta360 for 360&deg; walkthroughs &mdash; coordinated around your job site schedule.</p>
         </div>
-        <div class="icon-card">
-          <div class="icon">◎</div>
-          <h3>Survey-grade accuracy</h3>
-          <p>Millimeter-precision point clouds you can build from with confidence.</p>
+        <div class="process-step">
+          <div class="step-number">2</div>
+          <h3>Process</h3>
+          <p>Registration, decimation, and quality control in-house. Point clouds tied to control where required, exported in your team&rsquo;s preferred format (E57, RCS/RCP, LAS, PTS).</p>
         </div>
-        <div class="icon-card">
-          <div class="icon">⚙</div>
-          <h3>Every deliverable, one team</h3>
-          <p>From raw scans to finished drawings and tours &mdash; no handoffs between vendors.</p>
+        <div class="process-step">
+          <div class="step-number">3</div>
+          <h3>Deliver</h3>
+          <p>CAD drawings, Revit models, virtual tours &mdash; whatever your project needs &mdash; delivered in days, not weeks. We stay available for revisions and follow-up scope.</p>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Industries served -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Industries Served</div>
+          <h2>Who we work with</h2>
+        </div>
+        <a href="/industries/" class="link-arrow">View all industries <span class="arrow">→</span></a>
+      </div>
+      <div class="grid grid-3">
+        <a href="/industries/" class="industry-card">
+          <div class="industry-icon">▲</div>
+          <h3>Architects &amp; Design</h3>
+          <p>Existing conditions for renovations, retrofits, and adaptive reuse projects.</p>
+        </a>
+        <a href="/industries/" class="industry-card">
+          <div class="industry-icon">⚒</div>
+          <h3>General Contractors</h3>
+          <p>Pre-construction scans, progress capture, and coordination support.</p>
+        </a>
+        <a href="/industries/" class="industry-card">
+          <div class="industry-icon">⌂</div>
+          <h3>Real Estate &amp; Brokerage</h3>
+          <p>Floor plans, virtual tours, and listing-ready visualizations.</p>
+        </a>
+        <a href="/industries/" class="industry-card">
+          <div class="industry-icon">◉</div>
+          <h3>Insurance &amp; Forensic</h3>
+          <p>Damage documentation, loss assessment, and dispute-ready records.</p>
+        </a>
+        <a href="/industries/" class="industry-card">
+          <div class="industry-icon">◇</div>
+          <h3>Historic Preservation</h3>
+          <p>Non-contact documentation of fragile and protected structures.</p>
+        </a>
+        <a href="/industries/" class="industry-card">
+          <div class="industry-icon">⚙</div>
+          <h3>Facility Management</h3>
+          <p>Accurate floor plans and as-builts for ongoing operations and planning.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section-surface">
+    <div class="container">
+      <div class="section-title-centered">
+        <span class="eyebrow">What Clients Say</span>
+        <h2>Trusted on real projects.</h2>
+      </div>
+      <div class="testimonial-grid">
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <p class="quote">As-Built Company saved us weeks of field measurement on a 12,000-square-foot renovation. The drawings came back accurate to the conditions and ready to design from.</p>
+          <div class="author">
+            <div class="avatar">SK</div>
+            <div class="author-info">
+              <span class="name">[Client Name]</span>
+              <span class="role">Project Architect, [Firm Name]</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <p class="quote">Fast turnaround, clean point clouds, and a Revit model we could actually use without rework. Easiest scan vendor I&rsquo;ve worked with in California.</p>
+          <div class="author">
+            <div class="avatar">MR</div>
+            <div class="author-info">
+              <span class="name">[Client Name]</span>
+              <span class="role">BIM Manager, [Firm Name]</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <p class="quote">The virtual tour they delivered let our entire team review the site from across the country. Cut a week of travel out of the project.</p>
+          <div class="author">
+            <div class="avatar">JT</div>
+            <div class="author-info">
+              <span class="name">[Client Name]</span>
+              <span class="role">Senior PM, [Firm Name]</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent projects -->
   <section>
     <div class="container">
       <div class="section-head">
@@ -104,8 +244,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="card">
           <div class="card-image"><span class="card-badge">Commercial</span>(project image)</div>
           <div class="card-body">
-            <h3>500,000 SF commercial retrofit</h3>
-            <p>Full as-built capture and Revit model for a multi-floor office renovation in downtown LA.</p>
+            <h3>Office Retrofit, Los Angeles</h3>
+            <p>Full as-built capture and Revit model for a multi-floor renovation downtown.</p>
           </div>
           <div class="card-footer">
             <span>Los Angeles, CA</span>
@@ -115,7 +255,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="card">
           <div class="card-image"><span class="card-badge">Residential</span>(project image)</div>
           <div class="card-body">
-            <h3>Historic home documentation</h3>
+            <h3>Historic Craftsman Home</h3>
             <p>Point cloud and floor plans of a 1920s craftsman for a sensitive renovation.</p>
           </div>
           <div class="card-footer">
@@ -126,7 +266,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="card">
           <div class="card-image"><span class="card-badge">Industrial</span>(project image)</div>
           <div class="card-body">
-            <h3>Manufacturing facility scan</h3>
+            <h3>Manufacturing Facility</h3>
             <p>Floor-to-ceiling capture of an active plant with virtual tour for remote teams.</p>
           </div>
           <div class="card-footer">

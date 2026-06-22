@@ -1,7 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="About — As-Built Company">
+<BaseLayout
+  title="About — As-Built Company"
+  description="A California-based 3D scanning team focused on getting accurate existing-conditions data into the hands of the people who need to build from it."
+>
   <section class="hero hero-compact">
     <div class="container">
       <div class="eyebrow">About</div>
@@ -38,7 +41,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
+  <!-- Team section -->
   <section class="section-surface">
+    <div class="container">
+      <div class="section-title-centered">
+        <span class="eyebrow">Our Team</span>
+        <h2>The people behind the scans.</h2>
+        <p>A small, hands-on team. You talk directly with the people who scan, process, and deliver your project.</p>
+      </div>
+      <div class="grid grid-2" style="max-width: 800px; margin: 0 auto;">
+        <div class="team-card">
+          <div class="avatar-large">JC</div>
+          <h3>Jonathan Chen</h3>
+          <span class="role">Founder · Reality Capture Lead</span>
+          <p>[Bio placeholder — add a 2&ndash;3 sentence intro covering background, certifications, and what Jonathan personally handles on projects.]</p>
+        </div>
+        <div class="team-card">
+          <div class="avatar-large">+</div>
+          <h3>[Team Member]</h3>
+          <span class="role">[Role · e.g. Processing &amp; Modeling]</span>
+          <p>[Bio placeholder — add a 2&ndash;3 sentence intro for the second team member.]</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section>
     <div class="container">
       <div class="section-title-centered">
         <span class="eyebrow">Our Values</span>
@@ -59,6 +88,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="icon">⊜</div>
           <h3>Straight answers</h3>
           <p>If a scope isn&rsquo;t the right fit, we&rsquo;ll say so. We&rsquo;d rather lose a job than oversell one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Equipment -->
+  <section class="section-surface">
+    <div class="container">
+      <div class="section-title-centered">
+        <span class="eyebrow">Our Equipment</span>
+        <h2>Survey-grade tools.</h2>
+        <p>We invest in the equipment that delivers reliable, defensible data &mdash; not the cheapest option that fits the day&rsquo;s job.</p>
+      </div>
+      <div class="grid grid-2">
+        <div class="icon-card">
+          <div class="icon">◆</div>
+          <h3>Leica BLK2GO</h3>
+          <span class="accuracy-badge">2&ndash;4mm accuracy · 700,000 pts/sec</span>
+          <p>Handheld mobile-mapping scanner used for fast, complete interior and exterior capture. SLAM-based registration keeps scans coherent without external targets in most environments.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">◉</div>
+          <h3>Insta360 Pro Series</h3>
+          <span class="accuracy-badge">8K stitched 360&deg; capture</span>
+          <p>Professional 360&deg; cameras used for shareable virtual walkthroughs. Stitched and stop-tagged in-house for clean tour delivery.</p>
         </div>
       </div>
     </div>
