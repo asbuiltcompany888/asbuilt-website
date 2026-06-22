@@ -7,8 +7,8 @@ interface Props {
 }
 
 const {
-  title = 'As-Built Company — 3D Scanning & As-Built Documentation',
-  description = 'Precision 3D laser scanning, as-built documentation, and virtual tours for architects, contractors, and property owners in California.',
+  title = 'As-Built Company — 3D Scanning & As-Built Documentation in California',
+  description = 'Millimeter-accurate 3D laser scanning, as-built documentation, and 360° virtual tours for architects, contractors, and property owners across California.',
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -44,12 +44,13 @@ const year = new Date().getFullYear();
         </a>
         <nav class="nav" aria-label="Primary">
           <a href="/" class={isActive('/') ? 'active' : ''}>Home</a>
-          <a href="/about/" class={isActive('/about') ? 'active' : ''}>About</a>
           <a href="/services/" class={isActive('/services') ? 'active' : ''}>Services</a>
+          <a href="/industries/" class={isActive('/industries') ? 'active' : ''}>Industries</a>
           <a href="/projects/" class={isActive('/projects') ? 'active' : ''}>Projects</a>
           <a href="/pricing/" class={isActive('/pricing') ? 'active' : ''}>Pricing</a>
+          <a href="/areas-we-serve/" class={isActive('/areas-we-serve') ? 'active' : ''}>Areas</a>
+          <a href="/about/" class={isActive('/about') ? 'active' : ''}>About</a>
           <a href="/resources/" class={isActive('/resources') ? 'active' : ''}>Resources</a>
-          <a href="/contact/" class={isActive('/contact') ? 'active' : ''}>Contact</a>
         </nav>
         <div class="header-cta">
           <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
@@ -79,20 +80,21 @@ const year = new Date().getFullYear();
           </div>
 
           <div class="footer-col">
-            <h4>Quick Links</h4>
+            <h4>Services</h4>
             <ul>
-              <li><a href="/">Home</a></li>
-              <li><a href="/about/">About</a></li>
-              <li><a href="/services/">Services</a></li>
+              <li><a href="/services/">All Services</a></li>
+              <li><a href="/industries/">Industries</a></li>
               <li><a href="/projects/">Projects</a></li>
+              <li><a href="/pricing/">Pricing</a></li>
             </ul>
           </div>
 
           <div class="footer-col">
-            <h4>Resources</h4>
+            <h4>Company</h4>
             <ul>
-              <li><a href="/resources/">All Resources</a></li>
-              <li><a href="/pricing/">Pricing</a></li>
+              <li><a href="/about/">About</a></li>
+              <li><a href="/areas-we-serve/">Areas We Serve</a></li>
+              <li><a href="/resources/">Resources</a></li>
               <li><a href="/contact/">Contact</a></li>
             </ul>
           </div>
@@ -115,7 +117,7 @@ const year = new Date().getFullYear();
 
           <div class="footer-col footer-newsletter">
             <h4>Newsletter</h4>
-            <p>Get the latest insights and updates straight to your inbox.</p>
+            <p>Get insights on 3D scanning, as-built best practices, and project case studies.</p>
             <form class="newsletter-form" action="#" method="POST">
               <input type="email" placeholder="Your email address" required aria-label="Email address" />
               <button type="submit">Subscribe</button>
@@ -132,5 +134,11 @@ const year = new Date().getFullYear();
         </div>
       </div>
     </footer>
+
+    <!-- Mobile sticky CTA -->
+    <div class="mobile-cta-bar">
+      <a href="tel:+16266259249" class="cta-call">☎ Call</a>
+      <a href="/contact/" class="cta-quote">Get a Quote →</a>
+    </div>
   </body>
 </html>
