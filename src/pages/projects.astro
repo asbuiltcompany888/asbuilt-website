@@ -1,86 +1,161 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="Projects — As-Built Company">
+<BaseLayout
+  title="Projects — As-Built Company"
+  description="Recent residential, commercial, and industrial as-built documentation projects across California."
+>
   <section class="hero hero-compact">
     <div class="container">
       <div class="eyebrow">Projects</div>
       <h1>Recent <span class="accent">work.</span></h1>
-      <p class="lead">A selection of buildings, sites, and renovations we&rsquo;ve scanned and documented across California.</p>
+      <p class="lead">A selection of residential, commercial, and industrial as-built projects completed across California. Client names and addresses removed for privacy &mdash; city labels shown.</p>
     </div>
   </section>
 
+  <!-- COMMERCIAL -->
   <section>
     <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Commercial</div>
+          <h2>Restaurants, retail, offices</h2>
+        </div>
+        <a href="/services/" class="link-arrow">View commercial services <span class="arrow">→</span></a>
+      </div>
       <div class="grid grid-3">
         <div class="card">
-          <div class="card-image"><span class="card-badge">Commercial</span>(image placeholder)</div>
+          <div class="card-image"><span class="card-badge">Commercial</span>(restaurant floor plan)</div>
           <div class="card-body">
-            <h3>500,000 SF Office Retrofit</h3>
-            <p>Full as-built capture and LOD 300 Revit model for a multi-floor office renovation downtown.</p>
+            <h3>Restaurant Tenant Improvement</h3>
+            <p>1,863 SF existing-conditions floor plan with proposed kitchen + retail seating layout. Full equipment plan including walk-in refrigerator, freezer, hood, gas stove, and prep barricade. Delivered CAD-ready for permitting.</p>
           </div>
           <div class="card-footer">
-            <span>Los Angeles, CA</span>
+            <span>Seal Beach, CA</span>
             <a href="/contact/" class="arrow-link">Discuss similar →</a>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-image"><span class="card-badge">Residential</span>(image placeholder)</div>
+          <div class="card-image"><span class="card-badge">Commercial</span>(multi-tenant plan)</div>
           <div class="card-body">
-            <h3>Historic Craftsman Home</h3>
-            <p>Point cloud and dimensioned floor plans of a 1920s home for a sensitive renovation.</p>
+            <h3>Multi-Tenant Retail Center</h3>
+            <p>As-built floor plans for multiple commercial tenant units across a single strip plaza. Each suite captured individually with dimensioned drawings ready for lease documentation and tenant improvement design.</p>
           </div>
           <div class="card-footer">
-            <span>Pasadena, CA</span>
+            <span>La Mirada, CA</span>
             <a href="/contact/" class="arrow-link">Discuss similar →</a>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-image"><span class="card-badge">Industrial</span>(image placeholder)</div>
+          <div class="card-image"><span class="card-badge">Commercial</span>(office complex)</div>
           <div class="card-body">
-            <h3>Manufacturing Facility</h3>
-            <p>Floor-to-ceiling scan of an active plant with shareable 360&deg; virtual tour for remote teams.</p>
+            <h3>Office Complex Suite Documentation</h3>
+            <p>Existing-conditions floor plans for a multi-suite office complex. Captured rapidly, delivered as individual suite drawings for property management and lease/TI use.</p>
           </div>
           <div class="card-footer">
-            <span>Inland Empire, CA</span>
+            <span>Laguna Hills, CA</span>
+            <a href="/contact/" class="arrow-link">Discuss similar →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESIDENTIAL -->
+  <section class="section-surface">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Residential</div>
+          <h2>Single-family, additions, estates</h2>
+        </div>
+        <a href="/services/" class="link-arrow">View residential services <span class="arrow">→</span></a>
+      </div>
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-image"><span class="card-badge">Residential</span>(site plan)</div>
+          <div class="card-body">
+            <h3>Single-Family Home Addition</h3>
+            <p>Site plan and addition documentation for a 1,815 SF single-family home receiving a new 857 SF stand-alone covered patio. Includes APN-referenced site drawings, scope of work, and dimensioned construction notes.</p>
+          </div>
+          <div class="card-footer">
+            <span>Victorville, CA</span>
             <a href="/contact/" class="arrow-link">Discuss similar →</a>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-image"><span class="card-badge">Real Estate</span>(image placeholder)</div>
+          <div class="card-image"><span class="card-badge">Residential</span>(coastal estate)</div>
           <div class="card-body">
-            <h3>Multi-Unit Property Floor Plans</h3>
-            <p>Dimensioned floor plans for a 12-unit apartment building delivered in 48 hours.</p>
+            <h3>Coastal Estate Documentation</h3>
+            <p>Full as-built floor plan package for a multi-level coastal residence. Captured for a sensitive renovation, delivered with dimensioned interior layouts ready for the design team.</p>
           </div>
           <div class="card-footer">
-            <span>Long Beach, CA</span>
+            <span>Palos Verdes Estates, CA</span>
             <a href="/contact/" class="arrow-link">Discuss similar →</a>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-image"><span class="card-badge">Healthcare</span>(image placeholder)</div>
+          <div class="card-image"><span class="card-badge">Residential</span>(custom home)</div>
           <div class="card-body">
-            <h3>Outpatient Clinic As-Builts</h3>
-            <p>MEP-coordinated as-builts for a working medical facility, captured outside business hours.</p>
+            <h3>Custom Home Floor Plans</h3>
+            <p>As-built floor plans documenting an existing single-family home for renovation planning. Multi-room coverage with dimensioned interior layouts, including bathrooms, kitchen, and living areas.</p>
           </div>
           <div class="card-footer">
-            <span>San Diego, CA</span>
+            <span>Newport Beach, CA</span>
+            <a href="/contact/" class="arrow-link">Discuss similar →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INDUSTRIAL -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Industrial</div>
+          <h2>Flex, warehouse, distribution</h2>
+        </div>
+        <a href="/services/" class="link-arrow">View industrial services <span class="arrow">→</span></a>
+      </div>
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-image"><span class="card-badge">Industrial</span>(flex space plan)</div>
+          <div class="card-body">
+            <h3>Light Industrial Flex Space</h3>
+            <p>4,962 SF floor plan for a warehouse/office combo &mdash; 3,828 SF warehouse with 16&prime;-6&Prime; clear height, two 12&prime;&times;12&prime; dock doors, and 1,134 SF office plus restrooms. Captured in one visit, delivered for tenant improvement scoping.</p>
+          </div>
+          <div class="card-footer">
+            <span>Laguna Hills, CA</span>
             <a href="/contact/" class="arrow-link">Discuss similar →</a>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-image"><span class="card-badge">Hospitality</span>(image placeholder)</div>
+          <div class="card-image"><span class="card-badge">Industrial</span>(warehouse plan)</div>
           <div class="card-body">
-            <h3>Boutique Hotel Renovation</h3>
-            <p>Existing-conditions scan and Revit model for a full-floor guestroom remodel.</p>
+            <h3>Warehouse / Distribution Documentation</h3>
+            <p>As-built documentation for an active industrial property. Floor plans capture clear-span warehouse, loading dock positions, and ceiling heights &mdash; delivered for the property owner&rsquo;s tenant rollout package.</p>
           </div>
           <div class="card-footer">
-            <span>Santa Monica, CA</span>
+            <span>Ontario, CA</span>
+            <a href="/contact/" class="arrow-link">Discuss similar →</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-image"><span class="card-badge">Industrial</span>(commerce center)</div>
+          <div class="card-body">
+            <h3>Multi-Unit Commerce Center</h3>
+            <p>Floor plan documentation across multiple flex/industrial units within a single commerce center property. Per-unit dimensioned drawings delivered to support the owner&rsquo;s leasing and tenant onboarding workflow.</p>
+          </div>
+          <div class="card-footer">
+            <span>Laguna Hills, CA</span>
             <a href="/contact/" class="arrow-link">Discuss similar →</a>
           </div>
         </div>
@@ -93,7 +168,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="cta-strip">
         <div class="text">
           <h3>Have a project to scope?</h3>
-          <p>Tell us what you&rsquo;re working on and we&rsquo;ll put together a custom quote.</p>
+          <p>Tell us what you&rsquo;re working on and we&rsquo;ll put together a custom quote within one business day.</p>
         </div>
         <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
       </div>
