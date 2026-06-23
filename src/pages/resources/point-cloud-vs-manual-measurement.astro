@@ -1,0 +1,99 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+---
+<BlogLayout
+  title="How I Measure Buildings With Point Cloud Scanning"
+  description="The honest, side-by-side comparison: tape measure and clipboard vs Leica BLK2GO. Time, money, labor, and accuracy — what changes when you scan instead of measure by hand."
+  category="Case Study"
+  readTime="8 min"
+>
+  <p>The first time I tried to measure a 12,000-square-foot office building with a tape and a clipboard, it took me two days, three notebook pages of dimensions in handwriting I could barely read by the end, and one return trip the following week because I'd forgotten to record the ceiling height in the conference room. I priced that project at $1,800. I made about $4 an hour.</p>
+
+  <p>The first time I measured the same kind of building with a Leica BLK2GO mobile scanner, it took me four hours. I walked the building once. Every dimension was already in the point cloud waiting when I got home.</p>
+
+  <p>This is the comparison &mdash; tape measure vs scanner &mdash; in concrete numbers, plain language, and without any of the marketing.</p>
+
+  <h2>What "manual measurement" actually looks like</h2>
+
+  <p>When you measure a building by hand, here is the actual process. A two- or three-person crew arrives with tape measures, a laser distance meter (a Disto), a clipboard, and a printout of whatever existing drawing the client has. One person calls out dimensions while the other records them. You walk the perimeter of every room. You measure each wall to the opening, opening width, opening to next wall, the works. You document ceiling heights, door swings, electrical outlet locations if anyone cares, every soffit.</p>
+
+  <p>You miss things. You always miss things. You assume a wall is plumb when it isn't. You record a dimension as 12&prime;-4&Prime; when it's actually 12&prime;-4 1/2&Prime; because that's all you bothered to read off the tape. By the end of a long day your handwriting degrades. The next morning at the desk, the person who wasn't on site tries to draft the floor plan and finds three dimensions that don't add up across walls. They have to call the site, or worse, drive back.</p>
+
+  <p>Most field-measurement teams do good work. The work has a ceiling, though, and the ceiling is human attention. <strong>You cannot measure 70,000 dimensions on a building in a day with a tape measure.</strong> A laser scanner does that in a minute.</p>
+
+  <h2>What scanning actually looks like</h2>
+
+  <p>I show up alone with a Leica BLK2GO, a tripod for the static setups I might need, and an Insta360 camera if the client wants a virtual tour deliverable. The BLK2GO is a handheld scanner about the size of a small thermos. I turn it on, calibrate, and walk the building.</p>
+
+  <p>For interiors, I walk a continuous loop &mdash; perimeter, then through each space, then back. The scanner records 700,000 points per second. Walls, ceilings, floors, openings, equipment, soffits, columns, every dimensioned surface in the building. A 12,000 SF interior takes me about 90 minutes on-site, including setup and a few static scans where the mobile alignment needs extra control.</p>
+
+  <p>Then I drive home. The scanner has captured the entire building geometry. Back at the desk, I register the scans (align them into a single coordinate system), check the registration quality, decimate the cloud if it's too dense, and export the point cloud in whatever formats the client asked for &mdash; usually <code>.e57</code> for archive, <code>.rcp</code> for AutoCAD ReCap, sometimes <code>.las</code> for surveyors. From there a drafter pulls 2D plans, or a BIM modeler pulls a Revit file.</p>
+
+  <p>The thing that always surprises new clients: I don't measure anything on site beyond the scan itself. I don't pull out a tape. The scan <em>is</em> the measurement.</p>
+
+  <h2>The side-by-side</h2>
+
+  <p>For a 12,000 SF single-story commercial building &mdash; a realistic comparison:</p>
+
+  <table>
+    <thead>
+      <tr><th></th><th>Hand measurement</th><th>3D laser scanning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>On-site time</td><td>1&ndash;2 days</td><td>2&ndash;4 hours</td></tr>
+      <tr><td>Crew on site</td><td>2&ndash;3 people</td><td>1 operator</td></tr>
+      <tr><td>Dimensions captured</td><td>Hundreds (whatever you wrote down)</td><td>Tens of millions (every surface)</td></tr>
+      <tr><td>Accuracy</td><td>&plusmn;1/2&Prime; at best, often worse over long runs</td><td>2&ndash;4 mm (about 1/8&Prime;)</td></tr>
+      <tr><td>Things missed</td><td>Common &mdash; ceiling heights, MEP, deformation</td><td>Rare &mdash; what you don't capture in the cloud you can capture again from the file</td></tr>
+      <tr><td>Revisit rate</td><td>~1 in 3 projects requires a callback</td><td>Rare. The point cloud is a permanent record.</td></tr>
+      <tr><td>Time to draft 2D plans afterward</td><td>3&ndash;5 days</td><td>2&ndash;3 days</td></tr>
+      <tr><td>Total project cost (typical)</td><td>$3,500&ndash;$6,000</td><td>$2,000&ndash;$4,500</td></tr>
+    </tbody>
+  </table>
+
+  <p>The accuracy comparison deserves more than a row in a table. A tape measure in skilled hands is good to about 1/8&Prime; over short runs. Over 50 feet of corridor, with the tape laid against a baseboard that isn't perfectly straight, you can accumulate an inch of error without realizing it. The Leica BLK2GO publishes 4&ndash;6 mm accuracy in motion. A static scanner like the Leica RTC360 publishes 1.9 mm at 10 meters, 2.9 mm at 20 meters &mdash; per Leica's own datasheet, at 1-sigma confidence. Double those for 95% confidence and you're still under what any human can do with a tape.</p>
+
+  <h2>What scanning gives you that measurement doesn't</h2>
+
+  <p>The dimensions are the obvious win. The less obvious wins are what change the economics:</p>
+
+  <p><strong>You capture things you didn't ask for.</strong> The point cloud contains every visible surface in the building. If the architect later says "wait, what's the height of that soffit over the bar?" the answer is in the file you already delivered. You don't go back to site.</p>
+
+  <p><strong>You can issue revised drawings without re-measuring.</strong> A client adds scope &mdash; "actually, can you also do the second floor?" If you scanned the second floor, you have it. If you measured the first floor with a tape, you're back on site.</p>
+
+  <p><strong>You can produce a 3D virtual tour from the same data.</strong> A 360&deg; camera adds about thirty minutes to the on-site time and gives the client a navigable walkthrough they can share with stakeholders who weren't on site. That's an extra deliverable you can sell &mdash; or include &mdash; for the same site visit.</p>
+
+  <p><strong>The deliverable is defensible.</strong> If an insurance claim, a litigation discovery, or a contract dispute references the building's pre-construction state, the point cloud is a permanent dated record. The handwritten field notes are not.</p>
+
+  <h2>What scanning doesn't give you</h2>
+
+  <p>It's not magic. Worth being honest about:</p>
+
+  <p><strong>It can't see what's behind a wall.</strong> Laser scanners measure visible surfaces. They don't see embedded conduit, hidden plumbing, or anything inside a closed cavity. If you need to know what's behind drywall, you still need a wall opening or a different tool (ground-penetrating radar, thermal imaging).</p>
+
+  <p><strong>It struggles in some spaces.</strong> Tight closets, glass-walled rooms, mirror surfaces, and full-mirror finishes are hard. You can scan them, but you sometimes need supplementary measurements. We still occasionally carry a Disto for a single tricky dimension.</p>
+
+  <p><strong>It needs decent access.</strong> A scanner walked through an occupied medical exam room has to wait for the room to be empty. We schedule around clinical hours. We work nights for retail. Hand measurement has the same problem, but the scheduling is more sensitive because a single missed setup costs more time to reschedule.</p>
+
+  <p><strong>It costs more for very small jobs.</strong> A single 200 SF garage probably isn't worth the scanner setup. A tape measure is fine. The crossover is around 1,000&ndash;1,500 SF for interiors; below that, hand measurement wins on speed.</p>
+
+  <h2>The economics for the small business owner</h2>
+
+  <p>If you're a contractor or owner deciding whether to hire a scanning firm vs an old-school field-measurement crew, here's the comparison stripped to the essentials:</p>
+
+  <p><strong>Time saved on site.</strong> Three days of two people becomes half a day of one person. Whatever your billable rate is, that's the math. For a $250/hr architect, the saved field time alone is often 80% of the scanning cost.</p>
+
+  <p><strong>Reduced rework.</strong> Industry data published in <em>Construction Engineering and Management</em> attributes about 14&ndash;22% of construction rework to bad documentation. If your project budget is $500,000, you're looking at $70,000&ndash;$110,000 of expected rework cost. A $5,000 scanning bill that cuts that exposure in half pays for itself with margin to spare.</p>
+
+  <p><strong>Permanent record.</strong> If you scan once, you have the data forever. The marginal cost of re-measuring the building in five years for a future project is zero. Hand measurement has zero residual value.</p>
+
+  <p><strong>Saleable deliverable.</strong> If you're a contractor, the point cloud is an asset you can offer your client at handover. Owners increasingly expect it for facility management. It differentiates your bid.</p>
+
+  <h2>The simplest possible decision rule</h2>
+
+  <p>If the building is bigger than your living room, you have a renovation budget in five or six figures, and you care about not finding a measurement error during construction &mdash; scan it. The math has worked out in scanning's favor since roughly 2018, and the gap widens every year as scanner prices come down and labor rates go up.</p>
+
+  <p>If it's a single closet and you have a tape measure in your back pocket &mdash; use the tape. Don't overthink it.</p>
+
+  <p>For everything in between: get a quote for both, ask each vendor what they'd actually deliver, and notice which one tells you more useful things about the building before you've even signed.</p>
+</BlogLayout>

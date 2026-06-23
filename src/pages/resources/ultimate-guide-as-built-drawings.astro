@@ -1,0 +1,111 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+---
+<BlogLayout
+  title="The Ultimate Guide to As-Built Drawings"
+  description="What as-built drawings actually are, what's in a real set, who needs them, and how to specify accuracy correctly using USIBD Level of Accuracy."
+  category="Guide"
+  readTime="9 min"
+>
+  <p>A general contractor in Anaheim handed me a stack of drawings dated 1987. He wanted to know if they were still right. The short answer: no. The slightly longer answer is what this guide is about &mdash; what an as-built drawing actually is, what should be in one, and why the original construction set sitting in his project file had become nearly useless after four decades of tenant fit-outs.</p>
+
+  <p>If you're scoping a renovation, a retrofit, a lease, an insurance claim, or any kind of work on a building that exists today, you need an as-built. This is what it should give you.</p>
+
+  <h2>What an as-built drawing actually is</h2>
+
+  <p>An as-built drawing is a document of the building as it physically stands today. Not as it was designed. Not as it was approved. Not what's on the original construction set. As it is. Right now. After every wall that was moved, every duct that was rerouted, and every door someone bricked over.</p>
+
+  <p>That distinction is the entire point. The plans the architect drew in 1987 captured an intent. Forty years of leases, MEP swaps, and "we'll just frame this wall here, who'll notice" later, those plans describe a building that no longer exists.</p>
+
+  <p>The American Institute of Architects' contract documents draw clean lines here. <strong>As-designed</strong> drawings are the architect's design intent. <strong>Record drawings</strong> are the contractor's redlined version handed back at project close, showing what was actually built. <strong>As-builts</strong> are field-verified documents prepared by a third party (often us) at any point in a building's life. <strong>Shop drawings</strong> are something else entirely &mdash; fabrication specs prepared by a subcontractor, regulated under AIA A201 &sect;3.12.</p>
+
+  <p>People in the trade use these terms loosely. The contracts don't. If you're getting an as-built for litigation, insurance, or a permit submittal, that loose use matters.</p>
+
+  <h2>What's in a real as-built set</h2>
+
+  <p>Most clients order an as-built and discover they actually needed six different drawings. The set we deliver on a typical commercial job:</p>
+
+  <ul>
+    <li><strong>Floor plans</strong> &mdash; the room-by-room footprint, walls dimensioned, openings located, fixtures shown.</li>
+    <li><strong>Reflected ceiling plans (RCPs)</strong> &mdash; the ceiling looking down through the floor: lighting layout, soffits, diffusers, sprinklers.</li>
+    <li><strong>Exterior elevations</strong> &mdash; each face of the building, windows and doors dimensioned, fa&ccedil;ade detail.</li>
+    <li><strong>Building sections</strong> &mdash; vertical cuts showing floor-to-floor heights, structural depths, ceiling plenums.</li>
+    <li><strong>Roof plan</strong> &mdash; the roof above, including equipment, drains, hatches.</li>
+    <li><strong>Site plan</strong> &mdash; the building in context with parking, hardscape, easements.</li>
+  </ul>
+
+  <p>That's the standard set. Then come the optional layers: MEP (mechanical, electrical, plumbing routing &mdash; the biggest cost adder by far), structural, FF&amp;E, BOMA area measurements for lease documentation, and increasingly, a full Revit BIM model behind the 2D drawings.</p>
+
+  <p>Most clients don't need all of it. The single most expensive mistake we see is over-ordering &mdash; asking for LOD 400 MEP coordination when the project is a kitchen remodel.</p>
+
+  <h2>Who actually needs as-builts</h2>
+
+  <p>The buyers split roughly into these groups, and what they need varies more than people expect:</p>
+
+  <p><strong>Architects</strong> scoping a renovation, retrofit, or adaptive reuse. They need accurate floor plans they can design from in CAD or Revit, and they need to trust the dimensions. Their pain point is field measurement &mdash; the time their team spends with a tape measure is time they're not designing.</p>
+
+  <p><strong>General contractors</strong> preparing pre-construction estimates or coordinating MEP. They need takeoff-ready quantities and clash-detectable models. They care about whether the existing building geometry will accept the new design before crews are on site.</p>
+
+  <p><strong>Property owners and facility managers</strong> documenting their portfolio. They need a baseline they can reuse for the next ten leases, the next insurance renewal, the next emergency response.</p>
+
+  <p><strong>Real estate professionals</strong> producing listing materials. They need a 2D floor plan with BOMA area for the brochure, often within 48 hours.</p>
+
+  <p><strong>Insurance, forensic, and legal teams</strong> documenting pre-loss conditions or post-event damage. They need dimensioned, defensible records they can put in front of a deposition.</p>
+
+  <p><strong>Historic preservation</strong> teams documenting structures protected under HABS, SHPO, or federal preservation rules. They need non-contact documentation that doesn't disturb the building.</p>
+
+  <p>Same general deliverable, very different specs.</p>
+
+  <h2>How accuracy is actually specified</h2>
+
+  <p>The industry has a real standard for this, and most clients don't use it. The <a href="https://usibd.org/level-of-accuracy/">US Institute of Building Documentation publishes the Level of Accuracy (LOA) Specification</a>. It defines five tolerance bands:</p>
+
+  <table>
+    <thead><tr><th>Level</th><th>Upper bound</th><th>Lower bound</th><th>Typical use</th></tr></thead>
+    <tbody>
+      <tr><td>LOA 10</td><td>User-defined</td><td>5 cm (~2&Prime;)</td><td>Rough sketches, conceptual planning</td></tr>
+      <tr><td>LOA 20</td><td>5 cm</td><td>15 mm (~5/8&Prime;)</td><td>Real estate, basic floor plans, leasing</td></tr>
+      <tr><td>LOA 30</td><td>15 mm</td><td>5 mm (~3/16&Prime;)</td><td>Renovation, architectural design</td></tr>
+      <tr><td>LOA 40</td><td>5 mm</td><td>1 mm</td><td>MEP coordination, prefab, BIM LOD 300+</td></tr>
+      <tr><td>LOA 50</td><td>1 mm</td><td>0</td><td>Historic preservation, fabrication, forensic</td></tr>
+    </tbody>
+  </table>
+
+  <p>All at 95% confidence (2-sigma). Most renovation work belongs at LOA 30. Most leasing work belongs at LOA 20. Prefab and MEP coordination push to LOA 40. Asking for LOA 50 on a typical commercial renovation will roughly double your bill for no practical gain.</p>
+
+  <div class="callout">
+    <div class="callout-title">Important distinction</div>
+    <p><strong>LOA is not LOD.</strong> LOA describes how accurate the survey is. LOD (Level of Development, per the BIMForum spec) describes how detailed the model is. A BIM model can be LOD 300 visually correct but built from an LOA 20 survey that's off by 25 mm. USIBD specifically chose two-digit LOA numbering to avoid confusion with the three-digit LOD framework. Specify both when you scope a job.</p>
+  </div>
+
+  <h2>What an as-built actually costs</h2>
+
+  <p>Ballparks from current 2025&ndash;26 industry data, for California work:</p>
+
+  <ul>
+    <li><strong>Raw point cloud only</strong>: roughly $0.02&ndash;$0.08 per square foot of building.</li>
+    <li><strong>Point cloud + 2D as-built drawings</strong>: $0.70&ndash;$1.50 per SF for typical commercial.</li>
+    <li><strong>Scan-to-BIM LOD 200</strong> (architectural shells): $0.15&ndash;$0.25 per SF.</li>
+    <li><strong>Scan-to-BIM LOD 300</strong> (coordinatable model): $0.25&ndash;$0.45 per SF.</li>
+    <li><strong>Scan-to-BIM LOD 400</strong> with detailed MEP: $0.45&ndash;$0.75 per SF, climbing to $3&ndash;$8 per SF on dense industrial MEP scopes.</li>
+    <li><strong>Real estate floor plans</strong>: typically $500&ndash;$1,500 per unit, delivered in 48 hours.</li>
+  </ul>
+
+  <p>What blows budgets is not square footage. It's complexity. A 5,000 SF restaurant with exposed MEP, two mezzanines, and seventeen ceiling soffits costs more than a 15,000 SF empty warehouse. The number a scope-checked quote actually depends on: room count, ceiling complexity, occupancy status, MEP density, site access, and deliverable LOA/LOD.</p>
+
+  <h2>What to look for in a provider</h2>
+
+  <p>If you're shopping this work, three things separate competent firms from the rest:</p>
+
+  <p><strong>They specify LOA correctly.</strong> Quotes that list LOD without LOA, or use the terms interchangeably, are a tell. Ask explicitly what LOA the deliverable will meet at 95% confidence.</p>
+
+  <p><strong>They use vendor-neutral point cloud formats.</strong> The ASTM E2807 standard for point clouds is <code>.e57</code>. Insist on getting your point cloud in E57 in addition to whatever Autodesk-native (<code>.rcp</code>/<code>.rcs</code>) format the firm prefers. You'll thank yourself when you eventually want to use a different software vendor.</p>
+
+  <p><strong>They tell you what they will <em>not</em> deliver.</strong> Anyone selling you LOD 400 from scan data is either confused or overselling. You can't laser-scan a weld inside a pipe. LOD 400 is for new fabrication of components yet to be built &mdash; not existing conditions.</p>
+
+  <h2>The 60-second next step</h2>
+
+  <p>Take whatever drawings you currently have for the building &mdash; the 1987 set, the lease exhibit, the napkin sketch &mdash; and walk a single room with a tape measure. Check three dimensions. If any of them are off by more than what your project tolerance allows, you need an as-built. Send a scope and the building address to a competent firm, ask for LOA 30 at 95% confidence with 2D plans and an E57 point cloud, and ask them what they'd flag as a complexity adder.</p>
+
+  <p>That's the entire conversation. The rest is just the work.</p>
+</BlogLayout>

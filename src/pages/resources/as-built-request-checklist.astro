@@ -1,0 +1,150 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+---
+<BlogLayout
+  title="As-Built Drawing Request Checklist"
+  description="A scope-tight checklist for clients requesting as-built drawings. What to send so quotes are accurate, comparable, and not wildly off."
+  category="Template"
+  readTime="5 min"
+>
+  <p>About a third of the requests for proposal we receive can't be quoted accurately because they're missing critical information. The other two-thirds get a quote that's a guess. That's the buyer's problem, not the vendor's &mdash; vendors will quote what they're asked to quote, and the cheapest of those is rarely the right answer.</p>
+
+  <p>This is the checklist we wish every client sent. If you provide the items below, you'll get back quotes that are actually comparable, and you'll cut at least a week of back-and-forth out of the project start.</p>
+
+  <h2>The checklist</h2>
+
+  <h3>1. Project basics</h3>
+
+  <ul>
+    <li>Contact name, company, phone, email</li>
+    <li>Project name and jobsite address (including state &mdash; routing matters for California)</li>
+    <li>Building type (commercial, residential, industrial, healthcare, etc.)</li>
+    <li>Approximate gross square footage</li>
+    <li>Number of floors / stories</li>
+    <li>Year built (rough, if you don't know exactly)</li>
+    <li>Occupancy status: occupied / unoccupied / partially occupied</li>
+  </ul>
+
+  <h3>2. Scope of capture (what we measure)</h3>
+
+  <p>Be explicit. Quotes that assume "everything" are quotes for everything.</p>
+
+  <ul>
+    <li>Interior only / exterior only / both</li>
+    <li>Floor plans</li>
+    <li>Reflected ceiling plans (RCPs)</li>
+    <li>Exterior elevations</li>
+    <li>Building sections</li>
+    <li>Roof plan</li>
+    <li>Site plan / topographic survey</li>
+    <li>MEP routing (yes/no &mdash; this is the biggest cost variable)</li>
+    <li>Structural elements</li>
+    <li>FF&amp;E (furniture, fixtures, equipment)</li>
+    <li>BOMA area measurements (for leasing)</li>
+    <li>Drone capture for roof or hard-to-access areas</li>
+  </ul>
+
+  <h3>3. Deliverable formats (be specific)</h3>
+
+  <p>Naming the formats up front saves a round-trip later. If you need a specific Revit version, say so.</p>
+
+  <ul>
+    <li><strong>2D CAD:</strong> DWG, DXF, PDF</li>
+    <li><strong>3D BIM:</strong> RVT (specify Revit year &mdash; 2024, 2025, 2026), IFC, NWC/NWD for coordination</li>
+    <li><strong>Point cloud:</strong> <code>.e57</code> (vendor-neutral ASTM standard &mdash; insist on this), <code>.rcp</code>/<code>.rcs</code> (Autodesk ReCap), <code>.las</code> (LiDAR)</li>
+    <li><strong>Virtual tour:</strong> Matterport, 360&deg; web viewer</li>
+    <li><strong>QA/QC:</strong> deviation heatmap if you need verification against design intent</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-title">One non-obvious tip</div>
+    <p>Always include <code>.e57</code> in your deliverable list, even if your team uses Autodesk. It's the ASTM E2807 vendor-neutral standard. If you ever switch software vendors or hand the data to another team, you'll thank yourself. A point cloud locked into one vendor's proprietary format ages badly.</p>
+  </div>
+
+  <h3>4. Accuracy and development level</h3>
+
+  <p>This is where most RFPs fall apart. Specify both:</p>
+
+  <ul>
+    <li><strong>USIBD Level of Accuracy (LOA):</strong> 10, 20, 30, 40, or 50 at 95% confidence. Most renovation work belongs at LOA 30. Real estate at LOA 20. MEP coordination or prefab at LOA 40.</li>
+    <li><strong>BIMForum Level of Development (LOD)</strong> &mdash; only if you want a BIM model: 100, 200, 300, 350, 400, or 500. Most renovation BIM lives at LOD 300.</li>
+  </ul>
+
+  <p>LOA and LOD are not the same thing. LOA is how accurate the survey is. LOD is how detailed the model is. You need both numbers, or you'll get a visually convincing model that's dimensionally wrong.</p>
+
+  <h3>5. Coordinate system / survey control</h3>
+
+  <ul>
+    <li>Local origin (0, 0, 0) &mdash; standalone building work</li>
+    <li>State Plane (California State Plane, NAD83) &mdash; required if you're tying the as-built into a civil survey, topo, or site plan</li>
+    <li>Existing control points on site, if any &mdash; share the data</li>
+  </ul>
+
+  <h3>6. Site access and logistics</h3>
+
+  <ul>
+    <li>Available hours (business hours / after hours / weekends)</li>
+    <li>Escort required? Badging? Background check?</li>
+    <li>Parking availability</li>
+    <li>Lift / scissor lift access for high ceilings</li>
+    <li>Confined-space or hazmat zones</li>
+    <li>NDA required before site visit?</li>
+    <li>Union / prevailing wage requirements (California public works projects)</li>
+  </ul>
+
+  <h3>7. Existing reference materials</h3>
+
+  <p>Send whatever you have, even if it's old or partial. Old drawings save us from rediscovering basic geometry.</p>
+
+  <ul>
+    <li>Original construction drawings (CAD, PDF, scanned hardcopy &mdash; any format)</li>
+    <li>Tenant improvement drawings from previous fit-outs</li>
+    <li>Lease exhibits</li>
+    <li>BOMA reports</li>
+    <li>Prior point clouds or BIM models from other vendors</li>
+    <li>Site photos</li>
+  </ul>
+
+  <h3>8. Purpose / use case</h3>
+
+  <p>Tell us what the deliverable is <em>for</em>. The use case drives the accuracy level and the scope. Common ones:</p>
+
+  <ul>
+    <li>Renovation or addition</li>
+    <li>Historic preservation (HABS / SHPO / Federal Preservation)</li>
+    <li>MEP retrofit or upgrade</li>
+    <li>Facility management / digital twin</li>
+    <li>Real estate listing or lease documentation</li>
+    <li>Insurance baseline or forensic documentation</li>
+    <li>Litigation discovery</li>
+    <li>Permit submittal</li>
+  </ul>
+
+  <h3>9. Timeline and budget</h3>
+
+  <ul>
+    <li>Required deliverable date (and what drives it &mdash; design milestone, permit deadline, etc.)</li>
+    <li>Budget range, if you have one (it's not gauche to share &mdash; it helps us scope the right deliverable)</li>
+    <li>On-site point of contact name and phone</li>
+  </ul>
+
+  <h2>The five mistakes we see in nearly every bad RFP</h2>
+
+  <p>If you avoid these, you're ahead of about 80% of the requests we receive:</p>
+
+  <p><strong>Asking for LOD 300 without specifying LOA.</strong> You'll get a visually correct Revit model that's dimensionally off by 25 mm. Then you'll find out during prefab. Then everyone is unhappy.</p>
+
+  <p><strong>Comparing quotes only on dollars-per-square-foot.</strong> Two providers can quote the same $/SF and deliver radically different outcomes. The honest providers will ask complexity questions before quoting. The cheap ones won't, and you'll discover why later.</p>
+
+  <p><strong>Asking for "a complete BIM model."</strong> That phrase has no industry definition. Existing Conditions Surveys, one of the bigger national firms, explicitly tells clients to stop saying it. Specify LOA, LOD, and the disciplines you want modeled (architectural / structural / MEP).</p>
+
+  <p><strong>Over-specifying.</strong> Asking for LOD 400 on a kitchen remodel will roughly triple your bill for accuracy you'll never use. Most projects sit between LOD 200 and LOD 300. Most surveys at LOA 30. Push higher only when the work requires it.</p>
+
+  <p><strong>Not naming the Revit version.</strong> A vendor delivers RVT 2026; you're on Revit 2024; you can't open the file. We've seen this kill projects. Specify the year.</p>
+
+  <h2>How to use this checklist</h2>
+
+  <p>Send the answers as a short doc &mdash; an email is fine &mdash; before you ask anyone for a quote. The vendors who immediately come back with a clean number have probably scoped your project before; the ones who ask three more questions are doing their job properly. The ones who quote without asking are the ones to be cautious of.</p>
+
+  <p>If you'd rather skip the document and just talk: send the building address, the use case, and roughly what you want delivered. We'll tell you what we'd need to know to give you a real quote, and we'll do it in writing within one business day.</p>
+</BlogLayout>

@@ -1,0 +1,93 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+---
+<BlogLayout
+  title="2D vs 3D As-Built Drawings: Which Do You Need?"
+  description="A practical decision guide. When 2D as-built drawings make sense, when a 3D Revit model is worth the cost, and how to avoid over-ordering."
+  category="Article"
+  readTime="6 min"
+>
+  <p>The single most expensive scoping mistake we see is a client paying for a 3D BIM model when 2D floor plans would have done the job &mdash; and the second most expensive is a contractor finding out mid-coordination that 2D drawings don't actually answer the question they need answered. The cost gap between those two outcomes is about 4&times;.</p>
+
+  <p>Here's how to know which one you actually need before you ask for a quote.</p>
+
+  <h2>The plain version</h2>
+
+  <p><strong>2D as-built drawings</strong> are flat plans, sections, and elevations. Usually delivered as DWG, DXF, and PDF. They show the building's footprint, dimensions, room layouts, ceiling plans, and elevations. You read them the same way an architect reads a blueprint.</p>
+
+  <p><strong>3D as-builts</strong> are a point cloud (every surface of the building captured as a dense cloud of measured points) and usually an accompanying Revit or Rhino model built from that point cloud. You can rotate them, fly through them, clash-detect against new design, and pull any measurement out of them after the fact.</p>
+
+  <p>The point cloud is the raw data. The 2D drawings and the 3D model are two different deliverables produced from the same raw data. Often we deliver both. Sometimes the cloud alone is enough.</p>
+
+  <h2>When 2D is the right answer</h2>
+
+  <p>2D drawings are the right call when your project lives on a flat sheet of paper. Specifically:</p>
+
+  <ul>
+    <li><strong>Real estate and leasing.</strong> Listing floor plans, BOMA-standard area calculations, and lease exhibits all consume 2D PDFs. Nobody pulls out an iPad to spin a 3D model in a brokerage tour.</li>
+    <li><strong>Single-room or single-floor renovations.</strong> A kitchen remodel, a bathroom redo, a tenant fit-out on a small footprint. Your contractor needs accurate floor plans, RCPs, and one or two elevations. They do not need a federated model.</li>
+    <li><strong>Property records and historical documentation.</strong> Owners and facility managers building a baseline drawing set for a portfolio. The next ten leases will reference these drawings; nobody will reference a 3D model.</li>
+    <li><strong>Insurance and forensic baselines.</strong> Pre-loss conditions, dimensioned and dated. A deposition exhibit needs a defensible 2D plan, not a Revit file.</li>
+    <li><strong>Permit submittals.</strong> Most California building departments want stamped 2D plans. They are not equipped to review a BIM model.</li>
+  </ul>
+
+  <p>The deliverable in all of these cases: DWG, DXF, PDF. Often a point cloud too, as an archival record &mdash; cheap insurance, and you can always extract more 2D drawings from it later.</p>
+
+  <h2>When 3D is worth the money</h2>
+
+  <p>3D &mdash; meaning a Revit/Rhino model or, at minimum, a navigable point cloud you can use directly &mdash; is the right call when the project demands geometry, not just dimensions.</p>
+
+  <ul>
+    <li><strong>MEP coordination.</strong> If your project involves new ductwork, conduit, or piping snaking through an existing ceiling plenum, you need a 3D model to clash-detect against. 2D drawings will hide a conflict that costs $30,000 to discover in the field.</li>
+    <li><strong>Multi-floor renovations or full building retrofits.</strong> A federated BIM model lets the architectural, structural, and MEP teams coordinate around shared geometry. 2D plans force them to coordinate through markup and meetings.</li>
+    <li><strong>Prefabrication and modular construction.</strong> If you're prefabbing walls, headwalls, or modules off-site, you need LOA 40 or better tied to a BIM model. The whole reason prefab works financially is that the existing conditions data is good enough to send to the shop without rework.</li>
+    <li><strong>Facility management and digital twins.</strong> Owners maintaining a building over decades. The Revit model becomes the long-lived asset; the 2D drawings are an output. This is the only case where the 3D investment compounds.</li>
+    <li><strong>Complex historic or curved geometry.</strong> A cathedral, a stadium, anything with non-orthogonal walls. 2D drawings of a curved building lie. Point clouds don't.</li>
+  </ul>
+
+  <h2>The cost picture (the actual reason this decision matters)</h2>
+
+  <p>For a notional 20,000 SF building in 2025&ndash;26 California pricing:</p>
+
+  <table>
+    <thead><tr><th>Deliverable</th><th>Order of magnitude</th></tr></thead>
+    <tbody>
+      <tr><td>Raw point cloud only</td><td>$400&ndash;$1,600</td></tr>
+      <tr><td>2D as-built drawing set (plans + RCP + elevations)</td><td>$14,000&ndash;$30,000</td></tr>
+      <tr><td>Scan-to-BIM, LOD 200 (architectural)</td><td>$3,000&ndash;$5,000</td></tr>
+      <tr><td>Scan-to-BIM, LOD 300 (coordinatable)</td><td>$5,000&ndash;$9,000</td></tr>
+      <tr><td>Scan-to-BIM, LOD 400 (detailed MEP)</td><td>$9,000&ndash;$15,000+, often much higher on MEP-dense sites</td></tr>
+    </tbody>
+  </table>
+
+  <p>Two things to notice. First: the BIM modeling is often cheaper than the 2D drafting on a per-square-foot basis, because the 2D drawings require more drafting decisions (line weights, annotation, sheet layout) than a Revit model that's already coordinated to the cloud. Second: the point cloud itself is essentially free relative to the modeling. If you're already paying for the scan, you should at minimum keep the point cloud as a deliverable. It costs nothing extra and it's a permanent record of the building.</p>
+
+  <h2>The hybrid that solves most projects</h2>
+
+  <p>For most California commercial renovations, the right answer is not 2D <em>or</em> 3D. It's both:</p>
+
+  <ol>
+    <li>Scan the building once. Get the point cloud (in <code>.e57</code> for vendor neutrality, <code>.rcp</code> for Autodesk users).</li>
+    <li>Order 2D plans (DWG, PDF) for the permit set, lease exhibit, and contractor takeoffs.</li>
+    <li>If MEP coordination or prefab is in scope, add a Revit model at LOD 300.</li>
+    <li>If it's not, archive the point cloud and pull 3D out of it later if the project grows.</li>
+  </ol>
+
+  <p>That sequence costs less than ordering just the BIM model up front, gives the architect what they need on day one, and leaves room to grow the deliverable later without re-mobilizing scanners.</p>
+
+  <h2>The decision in one minute</h2>
+
+  <p>If the answer to any of these is yes, you probably want 3D:</p>
+
+  <ul>
+    <li>Will new MEP routing pass through an existing ceiling?</li>
+    <li>Will anything be prefabricated off-site against existing conditions?</li>
+    <li>Will multiple design disciplines coordinate against the same building?</li>
+    <li>Will an owner maintain this model for years after construction?</li>
+    <li>Is the building non-orthogonal or historic?</li>
+  </ul>
+
+  <p>If all of those are no, save the money and get 2D drawings plus an archived point cloud. You can always upgrade later. Going the other direction &mdash; ordering a Revit model you don't end up using &mdash; costs you somewhere between $5,000 and $15,000 you didn't need to spend.</p>
+
+  <p>For most renovations that cross our desk, the recommendation is: scan once, get 2D for the permit, hold the point cloud as the archival record. If the project grows scope, the BIM is a phase-two deliverable. That's not the answer that maximizes our invoice. It's the answer that gets you a building you can build from.</p>
+</BlogLayout>
