@@ -1,167 +1,133 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = {
+  commercial: [
+    {
+      title: "Multi-Suite Commercial Complex",
+      city: "Stockton, CA",
+      img: "/images/floor-plans/stockton-commercial.jpg",
+      badge: "Commercial",
+      copy: 'Existing-conditions first-floor as-built for a 5-suite commercial complex totaling roughly <strong>29,000 SF</strong> (suites of 10,486 / 8,834 / 4,390 / 3,197 / 2,454 SF). Delivered as a single coordinated CAD set for the owner&rsquo;s leasing and TI workflow.',
+    },
+    {
+      title: "Community College Campus Civil As-Builts",
+      city: "Los Angeles, CA",
+      img: "/images/floor-plans/la-college-civil.jpg",
+      badge: "Commercial · Civic",
+      copy: 'DSA-submittal as-built drawings for <strong>domestic water, fire water, and sewer infrastructure</strong> improvements at a Los Angeles community college campus. Coordinated civil deliverables for state agency approval.',
+    },
+    {
+      title: "Restaurant Tenant Improvement",
+      city: "Seal Beach, CA",
+      img: "/images/floor-plans/seal-beach-restaurant.jpg",
+      badge: "Commercial",
+      copy: '1,863 SF existing-conditions floor plan with proposed kitchen + retail seating layout. Full equipment plan including walk-in refrigerator, freezer, hood, gas stove, and prep barricade. Delivered CAD-ready for permitting.',
+    },
+  ],
+  residential: [
+    {
+      title: "Luxury Estate Site Plan",
+      city: "Laguna Hills, CA",
+      img: "/images/floor-plans/laguna-hills-estate.jpg",
+      badge: "Residential",
+      copy: 'Full site documentation of a ~1-acre Nellie Gail Ranch property &mdash; main residence, 2-car garage, carport, pool, spa with equipment, gazebo, BBQ area, and driveway. Dimensioned across ~205&prime; &times; 209&prime; lot.',
+    },
+    {
+      title: "Coastal Duplex Remodel",
+      city: "Corona Del Mar, CA",
+      img: "/images/floor-plans/corona-del-mar-duplex.jpg",
+      badge: "Residential",
+      copy: '2,954 SF existing-conditions floor plan for a 2-story R-3 residential duplex receiving a kitchen and bathroom remodel. Delivered for permit submittal with code-compliant scope of work documentation.',
+    },
+    {
+      title: "Coastal Single-Family Home",
+      city: "Carlsbad, CA",
+      img: "/images/floor-plans/carlsbad-coastal.jpg",
+      badge: "Residential",
+      copy: 'Existing-conditions site plan and floor plan documentation for a coastal single-family residence in the Carlsbad lagoon area. Captured for renovation planning, dimensioned ready for design work.',
+    },
+  ],
+  industrial: [
+    {
+      title: "Industrial Warehouse Documentation",
+      city: "Placentia, CA",
+      img: "/images/floor-plans/placentia-warehouse.jpg",
+      badge: "Industrial",
+      copy: 'Full existing-conditions floor plan for a multi-bay industrial property &mdash; <strong>156&prime; wide</strong> with repeating 24&prime; structural bays and <strong>15&prime;-4&Prime; clear ceiling height</strong>. Mixed warehouse + office layout documented in a single visit.',
+    },
+    {
+      title: "Light Industrial Flex Space",
+      city: "Laguna Hills, CA",
+      img: "/images/floor-plans/laguna-hills-flex.jpg",
+      badge: "Industrial",
+      copy: '4,962 SF flex floor plan &mdash; 3,828 SF warehouse with <strong>16&prime;-6&Prime; clear height</strong>, two 12&prime;&times;12&prime; dock doors, plus 1,134 SF office and restrooms. Captured in one visit, delivered for tenant improvement scoping.',
+    },
+    {
+      title: "Multi-Unit Commerce Center",
+      city: "Laguna Hills, CA",
+      img: "/images/floor-plans/commerce-center-multi.jpg",
+      badge: "Industrial",
+      copy: 'Floor plan documentation across multiple flex/industrial units within a single commerce center property. Per-unit dimensioned drawings delivered to support the owner&rsquo;s leasing and tenant onboarding workflow.',
+    },
+  ],
+};
 ---
 <BaseLayout
   title="Projects — As-Built Company"
-  description="Recent residential, commercial, and industrial as-built documentation projects across California."
+  description="Recent residential, commercial, and industrial as-built documentation projects across California. Click any floor plan to view the sample."
 >
   <section class="hero hero-compact">
     <div class="container">
       <div class="eyebrow">Projects</div>
       <h1>Recent <span class="accent">work.</span></h1>
-      <p class="lead">A selection of residential, commercial, and industrial as-built projects completed across California. Client names and addresses removed for privacy &mdash; city labels and project scope shown.</p>
+      <p class="lead">A selection of residential, commercial, and industrial as-built projects across California &mdash; click any floor plan to view the full sample. Client names and addresses have been removed for privacy.</p>
     </div>
   </section>
 
-  <!-- COMMERCIAL -->
-  <section>
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow">Commercial</div>
-          <h2>Restaurants, retail, multi-tenant, civic</h2>
+  {[
+    { key: 'commercial', label: 'Commercial', heading: 'Restaurants, retail, multi-tenant, civic', link: '/services/' },
+    { key: 'residential', label: 'Residential', heading: 'Coastal homes, estates, duplexes', link: '/services/', surface: true },
+    { key: 'industrial', label: 'Industrial', heading: 'Warehouse, flex, distribution', link: '/services/' },
+  ].map((section) => (
+    <section class={section.surface ? 'section-surface' : ''}>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">{section.label}</div>
+            <h2>{section.heading}</h2>
+          </div>
+          <a href={section.link} class="link-arrow">View {section.label.toLowerCase()} services <span class="arrow">→</span></a>
         </div>
-        <a href="/services/" class="link-arrow">View commercial services <span class="arrow">→</span></a>
-      </div>
-      <div class="grid grid-3">
-        <div class="card">
-          <div class="card-image"><span class="card-badge">Commercial</span>(multi-suite floor plan)</div>
-          <div class="card-body">
-            <h3>Multi-Suite Commercial Complex</h3>
-            <p>Existing-conditions first-floor as-built for a 5-suite commercial complex totaling roughly <strong>29,000 SF</strong> (suites of 10,486 / 8,834 / 4,390 / 3,197 / 2,454 SF). Delivered as a single coordinated CAD set for the owner&rsquo;s leasing and TI workflow.</p>
-          </div>
-          <div class="card-footer">
-            <span>Stockton, CA</span>
-            <a href="/contact/" class="arrow-link">Discuss similar →</a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-image"><span class="card-badge">Commercial · Civic</span>(campus civil)</div>
-          <div class="card-body">
-            <h3>Community College Campus Civil As-Builts</h3>
-            <p>DSA-submittal as-built drawings for <strong>domestic water, fire water, and sewer infrastructure</strong> improvements at a Los Angeles community college campus. Coordinated civil deliverables for state agency approval.</p>
-          </div>
-          <div class="card-footer">
-            <span>Los Angeles, CA</span>
-            <a href="/contact/" class="arrow-link">Discuss similar →</a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-image"><span class="card-badge">Commercial</span>(restaurant TI)</div>
-          <div class="card-body">
-            <h3>Restaurant Tenant Improvement</h3>
-            <p>1,863 SF existing-conditions floor plan with proposed kitchen + retail seating layout. Full equipment plan including walk-in refrigerator, freezer, hood, gas stove, and prep barricade. Delivered CAD-ready for permitting.</p>
-          </div>
-          <div class="card-footer">
-            <span>Seal Beach, CA</span>
-            <a href="/contact/" class="arrow-link">Discuss similar →</a>
-          </div>
+        <div class="grid grid-3">
+          {projects[section.key].map((p) => (
+            <div class="card">
+              <div
+                class="card-image has-thumb"
+                data-fullimg={p.img}
+                data-caption={`${p.title} — ${p.city}`}
+                role="button"
+                tabindex="0"
+                aria-label={`View ${p.title} floor plan`}
+              >
+                <img src={p.img} alt={`${p.title} floor plan sample`} loading="lazy" />
+                <span class="card-badge">{p.badge}</span>
+                <div class="zoom-hint"><span class="icon">⊙</span> View Sample Plan</div>
+              </div>
+              <div class="card-body">
+                <h3>{p.title}</h3>
+                <p set:html={p.copy}></p>
+              </div>
+              <div class="card-footer">
+                <span>{p.city}</span>
+                <a href="/contact/" class="arrow-link">Discuss similar →</a>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- RESIDENTIAL -->
-  <section class="section-surface">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow">Residential</div>
-          <h2>Coastal homes, estates, duplexes</h2>
-        </div>
-        <a href="/services/" class="link-arrow">View residential services <span class="arrow">→</span></a>
-      </div>
-      <div class="grid grid-3">
-        <div class="card">
-          <div class="card-image"><span class="card-badge">Residential</span>(estate site plan)</div>
-          <div class="card-body">
-            <h3>Luxury Estate Site Plan</h3>
-            <p>Full site documentation of a ~1-acre Nellie Gail Ranch property &mdash; main residence, 2-car garage, carport, pool, spa with equipment, gazebo, BBQ area, and driveway. Dimensioned across ~205&prime; &times; 209&prime; lot.</p>
-          </div>
-          <div class="card-footer">
-            <span>Laguna Hills, CA</span>
-            <a href="/contact/" class="arrow-link">Discuss similar →</a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-image"><span class="card-badge">Residential</span>(duplex remodel)</div>
-          <div class="card-body">
-            <h3>Coastal Duplex Remodel</h3>
-            <p>2,954 SF existing-conditions floor plan for a 2-story R-3 residential duplex receiving a kitchen and bathroom remodel. Delivered for permit submittal with code-compliant scope of work documentation.</p>
-          </div>
-          <div class="card-footer">
-            <span>Corona Del Mar, CA</span>
-            <a href="/contact/" class="arrow-link">Discuss similar →</a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-image"><span class="card-badge">Residential</span>(coastal home)</div>
-          <div class="card-body">
-            <h3>Coastal Single-Family Home</h3>
-            <p>Existing-conditions site plan and floor plan documentation for a coastal single-family residence in the Carlsbad lagoon area. Captured for renovation planning, dimensioned ready for design work.</p>
-          </div>
-          <div class="card-footer">
-            <span>Carlsbad, CA</span>
-            <a href="/contact/" class="arrow-link">Discuss similar →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- INDUSTRIAL -->
-  <section>
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow">Industrial</div>
-          <h2>Warehouse, flex, distribution</h2>
-        </div>
-        <a href="/services/" class="link-arrow">View industrial services <span class="arrow">→</span></a>
-      </div>
-      <div class="grid grid-3">
-        <div class="card">
-          <div class="card-image"><span class="card-badge">Industrial</span>(warehouse plan)</div>
-          <div class="card-body">
-            <h3>Industrial Warehouse Documentation</h3>
-            <p>Full existing-conditions floor plan for a multi-bay industrial property &mdash; <strong>156&prime; wide</strong> with repeating 24&prime; structural bays and <strong>15&prime;-4&Prime; clear ceiling height</strong>. Mixed warehouse + office layout documented in a single visit.</p>
-          </div>
-          <div class="card-footer">
-            <span>Placentia, CA</span>
-            <a href="/contact/" class="arrow-link">Discuss similar →</a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-image"><span class="card-badge">Industrial</span>(flex space)</div>
-          <div class="card-body">
-            <h3>Light Industrial Flex Space</h3>
-            <p>4,962 SF flex floor plan &mdash; 3,828 SF warehouse with <strong>16&prime;-6&Prime; clear height</strong>, two 12&prime;&times;12&prime; dock doors, plus 1,134 SF office and restrooms. Captured in one visit, delivered for tenant improvement scoping.</p>
-          </div>
-          <div class="card-footer">
-            <span>Laguna Hills, CA</span>
-            <a href="/contact/" class="arrow-link">Discuss similar →</a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-image"><span class="card-badge">Industrial</span>(commerce center)</div>
-          <div class="card-body">
-            <h3>Multi-Unit Commerce Center</h3>
-            <p>Floor plan documentation across multiple flex/industrial units within a single commerce center property. Per-unit dimensioned drawings delivered to support the owner&rsquo;s leasing and tenant onboarding workflow.</p>
-          </div>
-          <div class="card-footer">
-            <span>Laguna Hills, CA</span>
-            <a href="/contact/" class="arrow-link">Discuss similar →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
+  ))}
 
   <section class="section-surface">
     <div class="container">
@@ -174,4 +140,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </div>
   </section>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Floor plan viewer">
+    <button id="lightbox-close" class="lightbox-close" aria-label="Close">&times;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+  </div>
+
+  <script is:inline>
+    (function() {
+      const lightbox = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img');
+      const cap = document.getElementById('lightbox-caption');
+      const closeBtn = document.getElementById('lightbox-close');
+
+      function open(src, caption) {
+        img.src = src;
+        img.alt = caption || '';
+        cap.textContent = caption || '';
+        lightbox.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      function close() {
+        lightbox.classList.remove('open');
+        document.body.style.overflow = '';
+        setTimeout(() => { img.src = ''; }, 200);
+      }
+
+      document.querySelectorAll('.card-image.has-thumb').forEach((el) => {
+        el.addEventListener('click', () => open(el.dataset.fullimg, el.dataset.caption));
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(el.dataset.fullimg, el.dataset.caption); }
+        });
+      });
+      closeBtn.addEventListener('click', close);
+      lightbox.addEventListener('click', (e) => { if (e.target === lightbox) close(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('open')) close(); });
+    })();
+  </script>
 </BaseLayout>
