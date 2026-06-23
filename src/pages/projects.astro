@@ -11,11 +11,11 @@ const projects = {
       copy: 'Existing-conditions first-floor as-built for a 5-suite commercial complex totaling roughly <strong>29,000 SF</strong> (suites of 10,486 / 8,834 / 4,390 / 3,197 / 2,454 SF). Delivered as a single coordinated CAD set for the owner&rsquo;s leasing and TI workflow.',
     },
     {
-      title: "Community College Campus Civil As-Builts",
-      city: "Los Angeles, CA",
-      img: "/images/floor-plans/la-college-civil.jpg",
-      badge: "Commercial · Civic",
-      copy: 'DSA-submittal as-built drawings for <strong>domestic water, fire water, and sewer infrastructure</strong> improvements at a Los Angeles community college campus. Coordinated civil deliverables for state agency approval.',
+      title: "Healthcare / Outpatient Clinic",
+      city: "Costa Mesa, CA",
+      img: "/images/floor-plans/costa-mesa-office.jpg",
+      badge: "Commercial · Healthcare",
+      copy: 'Existing-conditions floor plan for a ~10,000 SF outpatient medical facility &mdash; multiple <strong>operating rooms, exam rooms, labs, patient area, reception, lockers, server room</strong>, and accessible restrooms. Dimensioned and CAD-ready for renovation planning.',
     },
     {
       title: "Restaurant Tenant Improvement",
@@ -27,30 +27,30 @@ const projects = {
   ],
   residential: [
     {
-      title: "Luxury Estate Site Plan",
+      title: "Luxury Estate Floor Plan",
       city: "Laguna Hills, CA",
       img: "/images/floor-plans/laguna-hills-estate.jpg",
       badge: "Residential",
-      copy: 'Full site documentation of a ~1-acre Nellie Gail Ranch property &mdash; main residence, 2-car garage, carport, pool, spa with equipment, gazebo, BBQ area, and driveway. Dimensioned across ~205&prime; &times; 209&prime; lot.',
+      copy: 'Full existing-conditions floor plan of a Nellie Gail Ranch single-family estate. Multi-room residence dimensioned for renovation design &mdash; bedrooms, baths, kitchen, living spaces &mdash; documented from a single on-site visit.',
     },
     {
       title: "Coastal Duplex Remodel",
       city: "Corona Del Mar, CA",
       img: "/images/floor-plans/corona-del-mar-duplex.jpg",
       badge: "Residential",
-      copy: '2,954 SF existing-conditions floor plan for a 2-story R-3 residential duplex receiving a kitchen and bathroom remodel. Delivered for permit submittal with code-compliant scope of work documentation.',
+      copy: '2,954 SF existing-conditions floor plan for a 2-story R-3 residential duplex receiving a kitchen and bathroom remodel. Includes detailed kitchen layout callout. Delivered for permit submittal with code-compliant scope of work documentation.',
     },
     {
-      title: "Coastal Single-Family Home",
-      city: "Carlsbad, CA",
-      img: "/images/floor-plans/carlsbad-coastal.jpg",
+      title: "Mid-City Single-Family Home",
+      city: "Los Angeles, CA",
+      img: "/images/floor-plans/la-mid-city-residence.jpg",
       badge: "Residential",
-      copy: 'Existing-conditions site plan and floor plan documentation for a coastal single-family residence in the Carlsbad lagoon area. Captured for renovation planning, dimensioned ready for design work.',
+      copy: '2,600 SF first-floor existing-conditions plan for a Mid-City Los Angeles single-family home &mdash; bedrooms, bathrooms, kitchen, dining room, living room, foyer, bar area, fireplace, and carport. Dimensioned for renovation design.',
     },
   ],
   industrial: [
     {
-      title: "Industrial Warehouse Documentation",
+      title: "Industrial Warehouse",
       city: "Placentia, CA",
       img: "/images/floor-plans/placentia-warehouse.jpg",
       badge: "Industrial",
@@ -75,7 +75,7 @@ const projects = {
 ---
 <BaseLayout
   title="Projects — As-Built Company"
-  description="Recent residential, commercial, and industrial as-built documentation projects across California. Click any floor plan to view the sample."
+  description="Recent residential, commercial, and industrial as-built documentation projects across California. Click any floor plan to view the full sample."
 >
   <section class="hero hero-compact">
     <div class="container">
@@ -86,7 +86,7 @@ const projects = {
   </section>
 
   {[
-    { key: 'commercial', label: 'Commercial', heading: 'Restaurants, retail, multi-tenant, civic', link: '/services/' },
+    { key: 'commercial', label: 'Commercial', heading: 'Restaurants, retail, healthcare, multi-tenant', link: '/services/' },
     { key: 'residential', label: 'Residential', heading: 'Coastal homes, estates, duplexes', link: '/services/', surface: true },
     { key: 'industrial', label: 'Industrial', heading: 'Warehouse, flex, distribution', link: '/services/' },
   ].map((section) => (
