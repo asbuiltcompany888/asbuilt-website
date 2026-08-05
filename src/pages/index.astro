@@ -1,42 +1,31 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroScene from '../components/HeroScene.astro';
 ---
 <BaseLayout
   title="As-Built Company — Millimeter-Accurate 3D Scanning Across California"
   description="Survey-grade 3D laser scanning and as-built documentation across California. Delivered as CAD, Revit, point clouds, and virtual tours."
 >
-  <section class="hero">
-    <div class="container">
-      <div class="eyebrow">3D Laser Scanning · As-Built Documentation</div>
-      <h1>Millimeter-accurate as-builts <span class="accent">across California.</span></h1>
-      <p class="lead">
-        Survey-grade 3D laser scanning and 360&deg; capture for architects, contractors, and property owners.
-        We deliver the drawings, models, and walkthroughs your project actually needs.
-      </p>
-      <div class="actions">
-        <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
-        <a href="/services/" class="btn btn-outline-light">Explore Services</a>
-      </div>
-    </div>
-  </section>
+  {/* ===== 3D Scroll Hero (assembles Nellie Gail floor plan as user scrolls) ===== */}
+  <HeroScene />
 
-  <!-- Trust strip: the one place equipment + accuracy lives -->
-  <div class="trust-strip-wrapper">
+  {/* ===== Trust strip — dark bleed continuation from hero ===== */}
+  <div class="trust-strip-wrapper" style="background: #0A1F3D; border-top: 1px solid rgba(56, 189, 248, 0.12);">
     <div class="container">
       <div class="trust-strip-content">
-        <span class="strip-label">Trusted by Design &amp; Construction Teams</span>
-        <span class="trust-item"><span class="trust-icon">◆</span> Leica BLK2GO</span>
-        <span class="trust-item"><span class="trust-icon">◉</span> Insta360 Pro</span>
-        <span class="trust-item"><span class="trust-icon">⚡</span> 2&ndash;4 mm Accuracy</span>
-        <span class="trust-item"><span class="trust-icon">◎</span> California-Wide</span>
+        <span class="strip-label" style="color: rgba(255,255,255,0.5);">Trusted by Design &amp; Construction Teams</span>
+        <span class="trust-item" style="color: rgba(255,255,255,0.85);"><span class="trust-icon" style="color: #38BDF8;">◆</span> Leica BLK2GO</span>
+        <span class="trust-item" style="color: rgba(255,255,255,0.85);"><span class="trust-icon" style="color: #38BDF8;">◉</span> Insta360 Pro</span>
+        <span class="trust-item" style="color: rgba(255,255,255,0.85);"><span class="trust-icon" style="color: #38BDF8;">⚡</span> 2&ndash;4 mm Accuracy</span>
+        <span class="trust-item" style="color: rgba(255,255,255,0.85);"><span class="trust-icon" style="color: #38BDF8;">◎</span> California-Wide</span>
       </div>
     </div>
   </div>
 
-  <!-- Stat block: only unique numbers, no equipment/accuracy duplication -->
-  <section class="stat-block-section">
+  {/* ===== Stat block ===== */}
+  <section class="stat-block-section section-post-hero">
     <div class="container">
-      <div class="stat-grid">
+      <div class="stat-grid reveal-stagger">
         <div class="stat-item">
           <span class="number">24 hr</span>
           <span class="label">Quote response<br />for new project inquiries</span>
@@ -57,15 +46,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- What we do — short service descriptions without equipment repeats -->
+  {/* ===== What we do — services grid ===== */}
   <section>
     <div class="container">
-      <div class="section-title-centered">
+      <div class="section-title-centered reveal">
         <span class="eyebrow">What We Do</span>
         <h2>Capture. Document. Visualize.</h2>
         <p>End-to-end as-built services scoped to your project, your team, and your timeline.</p>
       </div>
-      <div class="grid grid-3">
+      <div class="grid grid-3 reveal-stagger">
         <div class="icon-card">
           <div class="icon">◧</div>
           <h3>3D Laser Scanning</h3>
@@ -106,15 +95,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 3-step process — no equipment names, no "days/weeks" repeat -->
+  {/* ===== 3-step process ===== */}
   <section class="section-surface">
     <div class="container">
-      <div class="section-title-centered">
+      <div class="section-title-centered reveal">
         <span class="eyebrow">Our Process</span>
         <h2>From site visit to deliverable.</h2>
         <p>A straightforward three-step workflow that fits your project schedule.</p>
       </div>
-      <div class="process-grid">
+      <div class="process-grid reveal-stagger">
         <div class="process-step">
           <div class="step-number">1</div>
           <h3>Scan</h3>
@@ -134,17 +123,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- Industries served -->
+  {/* ===== Industries served ===== */}
   <section>
     <div class="container">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div>
           <div class="eyebrow">Industries Served</div>
           <h2>Who we work with</h2>
         </div>
         <a href="/industries/" class="link-arrow">View all industries <span class="arrow">→</span></a>
       </div>
-      <div class="grid grid-3">
+      <div class="grid grid-3 reveal-stagger">
         <a href="/industries/" class="industry-card">
           <div class="industry-icon">▲</div>
           <h3>Architects &amp; Design</h3>
@@ -179,62 +168,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- Testimonials -->
+  {/* Testimonials section removed — was showing [Client Name]/[Firm Name] placeholders.
+      Will be re-added once real testimonials are provided (25-item checklist #1). */}
+
+  {/* ===== Recent projects ===== */}
   <section class="section-surface">
     <div class="container">
-      <div class="section-title-centered">
-        <span class="eyebrow">What Clients Say</span>
-        <h2>Trusted on real projects.</h2>
-      </div>
-      <div class="testimonial-grid">
-        <div class="testimonial">
-          <div class="quote-mark">"</div>
-          <p class="quote">As-Built Company saved us weeks of field measurement on a 12,000-square-foot renovation. The drawings came back accurate to the conditions and ready to design from.</p>
-          <div class="author">
-            <div class="avatar">SK</div>
-            <div class="author-info">
-              <span class="name">[Client Name]</span>
-              <span class="role">Project Architect, [Firm Name]</span>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial">
-          <div class="quote-mark">"</div>
-          <p class="quote">Fast turnaround, clean point clouds, and a Revit model we could actually use without rework. Easiest scan vendor I&rsquo;ve worked with in California.</p>
-          <div class="author">
-            <div class="avatar">MR</div>
-            <div class="author-info">
-              <span class="name">[Client Name]</span>
-              <span class="role">BIM Manager, [Firm Name]</span>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial">
-          <div class="quote-mark">"</div>
-          <p class="quote">The virtual tour they delivered let our entire team review the site from across the country. Cut a week of travel out of the project.</p>
-          <div class="author">
-            <div class="avatar">JT</div>
-            <div class="author-info">
-              <span class="name">[Client Name]</span>
-              <span class="role">Senior PM, [Firm Name]</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Recent projects: real samples with floor plan thumbnails -->
-  <section>
-    <div class="container">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div>
           <div class="eyebrow">Recent Projects</div>
           <h2>See our work</h2>
         </div>
         <a href="/projects/" class="link-arrow">View all projects <span class="arrow">→</span></a>
       </div>
-      <div class="grid grid-3">
+      <div class="grid grid-3 reveal-stagger">
         <a href="/projects/" class="card" style="text-decoration: none; color: inherit;">
           <div class="card-image has-thumb" style="cursor: pointer;">
             <img src="/images/floor-plans/costa-mesa-office.jpg" alt="Healthcare facility floor plan" loading="lazy" />
@@ -281,9 +228,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <section class="section-surface">
+  {/* ===== Final CTA ===== */}
+  <section>
     <div class="container">
-      <div class="cta-strip">
+      <div class="cta-strip reveal">
         <div class="text">
           <h3>Ready to scan?</h3>
           <p>Tell us about your project. We respond within one business day.</p>
