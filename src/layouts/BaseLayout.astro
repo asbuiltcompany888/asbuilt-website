@@ -33,7 +33,7 @@ const year = new Date().getFullYear();
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
     <header class="site-header">
@@ -71,12 +71,8 @@ const year = new Date().getFullYear();
               <span class="brand-bottom">COMPANY</span>
             </a>
             <p>Precision measurements.<br />Smarter data. Better builds.</p>
-            <div class="social-icons">
-              <a href="#" aria-label="LinkedIn">in</a>
-              <a href="#" aria-label="Facebook">f</a>
-              <a href="#" aria-label="Instagram">ig</a>
-              <a href="#" aria-label="YouTube">yt</a>
-            </div>
+            {/* Social icons hidden until real profile URLs are supplied.
+                See 25-item AI-tell checklist items 10–13. */}
           </div>
 
           <div class="footer-col">
@@ -115,14 +111,8 @@ const year = new Date().getFullYear();
             </div>
           </div>
 
-          <div class="footer-col footer-newsletter">
-            <h4>Newsletter</h4>
-            <p>Get insights on 3D scanning, as-built best practices, and project case studies.</p>
-            <form class="newsletter-form" action="#" method="POST">
-              <input type="email" placeholder="Your email address" required aria-label="Email address" />
-              <button type="submit">Subscribe</button>
-            </form>
-          </div>
+          {/* Newsletter section hidden until a mailing service is connected.
+              See 25-item AI-tell checklist item 14. */}
         </div>
 
         <div class="footer-bottom">
@@ -140,5 +130,33 @@ const year = new Date().getFullYear();
       <a href="tel:+16266259249" class="cta-call">☎ Call</a>
       <a href="/contact/" class="cta-quote">Get a Quote →</a>
     </div>
+
+    <!-- Global scroll-reveal (Intersection Observer) — no dependencies, respects reduced-motion -->
+    <script is:inline>
+      (function () {
+        if (typeof window === 'undefined') return;
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduced) {
+          document.querySelectorAll('.reveal, .reveal-stagger').forEach((el) => {
+            el.classList.add('revealed');
+          });
+          return;
+        }
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+        );
+        document.querySelectorAll('.reveal, .reveal-stagger').forEach((el) => {
+          observer.observe(el);
+        });
+      })();
+    </script>
   </body>
 </html>
