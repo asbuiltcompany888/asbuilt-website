@@ -1,0 +1,582 @@
+---
+// HeroScene.astro — 3D scroll-driven floor plan assembly
+// Uses Three.js (dynamically imported) + GSAP ScrollTrigger
+// Fallback: static image on mobile / prefers-reduced-motion / no-JS
+---
+
+<section class="hero-3d" id="hero-3d" aria-label="3D as-built floor plan animation">
+  <div class="hero-3d-inner">
+    <!-- Canvas (visible on desktop with motion enabled) -->
+    <canvas class="hero-3d-canvas" id="hero-3d-canvas" aria-hidden="true"></canvas>
+
+    <!-- Static image fallback (mobile / reduced motion / no JS) -->
+    <div class="hero-3d-fallback" aria-hidden="true">
+      <img src="/images/floor-plans/laguna-hills-estate.jpg" alt="" loading="eager" />
+    </div>
+
+    <!-- Foreground overlay -->
+    <div class="hero-3d-overlay">
+      <div class="hero-3d-container">
+        <div class="hero-3d-eyebrow">
+          <span class="dot"></span>
+          3D Laser Scanning · As-Built Documentation
+        </div>
+        <h1 class="hero-3d-headline">
+          We measure<br />
+          what <span class="accent">exists.</span>
+        </h1>
+        <p class="hero-3d-lead">
+          Survey-grade 3D laser scanning and as-built documentation for architects,
+          contractors, and property owners across California. What you see is a real
+          project floor plan — scanned, processed, and delivered in-house.
+        </p>
+        <div class="hero-3d-actions">
+          <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
+          <a href="/projects/" class="btn btn-ghost">See Real Projects</a>
+        </div>
+
+        <!-- Scroll hint -->
+        <div class="hero-3d-scroll-hint" aria-hidden="true">
+          <span>Scroll to assemble</span>
+          <div class="scroll-arrow">↓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { NELLIE_GAIL_WALLS, FLOOR_PLAN_CENTER, FLOOR_PLAN_BOUNDS } from '../data/nellieGailFloorPlan';
+
+  const WALL_HEIGHT = 3;
+  const WALL_THICKNESS = 0.18;
+  const DESKTOP_BREAKPOINT = 900;
+
+  const canvas = document.getElementById('hero-3d-canvas') as HTMLCanvasElement | null;
+  const section = document.getElementById('hero-3d') as HTMLElement | null;
+
+  if (!canvas || !section) {
+    console.warn('[HeroScene] Canvas or section not found');
+  } else {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isDesktop = window.innerWidth >= DESKTOP_BREAKPOINT;
+
+    if (prefersReducedMotion || !isDesktop) {
+      // Mobile or reduced-motion → keep static fallback visible, hide canvas
+      canvas.style.display = 'none';
+      section.classList.add('hero-3d-static');
+    } else {
+      // Load Three.js + GSAP dynamically (~200KB gzipped, only for capable devices)
+      init3DScene();
+    }
+  }
+
+  async function init3DScene() {
+    try {
+      // Load Three.js + GSAP from ESM CDN — keeps our bundle small,
+      // browser fetches these in parallel with our own JS.
+      const [THREE, gsapModule, scrollTriggerModule] = await Promise.all([
+        import(/* @vite-ignore */ 'https://esm.sh/three@0.170.0'),
+        import(/* @vite-ignore */ 'https://esm.sh/gsap@3.12.5'),
+        import(/* @vite-ignore */ 'https://esm.sh/gsap@3.12.5/ScrollTrigger'),
+      ]);
+
+      const gsap = (gsapModule as any).gsap ?? (gsapModule as any).default ?? gsapModule;
+      const ScrollTrigger = (scrollTriggerModule as any).ScrollTrigger ?? (scrollTriggerModule as any).default;
+      gsap.registerPlugin(ScrollTrigger);
+
+      buildScene(THREE, gsap, ScrollTrigger);
+    } catch (err) {
+      console.error('[HeroScene] Failed to load 3D libraries; keeping static fallback', err);
+      if (canvas) canvas.style.display = 'none';
+      section?.classList.add('hero-3d-static');
+    }
+  }
+
+  function buildScene(THREE: any, gsap: any, ScrollTrigger: any) {
+    const canvasEl = canvas!;
+    const sectionEl = section!;
+
+    // ---- Renderer ----
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvasEl,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance',
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(sectionEl.clientWidth, sectionEl.clientHeight, false);
+    renderer.setClearColor(0x020617, 0);
+
+    // ---- Scene ----
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x020617, 30, 90);
+
+    // ---- Camera (perspective, isometric-ish) ----
+    const aspect = sectionEl.clientWidth / sectionEl.clientHeight;
+    const camera = new THREE.PerspectiveCamera(35, aspect, 0.1, 200);
+    // Start high & top-down, then swing to isometric as user scrolls
+    camera.position.set(FLOOR_PLAN_CENTER.x, 80, FLOOR_PLAN_CENTER.z + 0.01);
+    camera.lookAt(FLOOR_PLAN_CENTER.x, 0, FLOOR_PLAN_CENTER.z);
+
+    // ---- Lights ----
+    scene.add(new THREE.AmbientLight(0x4a5875, 0.55));
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    keyLight.position.set(15, 30, 5);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.5);
+    rimLight.position.set(-20, 15, -20);
+    scene.add(rimLight);
+
+    // ---- Ground plane (subtle grid feel) ----
+    const groundGeom = new THREE.PlaneGeometry(120, 120);
+    const groundMat = new THREE.MeshBasicMaterial({
+      color: 0x0a1929,
+      transparent: true,
+      opacity: 0.6,
+    });
+    const ground = new THREE.Mesh(groundGeom, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.05;
+    scene.add(ground);
+
+    // Grid helper for the "as-built" aesthetic
+    const grid = new THREE.GridHelper(120, 60, 0x1e3a5f, 0x0f2a4a);
+    (grid.material as any).transparent = true;
+    (grid.material as any).opacity = 0.35;
+    scene.add(grid);
+
+    // ---- Wall material ----
+    const wallMaterial = new THREE.MeshStandardMaterial({
+      color: 0x2a3f5f,
+      metalness: 0.15,
+      roughness: 0.6,
+      transparent: true,
+      opacity: 0.92,
+    });
+
+    const edgeMaterial = new THREE.LineBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.85,
+    });
+
+    // ---- Build walls ----
+    const wallGroup = new THREE.Group();
+    const wallMeshes: any[] = [];
+    const wallTargets: Array<{
+      pos: any;
+      rot: any;
+      scaleY: number;
+    }> = [];
+
+    NELLIE_GAIL_WALLS.forEach((wall, index) => {
+      const dx = wall.x2 - wall.x1;
+      const dz = wall.z2 - wall.z1;
+      const length = Math.hypot(dx, dz);
+      const angle = Math.atan2(dz, dx);
+
+      const centerX = (wall.x1 + wall.x2) / 2;
+      const centerZ = (wall.z1 + wall.z2) / 2;
+
+      // Wall box: length × height × thickness
+      const geom = new THREE.BoxGeometry(length, WALL_HEIGHT, WALL_THICKNESS);
+      const mesh = new THREE.Mesh(geom, wallMaterial);
+
+      mesh.position.set(centerX, WALL_HEIGHT / 2, centerZ);
+      mesh.rotation.y = -angle;
+
+      // Add glowing edges
+      const edges = new THREE.EdgesGeometry(geom);
+      const edgeLines = new THREE.LineSegments(edges, edgeMaterial);
+      mesh.add(edgeLines);
+
+      // Store target state
+      wallTargets.push({
+        pos: mesh.position.clone(),
+        rot: mesh.rotation.clone(),
+        scaleY: 1,
+      });
+
+      // Set initial "exploded" state — scattered, deep in the void
+      const scatterRadius = 25 + Math.random() * 15;
+      const scatterAngle = Math.random() * Math.PI * 2;
+      const scatterHeight = 12 + Math.random() * 25;
+
+      mesh.position.set(
+        FLOOR_PLAN_CENTER.x + Math.cos(scatterAngle) * scatterRadius,
+        scatterHeight,
+        FLOOR_PLAN_CENTER.z + Math.sin(scatterAngle) * scatterRadius
+      );
+      mesh.rotation.set(
+        (Math.random() - 0.5) * Math.PI,
+        Math.random() * Math.PI * 2,
+        (Math.random() - 0.5) * Math.PI
+      );
+      mesh.scale.y = 0;
+
+      wallGroup.add(mesh);
+      wallMeshes.push(mesh);
+    });
+
+    scene.add(wallGroup);
+
+    // ---- GSAP Scroll Timeline ----
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionEl,
+        start: 'top top',
+        end: '+=180%',
+        scrub: 1,
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+      },
+    });
+
+    // Phase 1 (0-70%): Walls assemble from scattered to correct positions
+    wallMeshes.forEach((mesh, i) => {
+      const target = wallTargets[i];
+      const stagger = (i / wallMeshes.length) * 0.4;
+
+      tl.to(
+        mesh.position,
+        {
+          x: target.pos.x,
+          y: target.pos.y,
+          z: target.pos.z,
+          duration: 0.6,
+          ease: 'power2.inOut',
+        },
+        stagger
+      );
+      tl.to(
+        mesh.rotation,
+        {
+          x: target.rot.x,
+          y: target.rot.y,
+          z: target.rot.z,
+          duration: 0.6,
+          ease: 'power2.inOut',
+        },
+        stagger
+      );
+      tl.to(
+        mesh.scale,
+        { y: target.scaleY, duration: 0.5, ease: 'power2.out' },
+        stagger + 0.3
+      );
+    });
+
+    // Phase 2 (70-100%): Camera swings from top-down to isometric perspective
+    tl.to(
+      camera.position,
+      {
+        x: FLOOR_PLAN_CENTER.x + 22,
+        y: 30,
+        z: FLOOR_PLAN_CENTER.z + 40,
+        duration: 0.6,
+        ease: 'power2.inOut',
+        onUpdate: () => camera.lookAt(FLOOR_PLAN_CENTER.x, 0, FLOOR_PLAN_CENTER.z),
+      },
+      0.5
+    );
+
+    // ---- Animation loop ----
+    let rafId: number;
+    function animate() {
+      renderer.render(scene, camera);
+      rafId = requestAnimationFrame(animate);
+    }
+    animate();
+
+    // ---- Resize handler ----
+    function handleResize() {
+      const w = sectionEl.clientWidth;
+      const h = sectionEl.clientHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      ScrollTrigger.refresh();
+    }
+    window.addEventListener('resize', handleResize);
+
+    // ---- Cleanup on page unload ----
+    window.addEventListener('beforeunload', () => {
+      cancelAnimationFrame(rafId);
+      wallMeshes.forEach((mesh) => {
+        mesh.geometry.dispose();
+      });
+      wallMaterial.dispose();
+      edgeMaterial.dispose();
+      renderer.dispose();
+    });
+
+    // Once assembled, allow overlay text to fully brighten
+    ScrollTrigger.create({
+      trigger: sectionEl,
+      start: 'top top',
+      end: '+=40%',
+      onUpdate: (self: any) => {
+        const overlay = document.querySelector('.hero-3d-overlay') as HTMLElement | null;
+        if (overlay) overlay.style.opacity = String(1 - self.progress * 0.15);
+      },
+    });
+  }
+</script>
+
+<style>
+  /* ===== 3D Hero Section ===== */
+  .hero-3d {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 720px;
+    background: linear-gradient(
+      180deg,
+      #020617 0%,
+      #061629 50%,
+      #0a1f3d 100%
+    );
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero-3d-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-3d-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    z-index: 1;
+  }
+
+  /* Static image fallback (shown behind canvas by default; brought forward when canvas hides) */
+  .hero-3d-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .hero-3d-fallback img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 4rem;
+    filter: brightness(0.9) contrast(1.05);
+    opacity: 0.35;
+  }
+
+  .hero-3d.hero-3d-static .hero-3d-fallback {
+    opacity: 1;
+    z-index: 1;
+  }
+
+  /* Foreground text overlay */
+  .hero-3d-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .hero-3d-container {
+    max-width: 620px;
+    margin: 0 auto 0 max(2rem, calc((100vw - 1200px) / 2 + 1.5rem));
+    padding: 2rem;
+    pointer-events: auto;
+  }
+
+  /* Eyebrow (dot + label) */
+  .hero-3d-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.9rem;
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 999px;
+    color: #7dd3fc;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-3d-eyebrow .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+    animation: pulse-dot 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+  }
+
+  /* Headline */
+  .hero-3d-headline {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+    margin: 0 0 1.5rem;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero-3d-headline .accent {
+    background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Lead paragraph */
+  .hero-3d-lead {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0 0 2rem;
+    max-width: 540px;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Actions */
+  .hero-3d-actions {
+    display: flex;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    margin-bottom: 3.5rem;
+  }
+
+  .hero-3d-actions .btn {
+    background: #0369A1;
+    color: #ffffff;
+    padding: 0.9rem 1.6rem;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow:
+      0 4px 20px rgba(3, 105, 161, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .hero-3d-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 6px 30px rgba(3, 105, 161, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .hero-3d-actions .btn-ghost {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: none;
+    color: #ffffff;
+  }
+
+  .hero-3d-actions .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: none;
+  }
+
+  /* Scroll hint */
+  .hero-3d-scroll-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .scroll-arrow {
+    font-size: 1.2rem;
+    animation: scroll-bounce 2s ease-in-out infinite;
+    color: #38bdf8;
+  }
+
+  @keyframes scroll-bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.6; }
+    50% { transform: translateY(6px); opacity: 1; }
+  }
+
+  /* ===== Mobile / narrow viewport ===== */
+  @media (max-width: 900px) {
+    .hero-3d {
+      height: auto;
+      min-height: auto;
+      padding: 6rem 0 4rem;
+    }
+
+    .hero-3d-canvas {
+      display: none !important;
+    }
+
+    .hero-3d-fallback {
+      position: relative;
+      opacity: 1;
+      z-index: 1;
+      height: 240px;
+      margin-top: 2rem;
+    }
+
+    .hero-3d-fallback img {
+      padding: 1rem;
+      opacity: 0.55;
+    }
+
+    .hero-3d-overlay {
+      position: static;
+    }
+
+    .hero-3d-container {
+      margin: 0 auto;
+      max-width: 100%;
+      padding: 0 1.5rem;
+    }
+
+    .hero-3d-scroll-hint {
+      display: none;
+    }
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-3d-eyebrow .dot,
+    .scroll-arrow {
+      animation: none !important;
+    }
+    .hero-3d-canvas {
+      display: none !important;
+    }
+    .hero-3d-fallback {
+      opacity: 1;
+      z-index: 1;
+    }
+  }
+</style>
