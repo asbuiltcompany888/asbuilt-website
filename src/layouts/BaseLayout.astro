@@ -4,11 +4,17 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  ogImage?: string;
+  noIndex?: boolean;
+  jsonLd?: any; // Optional page-specific JSON-LD schema
 }
 
 const {
   title = 'As-Built Company — 3D Scanning & As-Built Documentation Nationwide',
   description = 'Millimeter-accurate 3D laser scanning, as-built documentation, and 360° virtual tours for architects, contractors, and property owners nationwide.',
+  ogImage = '/images/floor-plans/laguna-hills-estate.jpg',
+  noIndex = false,
+  jsonLd = null,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -18,6 +24,97 @@ function isActive(href: string): boolean {
 }
 
 const year = new Date().getFullYear();
+
+// Canonical URL — always use the production domain
+const canonicalUrl = new URL(path, 'https://asbuiltcompany.com').href;
+const ogImageUrl = new URL(ogImage, 'https://asbuiltcompany.com').href;
+
+// Site-wide JSON-LD: Organization + LocalBusiness/ProfessionalService + WebSite
+const siteJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ProfessionalService',
+      '@id': 'https://asbuiltcompany.com/#organization',
+      name: 'As-Built Company',
+      alternateName: 'As-Built Co.',
+      url: 'https://asbuiltcompany.com',
+      logo: 'https://asbuiltcompany.com/favicon.svg',
+      image: ogImageUrl,
+      description: 'Survey-grade 3D laser scanning and as-built documentation for architects, contractors, and property owners nationwide.',
+      telephone: '+1-626-625-9249',
+      email: 'hello@asbuiltcompany.com',
+      priceRange: '$$-$$$',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Fullerton',
+        addressRegion: 'CA',
+        addressCountry: 'US',
+      },
+      areaServed: {
+        '@type': 'Country',
+        name: 'United States',
+      },
+      serviceType: [
+        '3D Laser Scanning',
+        'As-Built Documentation',
+        'BIM Modeling',
+        'Point Cloud Processing',
+        '360° Virtual Tours',
+        'Floor Plan Drafting',
+      ],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Services',
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: '3D Laser Scanning',
+              description: 'High-density point clouds of interiors, exteriors, and full sites — survey-grade and ready for downstream work.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'As-Built Drawings',
+              description: 'Floor plans, elevations, sections, and details drawn from scan data — CAD and Revit, ready to design from.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'BIM Modeling',
+              description: 'LOD 200–400 Revit and Rhino models built from registered scan data.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: '360° Virtual Tours',
+              description: 'Interactive walkthroughs your team can navigate in any browser.',
+            },
+          },
+        ],
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://asbuiltcompany.com/#website',
+      url: 'https://asbuiltcompany.com',
+      name: 'As-Built Company',
+      description: description,
+      publisher: {
+        '@id': 'https://asbuiltcompany.com/#organization',
+      },
+      inLanguage: 'en-US',
+    },
+  ],
+};
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -25,18 +122,58 @@ const year = new Date().getFullYear();
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {/* --- Google Search Console verification ---
+        After you create your GSC property at https://search.google.com/search-console,
+        paste the meta tag Google gives you here (replace the line below).
+        Example:
+        <meta name="google-site-verification" content="YOUR_CODE_HERE" />
+    --- */}
+    {/* <meta name="google-site-verification" content="REPLACE_WITH_GSC_CODE" /> */}
+
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content="As-Built Company" />
+    {noIndex ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    )}
+
+    <link rel="canonical" href={canonicalUrl} />
+
+    {/* Open Graph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="As-Built Company" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    {/* Twitter Card */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    {/* Site-wide structured data */}
+    <script type="application/ld+json" set:html={JSON.stringify(siteJsonLd)}></script>
+
+    {/* Page-specific structured data (Article, FAQPage, BreadcrumbList, etc.) */}
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+    )}
   </head>
   <body>
     <header class="site-header">
+      <div class="site-header">
       <div class="container">
         <a href="/" class="brand" aria-label="As-Built Company home">
           <span class="brand-top">AS-BUILT</span>
@@ -71,8 +208,7 @@ const year = new Date().getFullYear();
               <span class="brand-bottom">COMPANY</span>
             </a>
             <p>Precision measurements.<br />Smarter data. Better builds.</p>
-            {/* Social icons hidden until real profile URLs are supplied.
-                See 25-item AI-tell checklist items 10–13. */}
+            {/* Social icons hidden until real profile URLs are supplied. */}
           </div>
 
           <div class="footer-col">
@@ -111,8 +247,7 @@ const year = new Date().getFullYear();
             </div>
           </div>
 
-          {/* Newsletter section hidden until a mailing service is connected.
-              See 25-item AI-tell checklist item 14. */}
+          {/* Newsletter section hidden until a mailing service is connected. */}
         </div>
 
         <div class="footer-bottom">
@@ -131,11 +266,11 @@ const year = new Date().getFullYear();
       <a href="/contact/" class="cta-quote">Get a Quote →</a>
     </div>
 
-    <!-- Global scroll-reveal (Intersection Observer) — no dependencies, respects reduced-motion -->
+    <!-- Global scroll-reveal (Intersection Observer) -->
     <script is:inline>
       (function () {
         if (typeof window === 'undefined') return;
-        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         if (prefersReduced) {
           document.querySelectorAll('.reveal, .reveal-stagger').forEach((el) => {
             el.classList.add('revealed');
