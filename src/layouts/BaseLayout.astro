@@ -173,7 +173,6 @@ const siteJsonLd = {
   </head>
   <body>
     <header class="site-header">
-      <div class="site-header">
       <div class="container">
         <a href="/" class="brand" aria-label="As-Built Company home">
           <span class="brand-top">AS-BUILT</span>
@@ -226,6 +225,7 @@ const siteJsonLd = {
             <ul>
               <li><a href="/about/">About</a></li>
               <li><a href="/areas-we-serve/">Areas We Serve</a></li>
+              <li><a href="/locations/">Locations</a></li>
               <li><a href="/resources/">Resources</a></li>
               <li><a href="/contact/">Contact</a></li>
             </ul>
@@ -270,7 +270,7 @@ const siteJsonLd = {
     <script is:inline>
       (function () {
         if (typeof window === 'undefined') return;
-        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (prefersReduced) {
           document.querySelectorAll('.reveal, .reveal-stagger').forEach((el) => {
             el.classList.add('revealed');
