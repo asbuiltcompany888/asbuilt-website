@@ -2,11 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroScene from '../components/HeroScene.astro';
 
-// FAQ content — used for both the visible section and the FAQPage JSON-LD schema
+// FAQ content, used for both the visible section and the FAQPage JSON-LD schema
 const faqs = [
   {
     q: "What's the difference between an as-built drawing and a record drawing?",
-    a: "A record drawing is the contractor's redlined set handed back at project close, showing what was actually built. An as-built is a field-verified document produced by a third party at any point in the building's life — it captures conditions as they exist today, including every tenant fit-out, MEP swap, and modification since the original construction. Per AIA contract documents, they are distinct deliverables with different legal weight.",
+    a: "A record drawing is the contractor's redlined set handed back at project close, showing what was actually built. An as-built is a field-verified document produced by a third party at any point in the building's life, it captures conditions as they exist today, including every tenant fit-out, MEP swap, and modification since the original construction. Per AIA contract documents, they are distinct deliverables with different legal weight.",
   },
   {
     q: "What accuracy level should I specify for my project?",
@@ -14,15 +14,15 @@ const faqs = [
   },
   {
     q: "Do you travel nationwide? What are the travel policies?",
-    a: "Yes — we scan projects anywhere in the U.S. Our home base is Southern California, but we quote and schedule projects nationally. Travel and per-diem are folded into the project quote, and we'll disclose all trip costs before you sign off. Multi-day and multi-site work usually gets a better daily rate.",
+    a: "Yes, we scan projects anywhere in the U.S. Our home base is Southern California, but we quote and schedule projects nationally. Travel and per-diem are folded into the project quote, and we'll disclose all trip costs before you sign off. Multi-day and multi-site work usually gets a better daily rate.",
   },
   {
     q: "How long does a typical scan take on-site?",
-    a: "A small residential floor plan (up to 3,000 SF) typically takes half a day. A 10,000 SF commercial space is a full day. Larger buildings scale from there — a 50,000 SF industrial facility with exterior and roof might run 2–3 days. Mobile-mapping with our Leica BLK2GO is roughly 3–5x faster than traditional tripod-based scanning, which is why we can move quickly on active sites.",
+    a: "A small residential floor plan (up to 3,000 SF) typically takes half a day. A 10,000 SF commercial space is a full day. Larger buildings scale from there, a 50,000 SF industrial facility with exterior and roof might run 2–3 days. Mobile-mapping with our Leica BLK2GO is roughly 3–5x faster than traditional tripod-based scanning, which is why we can move quickly on active sites.",
   },
   {
     q: "What deliverable formats do you provide?",
-    a: "10+ formats depending on your workflow: 2D CAD (DWG, DXF, PDF), 3D BIM (RVT for any Revit year, IFC, NWC), point cloud (E57 — ASTM vendor-neutral standard, RCP/RCS for Autodesk, LAS, PTS), and virtual tour output. Insist on receiving E57 alongside whatever proprietary format you prefer — it protects you if you ever change software vendors.",
+    a: "10+ formats depending on your workflow: 2D CAD (DWG, DXF, PDF), 3D BIM (RVT for any Revit year, IFC, NWC), point cloud (E57, ASTM vendor-neutral standard, RCP/RCS for Autodesk, LAS, PTS), and virtual tour output. Insist on receiving E57 alongside whatever proprietary format you prefer, it protects you if you ever change software vendors.",
   },
   {
     q: "Can you scan an occupied building during business hours?",
@@ -30,7 +30,7 @@ const faqs = [
   },
   {
     q: "Do you deliver Revit models? What LOD do you provide?",
-    a: "Yes — we produce Revit models from LOD 200 through LOD 400 depending on the intended use. Most existing-conditions renovation work uses LOD 300 architectural (walls, doors, windows, ceilings dimensionally correct and coordinated). LOD 400 is reserved for prefab and fabrication scope. We deliver in your target Revit version — always specify the year to avoid version-compatibility issues.",
+    a: "Yes, we produce Revit models from LOD 200 through LOD 400 depending on the intended use. Most existing-conditions renovation work uses LOD 300 architectural (walls, doors, windows, ceilings dimensionally correct and coordinated). LOD 400 is reserved for prefab and fabrication scope. We deliver in your target Revit version, always specify the year to avoid version-compatibility issues.",
   },
   {
     q: "What's the typical turnaround from site visit to delivery?",
@@ -38,7 +38,7 @@ const faqs = [
   },
   {
     q: "Should I order 2D drawings or a full BIM model?",
-    a: "2D drawings are right for permit submittals, real estate marketing, simple leasing exhibits, and small renovations. BIM models are worth the added cost when you need clash detection, MEP coordination, energy analysis, or a foundation for facility management. Most projects benefit from ordering both — a 2D set for permits and stakeholders, plus a BIM model for the design team.",
+    a: "2D drawings are right for permit submittals, real estate marketing, simple leasing exhibits, and small renovations. BIM models are worth the added cost when you need clash detection, MEP coordination, energy analysis, or a foundation for facility management. Most projects benefit from ordering both, a 2D set for permits and stakeholders, plus a BIM model for the design team.",
   },
   {
     q: "How do you price projects?",
@@ -60,14 +60,14 @@ const faqJsonLd = {
 };
 ---
 <BaseLayout
-  title="As-Built Company — Millimeter-Accurate 3D Scanning Nationwide"
+  title="As-Built Company, Millimeter-Accurate 3D Scanning Nationwide"
   description="Survey-grade 3D laser scanning and as-built documentation nationwide. Delivered as CAD, Revit, point clouds, and virtual tours."
   jsonLd={faqJsonLd}
 >
   {/* ===== 3D Scroll Hero (assembles luxury estate floor plan as user scrolls) ===== */}
   <HeroScene />
 
-  {/* ===== Trust strip — dark bleed continuation from hero ===== */}
+  {/* ===== Trust strip, dark bleed continuation from hero ===== */}
   <div class="trust-strip-wrapper" style="background: #0A1F3D; border-top: 1px solid rgba(56, 189, 248, 0.12);">
     <div class="container">
       <div class="trust-strip-content">
@@ -104,7 +104,7 @@ const faqJsonLd = {
     </div>
   </section>
 
-  {/* ===== What we do — services grid ===== */}
+  {/* ===== What we do, services grid ===== */}
   <section>
     <div class="container">
       <div class="section-title-centered reveal">
@@ -116,13 +116,13 @@ const faqJsonLd = {
         <div class="icon-card">
           <div class="icon">◧</div>
           <h3>3D Laser Scanning</h3>
-          <p>High-density point clouds of interiors, exteriors, and full sites &mdash; survey-grade and ready for downstream work.</p>
+          <p>High-density point clouds of interiors, exteriors, and full sites, survey-grade and ready for downstream work.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
         <div class="icon-card">
           <div class="icon">▤</div>
           <h3>As-Built Drawings</h3>
-          <p>Floor plans, elevations, sections, and details drawn from scan data &mdash; CAD and Revit, ready to design from.</p>
+          <p>Floor plans, elevations, sections, and details drawn from scan data, CAD and Revit, ready to design from.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
         <div class="icon-card">
@@ -134,7 +134,7 @@ const faqJsonLd = {
         <div class="icon-card">
           <div class="icon">▦</div>
           <h3>BIM &amp; 3D Modeling</h3>
-          <p>LOD 200&ndash;400 Revit and Rhino models built from registered scan data &mdash; for coordination or design development.</p>
+          <p>LOD 200&ndash;400 Revit and Rhino models built from registered scan data, for coordination or design development.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
         <div class="icon-card">
@@ -146,7 +146,7 @@ const faqJsonLd = {
         <div class="icon-card">
           <div class="icon">⌂</div>
           <h3>Real Estate Floor Plans</h3>
-          <p>Dimensioned floor plans for listings, lease drawings, and property records &mdash; typically delivered in 48 hours.</p>
+          <p>Dimensioned floor plans for listings, lease drawings, and property records, typically delivered in 48 hours.</p>
           <a href="/services/" class="link-arrow">Learn more <span class="arrow">→</span></a>
         </div>
       </div>
@@ -165,7 +165,7 @@ const faqJsonLd = {
         <div class="process-step">
           <div class="step-number">1</div>
           <h3>Scan</h3>
-          <p>On-site capture coordinated around your job site. Mobile-mapping for interiors and exteriors plus 360&deg; for shareable walkthroughs &mdash; minimal disruption to active work.</p>
+          <p>On-site capture coordinated around your job site. Mobile-mapping for interiors and exteriors plus 360&deg; for shareable walkthroughs, minimal disruption to active work.</p>
         </div>
         <div class="process-step">
           <div class="step-number">2</div>
@@ -175,7 +175,7 @@ const faqJsonLd = {
         <div class="process-step">
           <div class="step-number">3</div>
           <h3>Deliver</h3>
-          <p>CAD drawings, Revit models, virtual tours &mdash; whatever your project needs. We stay available for revisions and follow-up scope after handoff.</p>
+          <p>CAD drawings, Revit models, virtual tours, whatever your project needs. We stay available for revisions and follow-up scope after handoff.</p>
         </div>
       </div>
     </div>
@@ -215,7 +215,7 @@ const faqJsonLd = {
         <a href="/industries/" class="industry-card">
           <div class="industry-icon">◇</div>
           <h3>Historic Preservation</h3>
-          <p>Non-contact documentation of fragile and protected structures</p>
+          <p>Non-contact documentation of fragile and protected structures.</p>
         </a>
         <a href="/industries/" class="industry-card">
           <div class="industry-icon">⚙</div>
@@ -226,7 +226,7 @@ const faqJsonLd = {
     </div>
   </section>
 
-  {/* Testimonials section removed — was showing [Client Name]/[Firm Name] placeholders.
+  {/* Testimonials section removed, was showing [Client Name]/[Firm Name] placeholders.
       Will be re-added once real testimonials are provided (25-item checklist #1). */}
 
   {/* ===== Recent projects ===== */}
@@ -247,7 +247,7 @@ const faqJsonLd = {
           </div>
           <div class="card-body">
             <h3>Healthcare / Outpatient Clinic</h3>
-            <p>~10,000 SF outpatient medical facility &mdash; operating rooms, exam rooms, labs, and patient area.</p>
+            <p>~10,000 SF outpatient medical facility, operating rooms, exam rooms, labs, and patient area.</p>
           </div>
           <div class="card-footer">
             <span>Costa Mesa, CA</span>
@@ -323,7 +323,6 @@ const faqJsonLd = {
     </div>
   </section>
 </BaseLayout>
-
 <style>
   .faq-section {
     background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
