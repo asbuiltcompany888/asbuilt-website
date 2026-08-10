@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { CITIES } from '../../data/cities';
+
+export function getStaticPaths() {
+  return CITIES.map((city) => ({
+    params: { city: city.slug },
+    props: { city },
+  }));
+}
+
+const { city } = Astro.props;
+
+const canonicalUrl = `https://asbuiltcompany.com/locations/${city.slug}/`;
+
+// Per-city LocalBusiness + BreadcrumbList structured data
+const cityJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ProfessionalService',
+      name: `As-Built Company — ${city.name}`,
+      url: canonicalUrl,
+      parentOrganization: { '@id': 'https://asbuiltcompany.com/#organization' },
+      telephone: '+1-626-625-9249',
+      email: 'hello@asbuiltcompany.com',
+      priceRange: '$$-$$$',
+      areaServed: {
+        '@type': 'City',
+        name: city.name,
+      },
+      serviceType: [
+        '3D Laser Scanning',
+        'As-Built Documentation',
+        'BIM Modeling',
+        'Point Cloud Processing',
+      ],
+      description: `Survey-grade 3D laser scanning and as-built documentation in ${city.fullName}.`,
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://asbuiltcompany.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Locations', item: 'https://asbuiltcompany.com/locations/' },
+        { '@type': 'ListItem', position: 3, name: city.name, item: canonicalUrl },
+      ],
+    },
+  ],
+};
+
+const title = `3D Laser Scanning & As-Built Drawings in ${city.fullName} — As-Built Company`;
+const description = `Survey-grade 3D laser scanning and as-built documentation in ${city.fullName}. CAD, Revit, point clouds, and virtual tours for architects, contractors, and property owners in ${city.metroName}.`;
+---
+<BaseLayout title={title} description={description} jsonLd={cityJsonLd}>
+  <section class="hero hero-compact">
+    <div class="container">
+      <div class="eyebrow">3D Laser Scanning · {city.fullName}</div>
+      <h1>As-built documentation in <span class="accent">{city.name}.</span></h1>
+      <p class="lead">{city.intro}</p>
+      <div class="actions">
+        <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
+        <a href="/projects/" class="btn btn-outline-light">See Our Work</a>
+      </div>
+    </div>
+  </section>
+
+  {/* Local market context */}
+  <section>
+    <div class="container">
+      <div class="section-title-centered reveal">
+        <span class="eyebrow">The {city.name} Market</span>
+        <h2>Why accurate as-builts matter here</h2>
+      </div>
+      <div class="prose reveal" style="max-width: 760px; margin: 0 auto;">
+        <p>{city.marketNote}</p>
+        <p>{city.landmarksContext} Every project is captured with our Leica BLK2GO mobile mapping system and Insta360 cameras, then processed in-house and delivered in the format your team needs — typically within 3–7 business days.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* Services offered locally */}
+  <section class="section-surface">
+    <div class="container">
+      <div class="section-title-centered reveal">
+        <span class="eyebrow">Services in {city.name}</span>
+        <h2>What we deliver</h2>
+      </div>
+      <div class="grid grid-3 reveal-stagger">
+        <div class="icon-card">
+          <div class="icon">◧</div>
+          <h3>3D Laser Scanning</h3>
+          <p>Survey-grade point clouds of interiors, exteriors, and full sites across {city.metroName}.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">▤</div>
+          <h3>As-Built Drawings</h3>
+          <p>Floor plans, elevations, sections, and RCPs in CAD and Revit — ready to design from.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">▦</div>
+          <h3>BIM &amp; 3D Modeling</h3>
+          <p>LOD 200–400 Revit models built from registered scan data for coordination and design.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">◉</div>
+          <h3>360° Virtual Tours</h3>
+          <p>Interactive walkthroughs your team can navigate remotely — no travel required.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">⌂</div>
+          <h3>Real Estate Floor Plans</h3>
+          <p>Dimensioned plans for {city.name} listings and lease documentation, often within 48 hours.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">⊞</div>
+          <h3>Construction Documentation</h3>
+          <p>Milestone and progress capture for active {city.name} job sites.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Areas served within the metro */}
+  <section>
+    <div class="container">
+      <div class="section-title-centered reveal">
+        <span class="eyebrow">Coverage</span>
+        <h2>Serving {city.metroName}</h2>
+        <p>On-site capture available throughout the region, including:</p>
+      </div>
+      <div class="reveal" style="max-width: 700px; margin: 1.5rem auto 0; text-align: center;">
+        <p style="font-size: 1.1rem; line-height: 2;">
+          {city.neighborhoods.map((n, i) => (
+            <span>{n}{i < city.neighborhoods.length - 1 ? ' · ' : ''}</span>
+          ))}
+        </p>
+        <p style="color: var(--color-muted); margin-top: 1rem;">
+          Have a site outside these areas? We travel nationwide. <a href="/contact/">Tell us your address</a> and we&rsquo;ll confirm coverage and scheduling.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* CTA */}
+  <section class="section-surface">
+    <div class="container">
+      <div class="cta-strip reveal">
+        <div class="text">
+          <h3>Scanning a project in {city.name}?</h3>
+          <p>Send the address and scope. We respond within one business day.</p>
+        </div>
+        <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
