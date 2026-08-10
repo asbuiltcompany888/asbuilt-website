@@ -19,7 +19,7 @@ const cityJsonLd = {
   '@graph': [
     {
       '@type': 'ProfessionalService',
-      name: `As-Built Company — ${city.name}`,
+      name: `As-Built Company, ${city.name}`,
       url: canonicalUrl,
       parentOrganization: { '@id': 'https://asbuiltcompany.com/#organization' },
       telephone: '+1-626-625-9249',
@@ -48,7 +48,7 @@ const cityJsonLd = {
   ],
 };
 
-const title = `3D Laser Scanning & As-Built Drawings in ${city.fullName} — As-Built Company`;
+const title = `3D Laser Scanning & As-Built Drawings in ${city.fullName}, As-Built Company`;
 const description = `Survey-grade 3D laser scanning and as-built documentation in ${city.fullName}. CAD, Revit, point clouds, and virtual tours for architects, contractors, and property owners in ${city.metroName}.`;
 ---
 <BaseLayout title={title} description={description} jsonLd={cityJsonLd}>
@@ -73,7 +73,7 @@ const description = `Survey-grade 3D laser scanning and as-built documentation i
       </div>
       <div class="prose reveal" style="max-width: 760px; margin: 0 auto;">
         <p>{city.marketNote}</p>
-        <p>{city.landmarksContext} Every project is captured with our Leica BLK2GO mobile mapping system and Insta360 cameras, then processed in-house and delivered in the format your team needs — typically within 3–7 business days.</p>
+        <p>{city.landmarksContext} Every project is captured with our Leica BLK2GO mobile mapping system and Insta360 cameras, then processed in-house and delivered in the format your team needs, typically within 3–7 business days.</p>
       </div>
     </div>
   </section>
@@ -94,7 +94,7 @@ const description = `Survey-grade 3D laser scanning and as-built documentation i
         <div class="icon-card">
           <div class="icon">▤</div>
           <h3>As-Built Drawings</h3>
-          <p>Floor plans, elevations, sections, and RCPs in CAD and Revit — ready to design from.</p>
+          <p>Floor plans, elevations, sections, and RCPs in CAD and Revit, ready to design from.</p>
         </div>
         <div class="icon-card">
           <div class="icon">▦</div>
@@ -104,7 +104,7 @@ const description = `Survey-grade 3D laser scanning and as-built documentation i
         <div class="icon-card">
           <div class="icon">◉</div>
           <h3>360° Virtual Tours</h3>
-          <p>Interactive walkthroughs your team can navigate remotely — no travel required.</p>
+          <p>Interactive walkthroughs your team can navigate remotely, no travel required.</p>
         </div>
         <div class="icon-card">
           <div class="icon">⌂</div>
