@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { CITIES } from '../../data/cities';
+
+const title = 'Locations We Serve — 3D Laser Scanning Nationwide | As-Built Company';
+const description = 'As-Built Company provides 3D laser scanning and as-built documentation in major metros nationwide, including Los Angeles, San Diego, the Bay Area, Phoenix, Las Vegas, Seattle, and Dallas–Fort Worth.';
+---
+<BaseLayout title={title} description={description}>
+  <section class="hero hero-compact">
+    <div class="container">
+      <div class="eyebrow">Locations</div>
+      <h1>3D scanning, <span class="accent">nationwide.</span></h1>
+      <p class="lead">Our home base is Southern California, but we scan projects across the country. Explore the metros where we work most, or reach out about a site anywhere in the U.S.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="grid grid-3 reveal-stagger">
+        {CITIES.map((city) => (
+          <a href={`/locations/${city.slug}/`} class="industry-card">
+            <div class="industry-icon">◎</div>
+            <h3>{city.name}</h3>
+            <p>{city.region === 'CA' ? 'California' : city.region === 'AZ' ? 'Arizona' : city.region === 'NV' ? 'Nevada' : city.region === 'WA' ? 'Washington' : city.region === 'TX' ? 'Texas' : city.region} · 3D scanning &amp; as-built documentation</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-surface">
+    <div class="container">
+      <div class="cta-strip reveal">
+        <div class="text">
+          <h3>Don&rsquo;t see your city?</h3>
+          <p>We travel nationwide. Tell us your project address and we&rsquo;ll confirm coverage.</p>
+        </div>
+        <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
