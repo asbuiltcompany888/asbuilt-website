@@ -3,51 +3,51 @@ import BlogLayout from '../../layouts/BlogLayout.astro';
 ---
 <BlogLayout
   title="Scan-to-BIM: How a Point Cloud Becomes a Revit Model"
-  description="A plain-language walkthrough of the scan-to-BIM workflow — capture, registration, modeling to a target LOD, and QA — and where projects go wrong when the steps get rushed."
+  description="A plain-language walkthrough of the scan-to-BIM workflow, capture, registration, modeling to a target LOD, and QA, and where projects go wrong when the steps get rushed."
   category="Guide"
   readTime="8 min"
 >
   <p>"Scan-to-BIM" gets said like it's one thing. It isn't. It's a chain of four distinct steps, and the quality of the final Revit model depends on every one of them being done properly. When a model comes back wrong, it's almost always because a step got skipped or rushed. Here's the whole chain, in order, in plain language.</p>
 
-  <h2>Step 1 — Capture</h2>
+  <h2>Step 1, Capture</h2>
 
   <p>Everything downstream inherits the quality of the field data. If the scan is incomplete or noisy, no amount of modeling skill fixes it.</p>
 
-  <p>On site, we capture the space as a dense cloud of measured points — millions of them — using a mobile-mapping scanner. The goal is complete coverage: every wall, every ceiling, every column, captured from enough angles that there are no shadows or gaps behind furniture and equipment. Overlap between scan positions is what lets the software stitch everything together later, so we deliberately capture more than seems necessary.</p>
+  <p>On site, we capture the space as a dense cloud of measured points, millions of them, using a mobile-mapping scanner. The goal is complete coverage: every wall, every ceiling, every column, captured from enough angles that there are no shadows or gaps behind furniture and equipment. Overlap between scan positions is what lets the software stitch everything together later, so we deliberately capture more than seems necessary.</p>
 
   <p>This is also where accuracy is set. The <a href="/resources/ultimate-guide-as-built-drawings/">USIBD Level of Accuracy</a> you're targeting determines how carefully control is established and how dense the capture needs to be. LOA 30 for a renovation is a different field procedure than LOA 40 for MEP prefab.</p>
 
-  <h2>Step 2 — Registration</h2>
+  <h2>Step 2, Registration</h2>
 
   <p>Each scan position produces its own point cloud in its own local coordinate system. Registration is the process of aligning all of them into one unified, coordinated cloud.</p>
 
-  <p>Done well, registration produces a single clean dataset where a wall scanned from three positions shows up as one crisp surface. Done poorly, you get "ghosting" — the same wall appearing as two slightly offset surfaces because the scans didn't align. Ghosting at this stage propagates into every measurement taken afterward, which is why registration quality is worth asking about. A reputable provider will report the registration error.</p>
+  <p>Done well, registration produces a single clean dataset where a wall scanned from three positions shows up as one crisp surface. Done poorly, you get "ghosting", the same wall appearing as two slightly offset surfaces because the scans didn't align. Ghosting at this stage propagates into every measurement taken afterward, which is why registration quality is worth asking about. A reputable provider will report the registration error.</p>
 
   <p>The registered cloud is usually delivered in <code>.e57</code> (the ASTM vendor-neutral standard) plus whatever native format your software uses, such as Autodesk <code>.rcp</code>/<code>.rcs</code> for ReCap.</p>
 
-  <h2>Step 3 — Modeling to a target LOD</h2>
+  <h2>Step 3, Modeling to a target LOD</h2>
 
-  <p>This is where the point cloud becomes actual Revit geometry. A modeler brings the registered cloud into Revit and builds intelligent BIM elements — walls, doors, windows, columns, ceilings, MEP — traced to the scanned surfaces.</p>
+  <p>This is where the point cloud becomes actual Revit geometry. A modeler brings the registered cloud into Revit and builds intelligent BIM elements, walls, doors, windows, columns, ceilings, MEP, traced to the scanned surfaces.</p>
 
   <p>The critical decision here is the target <strong>Level of Development (LOD)</strong>, per the BIMForum specification. LOD describes how much detail and reliability each modeled element carries:</p>
 
   <ul>
-    <li><strong>LOD 200</strong> — generic elements, approximate size and location. Good for early design and massing.</li>
-    <li><strong>LOD 300</strong> — accurate size, shape, and location. This is where most existing-conditions renovation work lives.</li>
-    <li><strong>LOD 350</strong> — LOD 300 plus modeled connections and interfaces between systems. Useful for coordination.</li>
-    <li><strong>LOD 400</strong> — fabrication-level detail. Reserved for elements being prefabricated, not for documenting existing conditions.</li>
+    <li><strong>LOD 200</strong>, generic elements, approximate size and location. Good for early design and massing.</li>
+    <li><strong>LOD 300</strong>, accurate size, shape, and location. This is where most existing-conditions renovation work lives.</li>
+    <li><strong>LOD 350</strong>, LOD 300 plus modeled connections and interfaces between systems. Useful for coordination.</li>
+    <li><strong>LOD 400</strong>, fabrication-level detail. Reserved for elements being prefabricated, not for documenting existing conditions.</li>
   </ul>
 
   <div class="callout">
     <div class="callout-title">The most expensive misunderstanding in scan-to-BIM</div>
-    <p><strong>LOD is not LOA.</strong> LOA describes how accurate the survey is; LOD describes how detailed the model is. You can have a beautifully detailed LOD 350 model built on a sloppy LOA 20 survey — it will look convincing and be dimensionally wrong. Specify both numbers when you scope a job, or you're only controlling half the outcome.</p>
+    <p><strong>LOD is not LOA.</strong> LOA describes how accurate the survey is; LOD describes how detailed the model is. You can have a beautifully detailed LOD 350 model built on a sloppy LOA 20 survey, it will look convincing and be dimensionally wrong. Specify both numbers when you scope a job, or you're only controlling half the outcome.</p>
   </div>
 
-  <p>Not everything should be modeled. Modeling a LOD 400 pipe network for a project that only needs architectural floor plans wastes money. The scope conversation — which disciplines, which LOD, which elements — is where a good provider saves you the most.</p>
+  <p>Not everything should be modeled. Modeling a LOD 400 pipe network for a project that only needs architectural floor plans wastes money. The scope conversation, which disciplines, which LOD, which elements, is where a good provider saves you the most.</p>
 
-  <h2>Step 4 — QA against the cloud</h2>
+  <h2>Step 4, QA against the cloud</h2>
 
-  <p>The last step is verification: overlaying the finished Revit model back onto the point cloud and checking that the geometry actually matches what was measured. This is often done with a deviation analysis — a color-coded heatmap showing where the model departs from the scan and by how much.</p>
+  <p>The last step is verification: overlaying the finished Revit model back onto the point cloud and checking that the geometry actually matches what was measured. This is often done with a deviation analysis, a color-coded heatmap showing where the model departs from the scan and by how much.</p>
 
   <p>This step is what separates a model you can trust from a model that looks finished. Skipping it is the single most common reason a "complete" BIM model turns out to be off during construction. Ask whether QA against the cloud is included, and ask to see the deviation report.</p>
 
@@ -55,5 +55,5 @@ import BlogLayout from '../../layouts/BlogLayout.astro';
 
   <p>When you scope a scan-to-BIM project, specify five things: the LOA (survey accuracy), the LOD (model detail), the disciplines to model (architectural / structural / MEP), the Revit version, and whether QA against the cloud is included. Get those five right and the workflow does what it's supposed to. Leave them vague and you're trusting luck.</p>
 
-  <p>The point cloud is the ground truth. The model is an interpretation of it. Good scan-to-BIM keeps the interpretation honest at every step — and proves it at the end.</p>
+  <p>The point cloud is the ground truth. The model is an interpretation of it. Good scan-to-BIM keeps the interpretation honest at every step, and proves it at the end.</p>
 </BlogLayout>
