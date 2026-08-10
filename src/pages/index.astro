@@ -1,10 +1,68 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroScene from '../components/HeroScene.astro';
+
+// FAQ content — used for both the visible section and the FAQPage JSON-LD schema
+const faqs = [
+  {
+    q: "What's the difference between an as-built drawing and a record drawing?",
+    a: "A record drawing is the contractor's redlined set handed back at project close, showing what was actually built. An as-built is a field-verified document produced by a third party at any point in the building's life — it captures conditions as they exist today, including every tenant fit-out, MEP swap, and modification since the original construction. Per AIA contract documents, they are distinct deliverables with different legal weight.",
+  },
+  {
+    q: "What accuracy level should I specify for my project?",
+    a: "The industry uses USIBD's Level of Accuracy (LOA) spec, from LOA 10 (~5 cm) to LOA 50 (~1 mm). Most renovation work belongs at LOA 30 (5 mm–15 mm tolerance at 95% confidence). Real estate and leasing work fits LOA 20. MEP coordination and prefabrication push to LOA 40. Asking for LOA 50 on a typical commercial renovation roughly doubles your bill for accuracy you'll never use.",
+  },
+  {
+    q: "Do you travel nationwide? What are the travel policies?",
+    a: "Yes — we scan projects anywhere in the U.S. Our home base is Southern California, but we quote and schedule projects nationally. Travel and per-diem are folded into the project quote, and we'll disclose all trip costs before you sign off. Multi-day and multi-site work usually gets a better daily rate.",
+  },
+  {
+    q: "How long does a typical scan take on-site?",
+    a: "A small residential floor plan (up to 3,000 SF) typically takes half a day. A 10,000 SF commercial space is a full day. Larger buildings scale from there — a 50,000 SF industrial facility with exterior and roof might run 2–3 days. Mobile-mapping with our Leica BLK2GO is roughly 3–5x faster than traditional tripod-based scanning, which is why we can move quickly on active sites.",
+  },
+  {
+    q: "What deliverable formats do you provide?",
+    a: "10+ formats depending on your workflow: 2D CAD (DWG, DXF, PDF), 3D BIM (RVT for any Revit year, IFC, NWC), point cloud (E57 — ASTM vendor-neutral standard, RCP/RCS for Autodesk, LAS, PTS), and virtual tour output. Insist on receiving E57 alongside whatever proprietary format you prefer — it protects you if you ever change software vendors.",
+  },
+  {
+    q: "Can you scan an occupied building during business hours?",
+    a: "Yes. Our mobile-mapping scanner captures data at walking pace, so we can coordinate around tenant activity, retail hours, or occupied medical space with minimal disruption. For sensitive occupancies (healthcare, secured facilities), we can also schedule after-hours or weekend capture.",
+  },
+  {
+    q: "Do you deliver Revit models? What LOD do you provide?",
+    a: "Yes — we produce Revit models from LOD 200 through LOD 400 depending on the intended use. Most existing-conditions renovation work uses LOD 300 architectural (walls, doors, windows, ceilings dimensionally correct and coordinated). LOD 400 is reserved for prefab and fabrication scope. We deliver in your target Revit version — always specify the year to avoid version-compatibility issues.",
+  },
+  {
+    q: "What's the typical turnaround from site visit to delivery?",
+    a: "3–7 business days for standard 2D as-built floor plans. Revit models and complex MEP coordination projects run 2–4 weeks depending on scope. Rush turnaround (24–72 hours) is available for real estate listing plans and permit-deadline situations at a premium rate.",
+  },
+  {
+    q: "Should I order 2D drawings or a full BIM model?",
+    a: "2D drawings are right for permit submittals, real estate marketing, simple leasing exhibits, and small renovations. BIM models are worth the added cost when you need clash detection, MEP coordination, energy analysis, or a foundation for facility management. Most projects benefit from ordering both — a 2D set for permits and stakeholders, plus a BIM model for the design team.",
+  },
+  {
+    q: "How do you price projects?",
+    a: "Projects are quoted on scope, not hourly. The main cost drivers are square footage, complexity (single-tenant vs. multi-suite, single-story vs. multi-story), scope of capture (interior only vs. interior + exterior + roof + site), deliverable format (2D vs. BIM), accuracy level (LOA 20 vs. LOA 40), and access constraints (occupied vs. vacant, secured vs. open). Send an address and a scope description and you'll get a written quote within one business day.",
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: f.a,
+    },
+  })),
+};
 ---
 <BaseLayout
   title="As-Built Company — Millimeter-Accurate 3D Scanning Nationwide"
   description="Survey-grade 3D laser scanning and as-built documentation nationwide. Delivered as CAD, Revit, point clouds, and virtual tours."
+  jsonLd={faqJsonLd}
 >
   {/* ===== 3D Scroll Hero (assembles luxury estate floor plan as user scrolls) ===== */}
   <HeroScene />
@@ -157,7 +215,7 @@ import HeroScene from '../components/HeroScene.astro';
         <a href="/industries/" class="industry-card">
           <div class="industry-icon">◇</div>
           <h3>Historic Preservation</h3>
-          <p>Non-contact documentation of fragile and protected structures.</p>
+          <p>Non-contact documentation of fragile and protected structures</p>
         </a>
         <a href="/industries/" class="industry-card">
           <div class="industry-icon">⚙</div>
@@ -228,6 +286,30 @@ import HeroScene from '../components/HeroScene.astro';
     </div>
   </section>
 
+  {/* ===== FAQ section (wrapped in FAQPage JSON-LD for rich results) ===== */}
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-title-centered reveal">
+        <span class="eyebrow">FAQ</span>
+        <h2>Common questions.</h2>
+        <p>Real answers from real projects. If your question isn't here, just ask.</p>
+      </div>
+      <div class="faq-list reveal-stagger">
+        {faqs.map((f) => (
+          <details class="faq-item">
+            <summary>
+              <span class="faq-q">{f.q}</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>{f.a}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
   {/* ===== Final CTA ===== */}
   <section>
     <div class="container">
@@ -241,3 +323,97 @@ import HeroScene from '../components/HeroScene.astro';
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .faq-section {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    padding: 5rem 0;
+  }
+
+  .faq-list {
+    max-width: 820px;
+    margin: 3rem auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .faq-item {
+    background: #FFFFFF;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .faq-item[open] {
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 20px rgba(3, 105, 161, 0.08);
+  }
+
+  .faq-item summary {
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    list-style: none;
+    transition: background 0.15s ease;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary:hover {
+    background: rgba(3, 105, 161, 0.03);
+  }
+
+  .faq-item .faq-q {
+    flex: 1;
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+
+  .faq-item .faq-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(3, 105, 161, 0.08);
+    color: var(--color-accent);
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .faq-item[open] .faq-icon {
+    transform: rotate(45deg);
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  .faq-item .faq-answer {
+    padding: 0 1.5rem 1.5rem;
+    color: var(--color-muted);
+    line-height: 1.7;
+  }
+
+  .faq-item .faq-answer p {
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .faq-section { padding: 3rem 0; }
+    .faq-item summary { padding: 1rem 1.15rem; }
+    .faq-item .faq-q { font-size: 0.98rem; }
+    .faq-item .faq-answer { padding: 0 1.15rem 1.15rem; font-size: 0.95rem; }
+  }
+</style>
