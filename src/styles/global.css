@@ -992,3 +992,23 @@ section { padding: 5rem 0; }
   body { padding-bottom: 72px; }
   .site-footer { padding-bottom: 5.5rem; }
 }
+
+/* Architectural refinements */
+:root { --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+.eyebrow, .strip-label, .price-meta, .meta-label, .lightbox-caption {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+body { counter-reset: archsection; }
+.section-title-centered .eyebrow::before,
+.section-head .eyebrow::before {
+  counter-increment: archsection;
+  content: counter(archsection, decimal-leading-zero) " / ";
+  color: var(--color-accent);
+}
+.section-title-centered .eyebrow {
+  display: inline-block;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--color-border);
+}
