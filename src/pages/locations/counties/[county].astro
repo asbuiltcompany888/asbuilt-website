@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { COUNTIES } from '../../../data/counties';
+
+export function getStaticPaths() {
+  return COUNTIES.map((county) => ({
+    params: { county: county.slug },
+    props: { county },
+  }));
+}
+
+const { county } = Astro.props;
+
+const canonicalUrl = `https://asbuiltcompany.com/locations/counties/${county.slug}/`;
+
+const countyJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ProfessionalService',
+      name: `As-Built Company, ${county.name}`,
+      url: canonicalUrl,
+      parentOrganization: { '@id': 'https://asbuiltcompany.com/#organization' },
+      telephone: '+1-626-625-9247',
+      email: 'hello@asbuiltcompany.com',
+      priceRange: '$$-$$$',
+      areaServed: {
+        '@type': 'AdministrativeArea',
+        name: county.name,
+      },
+      serviceType: [
+        '3D Laser Scanning',
+        'As-Built Documentation',
+        'BIM Modeling',
+        'Point Cloud Processing',
+      ],
+      description: `Survey-grade 3D laser scanning and as-built documentation across ${county.name}, California.`,
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://asbuiltcompany.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Locations', item: 'https://asbuiltcompany.com/locations/' },
+        { '@type': 'ListItem', position: 3, name: county.name, item: canonicalUrl },
+      ],
+    },
+  ],
+};
+
+const title = `3D Laser Scanning & As-Built Drawings in ${county.name}, CA`;
+const description = `Survey-grade 3D laser scanning and as-built documentation across ${county.name}, California. Serving ${county.citiesServed.slice(0, 4).join(', ')}, and every city in the county.`;
+---
+<BaseLayout title={title} description={description} jsonLd={countyJsonLd}>
+  <section class="hero hero-compact">
+    <div class="container">
+      <div class="eyebrow">3D Laser Scanning · {county.name}</div>
+      <h1>As-built documentation across <span class="accent">{county.name}.</span></h1>
+      <p class="lead">{county.intro}</p>
+      <div class="actions">
+        <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
+        <a href="/projects/" class="btn btn-outline-light">See Our Work</a>
+      </div>
+    </div>
+  </section>
+
+  {/* County market context */}
+  <section>
+    <div class="container">
+      <div class="section-title-centered reveal">
+        <span class="eyebrow">The {county.name} Market</span>
+        <h2>Why accurate as-builts matter here</h2>
+      </div>
+      <div class="prose reveal" style="max-width: 760px; margin: 0 auto;">
+        <p>{county.marketNote}</p>
+        <p>{county.secondNote}</p>
+        <p>{county.landmarksContext} Every project is captured with our Leica BLK2GO mobile mapping system, processed in-house, and delivered in the format your team needs, typically within 3–7 business days.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* Featured cities with dedicated pages */}
+  {county.featured.length > 0 && (
+    <section class="section-surface">
+      <div class="container">
+        <div class="section-title-centered reveal">
+          <span class="eyebrow">Cities in {county.name}</span>
+          <h2>Local pages for the cities we scan most</h2>
+        </div>
+        <div class="grid grid-3 reveal-stagger">
+          {county.featured.map((c) => (
+            <a href={`/locations/${c.slug}/`} class="icon-card" style="text-decoration: none;">
+              <div class="icon">◉</div>
+              <h3>{c.name}</h3>
+              <p>3D laser scanning and as-built drawings in {c.name}. <span class="arrow">→</span></p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* All cities served in the county */}
+  <section>
+    <div class="container">
+      <div class="section-title-centered reveal">
+        <span class="eyebrow">Coverage</span>
+        <h2>Serving every city in {county.name}</h2>
+        <p>On-site capture available throughout the county, including:</p>
+      </div>
+      <div class="reveal" style="max-width: 780px; margin: 1.5rem auto 0; text-align: center;">
+        <p style="font-size: 1.05rem; line-height: 2;">
+          {county.citiesServed.map((c, i) => (
+            <span>{c}{i < county.citiesServed.length - 1 ? ' · ' : ''}</span>
+          ))}<span> · and surrounding communities</span>
+        </p>
+        <p style="color: var(--color-muted); margin-top: 1rem;">
+          Have a site anywhere in {county.name}? <a href="/contact/">Send us the address</a> and we&rsquo;ll confirm coverage and scheduling.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* Services */}
+  <section class="section-surface">
+    <div class="container">
+      <div class="section-title-centered reveal">
+        <span class="eyebrow">Services in {county.name}</span>
+        <h2>What we deliver</h2>
+      </div>
+      <div class="grid grid-3 reveal-stagger">
+        <div class="icon-card">
+          <div class="icon">◧</div>
+          <h3>3D Laser Scanning</h3>
+          <p>Survey-grade point clouds of interiors, exteriors, and full sites across {county.metroName}.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">▤</div>
+          <h3>As-Built Drawings</h3>
+          <p>Floor plans, elevations, sections, and RCPs in CAD and Revit, ready to design from.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon">▦</div>
+          <h3>BIM &amp; 3D Modeling</h3>
+          <p>LOD 200–400 Revit models built from registered scan data for coordination and design.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* CTA */}
+  <section>
+    <div class="container">
+      <div class="cta-strip reveal">
+        <div class="text">
+          <h3>Scanning a project in {county.name}?</h3>
+          <p>Send the address and scope. We respond within one business day.</p>
+        </div>
+        <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
