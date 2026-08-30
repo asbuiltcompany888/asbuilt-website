@@ -57,6 +57,9 @@ const description = `Survey-grade 3D laser scanning and as-built documentation i
       <div class="eyebrow">3D Laser Scanning · {city.fullName}</div>
       <h1>As-built documentation in <span class="accent">{city.name}.</span></h1>
       <p class="lead">{city.intro}</p>
+      {city.county && (
+        <p style="margin: 0.5rem 0 1rem;"><a href={`/locations/counties/${city.county}/`} style="color: var(--color-accent-light);">Part of {city.countyName} →</a></p>
+      )}
       <div class="actions">
         <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
         <a href="/projects/" class="btn btn-outline-light">See Our Work</a>
