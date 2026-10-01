@@ -1,0 +1,61 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+---
+<BlogLayout
+  title="How Much Does 3D Laser Scanning Cost? A 2026 Pricing Guide"
+  description="What 3D laser scanning and as-built documentation actually cost in 2026, the five things that drive the price, typical ranges by project type, and how to avoid paying for accuracy you'll never use."
+  category="Guide"
+  readTime="8 min"
+>
+  <p>The honest answer to "what does a 3D scan cost" is the one nobody likes: it depends. But it depends on a short, predictable list of things, and once you understand that list you can estimate a project yourself within a reasonable range and spot a quote that's padded or missing scope. This guide lays out the actual cost drivers and real-world ranges, without the vague "call for pricing" runaround.</p>
+
+  <p>One note up front: price and value are not the same thing here. The cheapest scan is often the most expensive outcome, because an inaccurate or incomplete existing-conditions dataset surfaces as a change order during construction, when fixing it costs ten times what the scan did. Scope the work correctly and the number below is some of the cheapest insurance on your project.</p>
+
+  <h2>The five things that drive the price</h2>
+
+  <p><strong>1. Square footage.</strong> The single biggest factor. On-site capture time and processing both scale with size, though not perfectly linearly, a 20,000 SF building does not cost twice a 10,000 SF one, because setup and travel are fixed costs spread across more area. Larger projects almost always get a better per-square-foot rate.</p>
+
+  <p><strong>2. Scope of capture.</strong> Interior only is cheaper than interior plus exterior plus roof plus site. Every added surface is more time on site and more to process. Be explicit about what you need, a quote that assumes "everything" is a quote for everything.</p>
+
+  <p><strong>3. The deliverable.</strong> This is where costs diverge the most. A raw point cloud is inexpensive because the scanner does the work. 2D CAD drawings and especially a Revit BIM model require skilled human hours to produce, and the level of detail (<a href="/resources/ultimate-guide-as-built-drawings/">LOD</a>) multiplies those hours. MEP modeling is the single largest cost adder.</p>
+
+  <p><strong>4. Accuracy level.</strong> The <a href="/resources/ultimate-guide-as-built-drawings/">USIBD Level of Accuracy</a> you specify changes how carefully control is established and how densely the space is captured. LOA 30 for a renovation is routine; LOA 40 or 50 for prefabrication or historic work means more setups, tighter control, and more QA, which costs more. Asking for LOA 50 on a job that only needs LOA 30 can roughly double your bill for accuracy you'll never use.</p>
+
+  <p><strong>5. Access and logistics.</strong> An occupied building scanned after hours, a secured facility requiring badging, high ceilings needing a lift, or a remote site with travel and per-diem all add cost. These are usually the line items people forget to mention when they ask for a quote, and then the quote changes.</p>
+
+  <h2>Typical ranges by deliverable</h2>
+
+  <p>For a notional mid-size commercial building, order-of-magnitude figures look roughly like this. Treat them as a sanity check, not a quote:</p>
+
+  <table>
+    <thead><tr><th>Deliverable</th><th>Order of magnitude</th></tr></thead>
+    <tbody>
+      <tr><td>Raw point cloud only (archival record)</td><td>$400&ndash;$1,600</td></tr>
+      <tr><td>2D as-built set (plans + RCP + elevations)</td><td>$3,000&ndash;$12,000</td></tr>
+      <tr><td>Scan-to-BIM, LOD 200 (architectural)</td><td>$3,000&ndash;$5,000</td></tr>
+      <tr><td>Scan-to-BIM, LOD 300 (coordinatable)</td><td>$5,000&ndash;$9,000</td></tr>
+      <tr><td>Scan-to-BIM, LOD 400 (detailed MEP)</td><td>$9,000&ndash;$15,000+, often higher on MEP-dense sites</td></tr>
+    </tbody>
+  </table>
+
+  <p>Two things worth noticing. First, the point cloud itself is cheap relative to the modeling, so if you're already paying for a scan, keeping the raw cloud as an archival deliverable costs almost nothing and protects you later. Second, small jobs carry a floor: a 400 SF suite and a 4,000 SF suite can cost nearly the same once you account for mobilization, so very small projects feel expensive per square foot.</p>
+
+  <div class="callout">
+    <div class="callout-title">The most common way people overpay</div>
+    <p>Ordering a detailed BIM model when 2D plans would have done the job. A kitchen remodel or a lease exhibit does not need an LOD 400 Revit model. The reverse mistake is cheaper up front but worse: ordering 2D plans for a project that later needs clash detection, and paying to re-scope. Match the deliverable to the actual use, and if you're not sure, ask the provider to recommend the minimum that works.</p>
+  </div>
+
+  <h2>How to control the cost</h2>
+
+  <p><strong>Scope precisely.</strong> Send square footage, which surfaces you need captured, the deliverable format and version, the accuracy level, and the access constraints. A provider who can quote cleanly from that has scoped jobs like yours before. Our <a href="/resources/as-built-request-checklist/">request checklist</a> covers exactly what to send.</p>
+
+  <p><strong>Scan once, deliver in phases.</strong> The expensive part is mobilizing and capturing. Scan the whole building once, take the point cloud now, and derive 2D or BIM later only for the areas and disciplines you actually need. This avoids paying for modeling you may never use while keeping the option open.</p>
+
+  <p><strong>Bundle work.</strong> Multi-day and multi-site projects earn better rates because fixed costs spread further. If you have several buildings or a phased program, say so up front.</p>
+
+  <p><strong>Keep the raw data.</strong> Insist on a vendor-neutral <code>.e57</code> point cloud alongside any proprietary format. If a new question comes up later, you answer it from the file instead of paying for a return visit.</p>
+
+  <h2>The short version</h2>
+
+  <p>3D laser scanning is priced on square footage, scope, deliverable, accuracy, and access, in that rough order of impact. A raw point cloud is a few hundred to a couple thousand dollars; a coordinatable Revit model of a mid-size building typically runs in the mid four to low five figures. The way to get a fair price is to scope the work precisely and order the minimum deliverable your project actually needs. Send us an address and a scope and you'll have a written quote within one business day, no "call for pricing" required.</p>
+</BlogLayout>
