@@ -1,0 +1,60 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+---
+<BlogLayout
+  title="Matterport vs. Survey-Grade 3D Laser Scanning: What's the Difference?"
+  description="Matterport and survey-grade laser scanning both make 3D models, but they're built for different jobs. Here's when a Matterport tour is enough and when you need a measurable point cloud."
+  category="Article"
+  readTime="6 min"
+>
+  <p>People often use "3D scan" to mean two very different things. One is a Matterport-style virtual tour, the kind of navigable 3D walkthrough you've seen on real estate listings. The other is survey-grade laser scanning that produces a measurable point cloud for design and construction. They look similar on a screen, and they get confused constantly, but they're built for different jobs and choosing the wrong one wastes money or, worse, produces a dataset you can't actually build from.</p>
+
+  <p>Here's the honest comparison, so you can tell which one your project needs before you pay for the wrong thing.</p>
+
+  <h2>What each one actually is</h2>
+
+  <p><strong>Matterport</strong> is a visualization platform. Its cameras capture a space and stitch it into an immersive, navigable 3D tour with photographic detail. It's excellent at letting someone walk through a space remotely. It also produces approximate measurements, good enough to get a rough sense of a room, but it is not a survey-grade instrument, and its accuracy is not specified or guaranteed to the tolerances design and construction require.</p>
+
+  <p><strong>Survey-grade laser scanning</strong> (the kind done with instruments like the Leica BLK2GO or RTC360) captures the space as a dense point cloud of millions of precisely measured points, with accuracy stated and documented, typically a few millimeters. That point cloud is the measurement. From it you can produce CAD drawings, a Revit BIM model, and run clash detection, because every point has a trustworthy coordinate.</p>
+
+  <h2>The core difference: looking vs. measuring</h2>
+
+  <p>This is the whole thing in one sentence. <strong>Matterport is built for looking at a space. Laser scanning is built for measuring it.</strong></p>
+
+  <p>If the deliverable's job is to let people see and navigate a space, a marketing tour, a remote walkthrough, a facilities reference, Matterport is often the better, cheaper tool, and it produces a nicer-looking visual experience. If the deliverable's job is to be the dimensional basis for design, fabrication, or construction, you need a survey-grade point cloud, because an architect or contractor who designs against measurements that are "approximately right" inherits every error during construction.</p>
+
+  <div class="callout">
+    <div class="callout-title">Where people get burned</div>
+    <p>The expensive mistake is commissioning a Matterport scan, handing it to an architect, and expecting a construction-ready model. The tour looks impressive, so it feels like it should work, but the measurements aren't tight enough to design from, and the project discovers this the hard way during coordination or fabrication. If anyone is going to build from the data, it needs to be survey-grade from the start.</p>
+  </div>
+
+  <h2>Side-by-side</h2>
+
+  <table>
+    <thead>
+      <tr><th></th><th>Matterport</th><th>Survey-grade laser scanning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Primary purpose</td><td>Visualization, virtual tours</td><td>Measurement, as-builts, BIM</td></tr>
+      <tr><td>Accuracy</td><td>Approximate, not specified to survey tolerances</td><td>Documented, typically a few mm</td></tr>
+      <tr><td>Best for</td><td>Marketing, remote walkthroughs, facility reference</td><td>Design, fabrication, construction, legal/forensic</td></tr>
+      <tr><td>Output you can build from</td><td>Limited, rough dimensions only</td><td>CAD, Revit/BIM, clash detection</td></tr>
+      <tr><td>Visual experience</td><td>Polished, photographic tour</td><td>Point cloud; a tour is an optional add-on</td></tr>
+      <tr><td>Defensible record</td><td>No</td><td>Yes, measured and dated</td></tr>
+    </tbody>
+  </table>
+
+  <h2>When each one is the right call</h2>
+
+  <p><strong>Choose Matterport-style capture when</strong> the goal is to show a space: a real estate listing, a remote tour for stakeholders who can't visit, a visual record for facilities, or a sales and marketing asset. It's purpose-built for that and usually the better value for it.</p>
+
+  <p><strong>Choose survey-grade laser scanning when</strong> anyone will design, measure, fabricate, or build from the data: renovations, tenant improvements, MEP coordination, as-built drawings, BIM models, lease and <a href="/resources/boma-area-measurement-explained/">BOMA area</a> documentation, or <a href="/resources/insurance-forensic-documentation/">insurance and forensic</a> records that have to hold up. If a tape measure's accuracy matters for the job, Matterport isn't the tool.</p>
+
+  <h2>You can have both</h2>
+
+  <p>They aren't mutually exclusive. On a survey-grade scan, we can capture a 360&deg; navigable walkthrough at the same visit, so you get a measurable point cloud for the design team <em>and</em> a shareable tour for everyone else, from one mobilization. If you think you want a tour but there's any chance someone will build from the data later, start with the survey-grade capture, you can always generate the tour from it, but you can't turn an approximate tour into measurable data after the fact.</p>
+
+  <h2>The short version</h2>
+
+  <p>Matterport is for looking; survey-grade laser scanning is for measuring. Both have their place, and the mistake that costs money is using a visualization tool as a measurement tool. If your project is marketing or a remote walkthrough, a tour is great. If anyone will design or build from it, get the survey-grade point cloud, and add the tour on top if you want it. Not sure which you need? Tell us what the deliverable is for and we'll point you to the right one.</p>
+</BlogLayout>
