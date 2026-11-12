@@ -1,0 +1,78 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+---
+<BlogLayout
+  title="LOD 200 vs 300 vs 350 vs 400: Which Level of Development Does Your Scan-to-BIM Model Need?"
+  description="What LOD 200, 300, 350, and 400 mean for a Revit model built from a 3D laser scan, how LOD differs from LOA accuracy, and how to pick the level your project actually needs."
+  category="Guide"
+  readTime="7 min"
+  datePublished="2026-11-11"
+  related={[
+    { href: '/resources/scan-to-bim-workflow/', label: 'Scan-to-BIM: How a Point Cloud Becomes a Revit Model' },
+    { href: '/resources/2d-vs-3d-as-built-drawings/', label: '2D vs 3D As-Built Drawings: Which Do You Need?' },
+    { href: '/services/scan-to-bim/', label: 'Scan-to-BIM modeling services' },
+  ]}
+>
+  <p>Every scan-to-BIM quote has a line that reads something like "Revit model, LOD 300." That one number has more effect on the price and usefulness of the model than almost anything else in the scope, and it is also the number most often chosen by guesswork.</p>
+
+  <p>This guide explains what each level means for a model of an existing building, what it costs you to go up a level, and how to choose.</p>
+
+  <h2>What LOD means</h2>
+
+  <p>LOD stands for Level of Development. The definitions most of the industry uses come from the BIMForum LOD Specification. LOD describes how much has been modeled and how far you can rely on each element: its size, shape, location, and the detail of its connections.</p>
+
+  <p>It does not describe how accurate the model is against the real building. That is a separate number, covered below, and mixing the two up is the most common mistake in scan-to-BIM scopes.</p>
+
+  <h2>The levels, in plain terms</h2>
+
+  <table>
+    <thead>
+      <tr><th>Level</th><th>What is modeled</th><th>Typical use on an existing building</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>LOD 200</td><td>Generic elements with approximate size, shape, and location</td><td>Feasibility studies, space planning, early design</td></tr>
+      <tr><td>LOD 300</td><td>Specific elements with correct size, shape, and location</td><td>Renovation design, construction documents, most tenant improvements</td></tr>
+      <tr><td>LOD 350</td><td>LOD 300 plus the interfaces between systems: supports, hangers, connections</td><td>Trade coordination and clash detection</td></tr>
+      <tr><td>LOD 400</td><td>Fabrication-level detail</td><td>Prefabrication and shop drawings for specific scopes</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>LOD 200</strong> gives you walls, floors, openings, and major elements as generic objects. A wall is a wall of roughly the right thickness, not a specific assembly. It is quick to produce and good for answering "will this program fit in this building."</p>
+
+  <p><strong>LOD 300</strong> is where most existing-conditions work belongs. Walls, doors, windows, ceilings, stairs, and structure are modeled at their real dimensions and positions, so drawings cut from the model can be designed against with confidence.</p>
+
+  <p><strong>LOD 350</strong> adds the parts that make elements collide in the real world: duct hangers, pipe supports, structural connections, equipment clearances. If mechanical, electrical, and plumbing trades will coordinate against the model, this is usually the level they need in the areas they are working.</p>
+
+  <p><strong>LOD 400</strong> is detailed enough to fabricate from. On existing buildings it is rarely needed for the whole model. It is typically requested for a specific scope, such as a mechanical room being rebuilt with prefabricated assemblies.</p>
+
+  <p>You may also see LOD 500, which means an element has been field verified. It is a statement about verification, not a higher level of detail.</p>
+
+  <h2>LOD is not accuracy</h2>
+
+  <p>How closely the model matches the real building is specified with LOA, Level of Accuracy, from the U.S. Institute of Building Documentation. LOA 30, for example, means measurements fall within roughly 5 mm to 15 mm of reality. Our <a href="/resources/ultimate-guide-as-built-drawings/">guide to as-built drawings</a> covers the full LOA scale.</p>
+
+  <p>The two numbers are independent. A beautifully detailed LOD 400 model can be dimensionally wrong, and a simple LOD 200 model can be very accurate. A complete scope states both, for example: "LOD 300 architectural and structural, modeled to LOA 30."</p>
+
+  <div class="callout">
+    <div class="callout-title">Existing buildings are not straight</div>
+    <p>Real walls lean and real floors slope. A Revit wall is perfectly vertical. Your scope should say how the modeler handles the difference, usually a tolerance within which elements are modeled as true and beyond which the deviation is modeled or flagged. Without that, two providers quoting the same LOD are quoting different products.</p>
+  </div>
+
+  <h2>What each step up costs</h2>
+
+  <p>The scan is the same regardless of LOD. What changes is modeling time, and it grows quickly. Each level adds more elements and more decisions per element, and mechanical, electrical, and plumbing systems multiply the effort. Our <a href="/resources/cost-of-3d-laser-scanning/">pricing guide</a> gives order-of-magnitude ranges by level.</p>
+
+  <p>That is why specifying one LOD for the whole building is usually a mistake. You pay fabrication-level prices for storage rooms nobody will touch.</p>
+
+  <h2>How to choose</h2>
+
+  <p><strong>Start from who uses the model and for what.</strong> An architect laying out a renovation needs LOD 300 architecture. A mechanical contractor prefabricating duct needs LOD 350 or 400 in the plenum, and nothing special anywhere else.</p>
+
+  <p><strong>Specify by discipline and by area.</strong> A typical efficient scope reads: architecture and structure at LOD 300 throughout, MEP at LOD 350 in the renovation area only, everything else left in the point cloud.</p>
+
+  <p><strong>Remember the point cloud is still there.</strong> Anything not modeled today can be modeled later from the same scan, with no return visit. Under-ordering is cheap to fix. Over-ordering is not refundable.</p>
+
+  <h2>The short version</h2>
+
+  <p>LOD 200 is for planning, LOD 300 is for design, LOD 350 is for coordination, and LOD 400 is for fabrication. Pick the level per discipline and per area, state the LOA accuracy alongside it, and let the point cloud cover everything else. If you are not sure what your project needs, tell us what the model will be used for and we will recommend the minimum that works.</p>
+</BlogLayout>

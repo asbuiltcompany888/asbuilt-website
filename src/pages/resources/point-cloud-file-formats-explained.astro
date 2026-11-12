@@ -1,0 +1,73 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+---
+<BlogLayout
+  title="Point Cloud File Formats Explained: E57 vs RCP vs LAS vs PTS"
+  description="E57, RCP, RCS, LAS, LAZ, PTS: what each point cloud file format is, which software opens it, and which ones to ask for when you order a 3D laser scan."
+  category="Guide"
+  readTime="6 min"
+  datePublished="2026-11-11"
+  related={[
+    { href: '/resources/scan-to-bim-workflow/', label: 'Scan-to-BIM: How a Point Cloud Becomes a Revit Model' },
+    { href: '/resources/as-built-request-checklist/', label: 'As-Built Drawing Request Checklist' },
+    { href: '/services/3d-laser-scanning/', label: '3D laser scanning services' },
+  ]}
+>
+  <p>When a 3D laser scan is finished, the thing you actually receive is a file. Which file matters more than most people expect. Ask for the wrong format and your architect cannot open it, your Revit model will not link it, or you end up locked into one vendor's software for the life of the building.</p>
+
+  <p>This guide covers the formats you will see on a scanning quote, what each one is for, and the short list worth insisting on.</p>
+
+  <h2>The quick answer</h2>
+
+  <table>
+    <thead>
+      <tr><th>Format</th><th>What it is</th><th>Use it for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>.e57</code></td><td>Open, vendor-neutral standard (ASTM E2807)</td><td>Archiving, and moving data between any software</td></tr>
+      <tr><td><code>.rcp</code> / <code>.rcs</code></td><td>Autodesk ReCap project and scan files</td><td>Linking into Revit, AutoCAD, and Navisworks</td></tr>
+      <tr><td><code>.las</code> / <code>.laz</code></td><td>Open lidar format from ASPRS; LAZ is the compressed version</td><td>Site, civil, GIS, and aerial data</td></tr>
+      <tr><td><code>.pts</code> / <code>.ptx</code></td><td>Plain-text point lists</td><td>Compatibility with older or niche tools</td></tr>
+      <tr><td><code>.ply</code> / <code>.obj</code></td><td>Mesh and visualization formats</td><td>Rendering, 3D printing, game engines</td></tr>
+    </tbody>
+  </table>
+
+  <h2>E57: the one to always keep</h2>
+
+  <p>E57 is an open standard published by ASTM. It stores the points, their color and intensity, the scanner positions, and panoramic imagery in one compact file, and nearly every point cloud program can read it. That makes it the right format for the long-term record of a building.</p>
+
+  <p>The practical reason to care: software changes. A firm that works in Autodesk today may be in a different platform in five years, and a proprietary scan file may not come along. An E57 will. If you take one thing from this article, ask for the registered E57 on every scan, even if you never plan to open it yourself.</p>
+
+  <h2>RCP and RCS: what Revit and AutoCAD actually want</h2>
+
+  <p>Autodesk products do not link an E57 directly. They use ReCap files. An <code>.rcs</code> file is a single indexed scan, and an <code>.rcp</code> file is the project that points to a set of RCS files and holds them together in one coordinate system. When your architect says "send me the point cloud for Revit," this is the format they mean.</p>
+
+  <p>Two things trip people up. First, the RCP file is small and useless without the folder of RCS files that sits next to it, so always send the whole folder. Second, ReCap files are not always backward compatible, so tell your provider which Autodesk version the design team is on.</p>
+
+  <h2>LAS and LAZ: site and survey work</h2>
+
+  <p>LAS was created for airborne lidar and is the standard in surveying, civil engineering, and GIS. LAZ is the same data losslessly compressed, often to a fraction of the size. If your scan covers a site, topography, or drone-captured exteriors, or if the data is headed to a civil engineer, LAS or LAZ is usually the right handoff.</p>
+
+  <h2>PTS and PTX: the plain-text fallback</h2>
+
+  <p>These are text files with one point per line: position, intensity, and color. They open almost anywhere, which is their only real advantage. They are also enormous and slow to load. Ask for them only when a specific tool in your workflow requires it.</p>
+
+  <div class="callout">
+    <div class="callout-title">A point cloud is not a mesh</div>
+    <p>PLY and OBJ files are often surfaces built from the cloud, not the measured points themselves. They look great in a rendering, but a mesh is an interpretation of the data. For design and construction, measure from the point cloud.</p>
+  </div>
+
+  <h2>What to ask for on your next scan</h2>
+
+  <p><strong>The registered E57.</strong> This is your archive copy and your insurance against software changes.</p>
+
+  <p><strong>The working format your team uses today.</strong> For most architects and contractors that is an RCP with its RCS files, in a stated Autodesk version.</p>
+
+  <p><strong>One unified, registered cloud.</strong> Individual unregistered scans are raw material, not a deliverable. Ask for the cloud registered into a single coordinate system, with the registration report if accuracy matters for your project.</p>
+
+  <p><strong>A sensible file size.</strong> A full-density cloud of a large building can run to tens of gigabytes. A good provider will deliver a decimated working copy that performs well in Revit alongside the full-density archive.</p>
+
+  <h2>The short version</h2>
+
+  <p>Keep an E57 for the record, work from RCP inside Autodesk software, use LAS or LAZ for site and civil data, and treat text formats as a last resort. Put the formats and software versions in the scope before the scan, not after. Our <a href="/resources/as-built-request-checklist/">request checklist</a> covers the rest of what to specify, and our as-built packages include the registered E57 alongside whatever format your team works in.</p>
+</BlogLayout>
