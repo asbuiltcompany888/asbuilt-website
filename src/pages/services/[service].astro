@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SERVICES } from '../../data/services';
+
+export function getStaticPaths() {
+  return SERVICES.map((service) => ({
+    params: { service: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+
+const canonicalUrl = `https://asbuiltcompany.com/services/${service.slug}/`;
+const otherServices = SERVICES.filter((s) => s.slug !== service.slug);
+
+// Service + FAQPage + BreadcrumbList structured data
+const serviceJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Service',
+      name: service.name,
+      serviceType: service.name,
+      description: service.description,
+      url: canonicalUrl,
+      provider: { '@id': 'https://asbuiltcompany.com/#organization' },
+      areaServed: { '@type': 'Country', name: 'United States' },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: service.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://asbuiltcompany.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://asbuiltcompany.com/services/' },
+        { '@type': 'ListItem', position: 3, name: service.name, item: canonicalUrl },
+      ],
+    },
+  ],
+};
+---
+<BaseLayout title={service.title} description={service.description} jsonLd={serviceJsonLd}>
+  <section class="hero hero-compact">
+    <div class="container">
+      <div class="eyebrow"><a href="/services/" style="color: inherit;">Services</a> · {service.eyebrow}</div>
+      <h1>{service.h1Lead} <span class="accent">{service.h1Accent}</span></h1>
+      <p class="lead">{service.lead}</p>
+      <div class="actions">
+        <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
+        <a href="/projects/" class="btn btn-outline-light">See Our Work</a>
+      </div>
+    </div>
+  </section>
+
+  {/* Deliverables */}
+  <section>
+    <div class="container">
+      <div class="section-title-centered reveal">
+        <span class="eyebrow">What You Get</span>
+        <h2>Deliverables</h2>
+      </div>
+      <div class="grid grid-3 reveal-stagger">
+        {service.deliverables.map((d) => (
+          <div class="icon-card">
+            <h3>{d.title}</h3>
+            <p>{d.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Body copy */}
+  <section class="section-surface">
+    <div class="container">
+      <div class="prose reveal" style="max-width: 760px; margin: 0 auto;">
+        {service.sections.map((s) => (
+          <>
+            <h2>{s.heading}</h2>
+            {s.paragraphs.map((p) => (
+              <p>{p}</p>
+            ))}
+          </>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* FAQ */}
+  <section>
+    <div class="container">
+      <div class="section-title-centered reveal">
+        <span class="eyebrow">FAQ</span>
+        <h2>{service.name}: common questions</h2>
+      </div>
+      <div class="prose reveal" style="max-width: 760px; margin: 0 auto;">
+        {service.faqs.map((f) => (
+          <>
+            <h3>{f.q}</h3>
+            <p>{f.a}</p>
+          </>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Related reading + other services (internal links) */}
+  <section class="section-surface">
+    <div class="container">
+      <div class="grid grid-2" style="max-width: 900px; margin: 0 auto;">
+        <div class="prose">
+          <h3>Related guides</h3>
+          <ul>
+            {service.related.map((r) => (
+              <li><a href={r.href}>{r.label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div class="prose">
+          <h3>Other services</h3>
+          <ul>
+            {otherServices.map((s) => (
+              <li><a href={`/services/${s.slug}/`}>{s.name}</a></li>
+            ))}
+            <li><a href="/services/">All services</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* CTA */}
+  <section>
+    <div class="container">
+      <div class="cta-strip reveal">
+        <div class="text">
+          <h3>Have a project in mind?</h3>
+          <p>Send the address and scope. We respond within one business day.</p>
+        </div>
+        <a href="/contact/" class="btn">Get a Quote <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
