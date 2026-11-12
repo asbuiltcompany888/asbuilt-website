@@ -7,9 +7,30 @@ interface Props {
   category: string;
   readTime: string;
   publishedDate?: string;
+  datePublished?: string; // ISO date, e.g. '2026-11-11'
+  dateModified?: string; // ISO date; defaults to datePublished when that is set
+  related?: { href: string; label: string }[];
 }
 
-const { title, description, category, readTime, publishedDate = 'June 2026' } = Astro.props;
+const {
+  title,
+  description,
+  category,
+  readTime,
+  datePublished,
+  dateModified,
+  related = [],
+} = Astro.props;
+
+// Articles published before per-article dates existed keep their original dates.
+const isoPublished = datePublished ?? '2026-06-01';
+const isoModified = dateModified ?? datePublished ?? '2026-08-10';
+const displayModified = new Date(`${isoModified}T12:00:00Z`).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
 
 // Article + BreadcrumbList structured data
 const canonicalUrl = new URL(Astro.url.pathname, 'https://asbuiltcompany.com').href;
@@ -30,8 +51,8 @@ const articleJsonLd = {
       publisher: {
         '@id': 'https://asbuiltcompany.com/#organization',
       },
-      datePublished: '2026-06-01',
-      dateModified: '2026-08-10',
+      datePublished: isoPublished,
+      dateModified: isoModified,
       mainEntityOfPage: {
         '@type': 'WebPage',
         '@id': canonicalUrl,
@@ -75,12 +96,24 @@ const articleJsonLd = {
       </div>
       <span class="meta-label">{category}</span>
       <h1>{title}</h1>
+      <p class="meta">By As-Built Company · {readTime} read · Updated <time datetime={isoModified}>{displayModified}</time></p>
     </div>
   </section>
 
   <article class="blog-body">
     <div class="container">
       <slot />
+
+      {related.length > 0 && (
+        <div class="callout">
+          <div class="callout-title">Keep reading</div>
+          <ul style="margin-bottom: 0;">
+            {related.map((r) => (
+              <li><a href={r.href}>{r.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <hr />
 
