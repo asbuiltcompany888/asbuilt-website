@@ -11,6 +11,60 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://asbuiltcompany.com/services/3d-laser-scanning/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/services/as-built-drawings/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/services/scan-to-bim/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/services/360-virtual-tours/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/services/real-estate-floor-plans/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/resources/point-cloud-file-formats-explained/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/resources/lod-200-300-350-400-explained/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/resources/how-to-prepare-for-a-3d-laser-scan/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/resources/as-built-drawings-for-tenant-improvements/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://asbuiltcompany.com/projects/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
