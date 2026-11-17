@@ -68,7 +68,7 @@ export const SERVICES: Service[] = [
     faqs: [
       {
         q: 'How long does a 3D laser scan take on site?',
-        a: 'A residential floor plan up to about 3,000 SF typically takes half a day. A 10,000 SF commercial space is about a full day. Larger buildings, exteriors, and roofs scale from there.',
+        a: 'A residential floor plan up to about 3,000 SF typically takes about 30 minutes on site. Commercial and other buildings under 30,000 SF take under an hour. Buildings from 30,000 up to 100,000 SF take about 3 hours, and larger ones scale from there.',
       },
       {
         q: 'Can you scan a building that is occupied?',
@@ -80,7 +80,7 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'How much does 3D laser scanning cost?',
-        a: 'Price depends on square footage, scope of capture, deliverable, accuracy level, and site access. As-built packages start from $2,500 per project. Send an address and scope for a written quote within one business day.',
+        a: 'Price depends on square footage, scope of capture, deliverable, accuracy level, and site access. As-built drawings start from $750 per project. Send an address and scope for a written quote within one business day.',
       },
     ],
     related: [
@@ -129,7 +129,7 @@ export const SERVICES: Service[] = [
     faqs: [
       {
         q: 'How long do as-built drawings take?',
-        a: 'Standard 2D as-built floor plans are typically delivered 3 to 7 business days after the site visit. Rush turnaround of 24 to 72 hours is available for listing plans and permit deadlines at a premium rate.',
+        a: 'Standard 2D as-built floor plans and site plans are delivered within 3 days of the site visit. Rush turnaround of 24 to 72 hours is available for listing plans and permit deadlines at a premium rate.',
       },
       {
         q: 'What is the difference between as-built drawings and record drawings?',
@@ -141,7 +141,7 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'How much do as-built drawings cost?',
-        a: 'Residential floor plans start from $499 for up to 3,000 SF. Full as-built packages with scan, 2D drawings, and point cloud start from $2,500 per project. Every quote is fixed-price once the scope is defined.',
+        a: 'Floor plans start from $750 with the first 3,000 SF included, then $0.30 per SF for residential, $0.10 for commercial, and $0.05 for industrial. Site plans start from $750 and exterior elevations are $200 per view. Every quote is fixed-price once the scope is defined.',
       },
     ],
     related: [
@@ -274,7 +274,7 @@ export const SERVICES: Service[] = [
     name: 'Real Estate Floor Plans',
     title: 'Real Estate Floor Plans & Lease Drawings | As-Built Company',
     description:
-      'Dimensioned floor plans for listings, lease exhibits, and property records. Measured on site and typically delivered within 48 hours, from $499 for residential properties.',
+      'Dimensioned floor plans for listings, lease exhibits, and property records. Measured on site and typically delivered within 48 hours, from $750 for residential properties.',
     eyebrow: 'Real Estate Floor Plans',
     h1Lead: 'Measured floor plans in',
     h1Accent: '48 hours.',
@@ -307,7 +307,7 @@ export const SERVICES: Service[] = [
     faqs: [
       {
         q: 'How much does a floor plan cost?',
-        a: 'Residential floor plans start from $499 per property, with up to 3,000 SF included. Larger homes and commercial spaces are quoted by scope.',
+        a: 'Residential floor plans start from $750 per property, with up to 3,000 SF included, then $0.30 per SF. Commercial floor plans are $0.10 per SF over 3,000.',
       },
       {
         q: 'How fast can I get it?',
