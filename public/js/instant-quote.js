@@ -1,0 +1,701 @@
+/* Instant quote wizard for /quote/
+ *
+ * ALL PRICES LIVE IN THE "PRICING" BLOCK BELOW. Change a number here and the
+ * calculator and the generated quote both pick it up. Nothing else needs editing.
+ *
+ * Each sq-ft scope is priced as:  base + rate x (sq ft over the threshold)
+ * Rates are keyed by building type: res = residential, com = commercial, ind = industrial.
+ */
+(function () {
+  'use strict';
+
+  var PRICING = {
+    // Building + garage sq ft are added together for the sq-ft scopes below.
+    floorPlan:   { label: 'Floor Plan',             base: 750, threshold: 3000,  rate: { res: 0.30, com: 0.10, ind: 0.05 } },
+    // Site plan is priced on LOT sq ft.
+    // The rate slides down as the lot gets bigger. Each rate applies only to the
+    // part of the lot inside its band (10,000-15,000 at 5 cents, 15,000-20,000 at 4 cents...).
+    sitePlan:    { label: 'Site Plan',              base: 750, threshold: 10000, useLot: true,
+                   tiers: [ { upTo: 15000, rate: 0.05 }, { upTo: 20000, rate: 0.04 }, { upTo: 25000, rate: 0.03 },
+                            { upTo: 30000, rate: 0.02 }, { upTo: Infinity, rate: 0.01 } ] },
+    roofPlan:    { label: 'Roof Plan',              perView: 150, unit: 'per story' },
+    rcp:         { label: 'Reflected Ceiling Plan', base: 600, threshold: 3000,  rate: { res: 0.15, com: 0.08, ind: 0.05 } },
+    electrical:  { label: 'Electrical',             base: { res: 650, com: 650, ind: 500 }, threshold: 3000, rate: { res: 0.10, com: 0.08, ind: 0.05 } },
+    mep:         { label: 'M.E.P.',                 base: 750, threshold: 3000,  rate: { res: 0.10, com: 0.15, ind: 0.05 } },
+    heights:     { label: 'Window & Door Heights',  base: 200, flat: true },
+    video360:    { label: '360 Video',              base: 150, flat: true },
+    // Per-view scopes
+    extElev:     { label: 'Elevations (exterior)',  perView: 200, unit: 'per elevation view' },
+    intElev:     { label: 'Elevations (interior)',  perView: 50,  unit: 'per elevation view' },
+    sections:    { label: 'Sections',               perView: 100, unit: 'per section view' },
+
+    garageSqFtPerSpace: 225,    // residential only: each garage parking space adds this many sq ft
+    minimumJob: 750,            // every job costs at least this; the quote is the higher of this and the items' total
+    bundleDiscount: 100,        // $ off when Floor Plan and Site Plan are ordered together
+    depositPercent: 20,        // deposit due on site
+    validDays: 7,               // quote expiry
+    instantStates: ['CA'],      // other states get a custom quote instead of an instant price
+    maxInstantSqFt: 50000       // larger buildings get a custom quote
+  };
+
+  /* Address search + aerial photo provider.
+   * Today this uses Esri's public geocoder and World Imagery, which need no key.
+   * To switch to Google Maps, a Google Maps Platform key is required (see CLAUDE.md). */
+  var GEO = {
+    suggest: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest',
+    find: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates',
+    imagery: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export',
+    footprints: ['https://overpass.kumi.systems/api/interpreter', 'https://overpass-api.de/api/interpreter']
+  };
+
+  var ORDER = ['floorPlan', 'sitePlan', 'roofPlan', 'extElev', 'intElev', 'sections', 'rcp', 'electrical', 'mep', 'heights', 'video360'];
+  var TYPE_LABEL = { res: 'Residential', com: 'Commercial', ind: 'Industrial' };
+  var IMG_W = 640, IMG_H = 400;
+
+  var form = document.getElementById('iq-form');
+  if (!form) return;
+  var wizard = document.getElementById('iq');
+  var out = document.getElementById('iq-result');
+  function byId(id) { return document.getElementById(id); }
+
+  /* ---------- small helpers ---------- */
+  function money(n) {
+    var s = Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return (n < 0 ? '-$' : '$') + s;
+  }
+  function int(n) { return Math.round(n).toLocaleString('en-US'); }
+  function num(id) {
+    var v = parseFloat(String(form.elements[id].value).replace(/,/g, ''));
+    return isFinite(v) && v > 0 ? v : 0;
+  }
+  function val(id) { return String(form.elements[id].value || '').trim(); }
+  function fmtDate(d) { return (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear(); }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function pick(v, type) { return typeof v === 'object' ? v[type] : v; }
+  function fullAddress() { return val('street') + ', ' + val('city') + ', ' + val('state') + ' ' + val('zip'); }
+
+  /* ---------- state list ---------- */
+  (function () {
+    var sel = form.elements['state'];
+    'AL AK AZ AR CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'
+      .split(' ').forEach(function (s) {
+        var o = document.createElement('option');
+        o.value = s; o.textContent = s;
+        sel.appendChild(o);
+      });
+  })();
+
+  /* ---------- step navigation ---------- */
+  var steps = Array.prototype.slice.call(form.querySelectorAll('.iq-step'));
+  var dots = Array.prototype.slice.call(document.querySelectorAll('.iq-dots li'));
+  var current = 1;
+  function show(n, noScroll) {
+    current = n;
+    steps.forEach(function (s) { s.hidden = Number(s.getAttribute('data-step')) !== n; });
+    dots.forEach(function (d, i) {
+      d.classList.toggle('is-done', i + 1 < n);
+      d.classList.toggle('is-current', i + 1 === n);
+    });
+    if (n === 3) updateRunningTotal();
+    if (!noScroll) wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function stepError(n, msg) {
+    var box = steps[n - 1].querySelector('.iq-error');
+    box.textContent = msg || '';
+    box.hidden = !msg;
+    if (msg) box.scrollIntoView({ block: 'center' });
+    return !msg;
+  }
+
+  /* ---------- step 1: building type ---------- */
+  Array.prototype.forEach.call(form.querySelectorAll('.iq-type'), function (btn) {
+    btn.addEventListener('click', function () {
+      var t = btn.getAttribute('data-type');
+      form.elements['btype'].value = t;
+      Array.prototype.forEach.call(form.querySelectorAll('.iq-type'), function (b) { b.classList.toggle('is-picked', b === btn); });
+      byId('iq-garage-wrap').hidden = t !== 'res';
+      byId('iq-type-chip').textContent = TYPE_LABEL[t] + ' property';
+      renderLookupLinks();
+      if (geo) loadAerial();
+      show(2);
+    });
+  });
+
+  /* ---------- step 2: address search ---------- */
+  var addr = byId('iq-address');
+  var list = byId('iq-suggest');
+  var manual = byId('iq-manual');
+  var geo = null;          // { lat, lon } of the chosen address
+  var footprint = null;    // { sqft, ring } traced building outline
+  var timer = null, seq = 0, active = -1, suggestions = [];
+
+  function closeList() { list.hidden = true; list.textContent = ''; active = -1; addr.setAttribute('aria-expanded', 'false'); }
+  function renderList() {
+    list.textContent = '';
+    suggestions.forEach(function (s, i) {
+      var li = el('li', i === active ? 'is-active' : '', s.text);
+      li.setAttribute('role', 'option');
+      li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(s); });
+      list.appendChild(li);
+    });
+    list.hidden = !suggestions.length;
+    addr.setAttribute('aria-expanded', suggestions.length ? 'true' : 'false');
+  }
+  addr.addEventListener('input', function () {
+    clearTimeout(timer);
+    var q = addr.value.trim();
+    if (q.length < 4) { suggestions = []; closeList(); return; }
+    timer = setTimeout(function () {
+      var my = ++seq;
+      fetch(GEO.suggest + '?f=json&countryCode=USA&category=Address&maxSuggestions=6&text=' + encodeURIComponent(q))
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (my !== seq) return;
+          suggestions = (j.suggestions || []).filter(function (s) { return !s.isCollection; });
+          active = -1;
+          renderList();
+        })
+        .catch(function () { /* typing still works; the manual fields are the fallback */ });
+    }, 250);
+  });
+  addr.addEventListener('keydown', function (e) {
+    if (list.hidden) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      active = (active + (e.key === 'ArrowDown' ? 1 : -1) + suggestions.length) % suggestions.length;
+      renderList();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      choose(suggestions[active < 0 ? 0 : active]);
+    } else if (e.key === 'Escape') { closeList(); }
+  });
+  addr.addEventListener('blur', function () { setTimeout(closeList, 150); });
+
+  function choose(s) {
+    if (!s) return;
+    closeList();
+    addr.value = s.text.replace(/, USA$/, '');
+    fetch(GEO.find + '?f=json&maxLocations=1&outFields=StAddr,City,RegionAbbr,Postal&magicKey=' + encodeURIComponent(s.magicKey) + '&SingleLine=' + encodeURIComponent(s.text))
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var c = (j.candidates || [])[0];
+        if (!c) { openManual(); return; }
+        var a = c.attributes || {};
+        form.elements['street'].value = a.StAddr || '';
+        form.elements['city'].value = a.City || '';
+        if (a.RegionAbbr) form.elements['state'].value = a.RegionAbbr;
+        form.elements['zip'].value = a.Postal || '';
+        geo = { lat: c.location.y, lon: c.location.x };
+        if (!a.StAddr || !a.City || !a.Postal) openManual();
+        renderLookupLinks();
+        loadAerial();
+      })
+      .catch(openManual);
+  }
+  function openManual() { manual.hidden = false; byId('iq-manual-toggle').hidden = true; }
+  byId('iq-manual-toggle').addEventListener('click', openManual);
+
+  /* ---------- step 2: aerial photo and building outline ---------- */
+  var aerial = byId('iq-aerial');
+  var aerialImg = byId('iq-aerial-img');
+  var aerialSvg = byId('iq-aerial-svg');
+  var aerialNote = byId('iq-aerial-note');
+  var box = null;
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  function loadAerial() {
+    if (!geo) return;
+    var widthM = form.elements['btype'].value === 'res' ? 110 : 240;
+    var heightM = widthM * IMG_H / IMG_W;
+    var dLon = (widthM / 2) / (111320 * Math.cos(geo.lat * Math.PI / 180));
+    var dLat = (heightM / 2) / 110540;
+    box = { w: geo.lon - dLon, e: geo.lon + dLon, s: geo.lat - dLat, n: geo.lat + dLat };
+    aerialImg.src = GEO.imagery + '?f=image&format=jpg&bboxSR=4326&imageSR=4326&size=' + IMG_W + ',' + IMG_H +
+      '&bbox=' + [box.w, box.s, box.e, box.n].join(',');
+    aerialImg.alt = 'Aerial view of ' + addr.value;
+    aerial.hidden = false;
+    footprint = null;
+    drawOverlay(null);
+    aerialNote.textContent = 'Looking for your building…';
+    renderFootprint();
+    traceBuilding();
+  }
+  function toXY(lon, lat) {
+    return [(lon - box.w) / (box.e - box.w) * IMG_W, (box.n - lat) / (box.n - box.s) * IMG_H];
+  }
+  function drawOverlay(ring) {
+    while (aerialSvg.firstChild) aerialSvg.removeChild(aerialSvg.firstChild);
+    if (ring) {
+      var poly = document.createElementNS(SVGNS, 'polygon');
+      poly.setAttribute('points', ring.map(function (p) { return toXY(p.lon, p.lat).join(','); }).join(' '));
+      poly.setAttribute('class', 'iq-outline');
+      aerialSvg.appendChild(poly);
+    } else {
+      var c = toXY(geo.lon, geo.lat);
+      var pin = document.createElementNS(SVGNS, 'circle');
+      pin.setAttribute('cx', c[0]); pin.setAttribute('cy', c[1]); pin.setAttribute('r', 9);
+      pin.setAttribute('class', 'iq-pin');
+      aerialSvg.appendChild(pin);
+    }
+  }
+  function ringAreaSqFt(ring) {
+    var lat0 = ring[0].lat, lon0 = ring[0].lon, k = Math.cos(lat0 * Math.PI / 180), a = 0;
+    for (var i = 0; i < ring.length; i++) {
+      var p = ring[i], q = ring[(i + 1) % ring.length];
+      var x1 = (p.lon - lon0) * 111320 * k, y1 = (p.lat - lat0) * 110540;
+      var x2 = (q.lon - lon0) * 111320 * k, y2 = (q.lat - lat0) * 110540;
+      a += x1 * y2 - x2 * y1;
+    }
+    return Math.abs(a) / 2 * 10.7639;
+  }
+  function contains(ring, lon, lat) {
+    var inside = false;
+    for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      var a = ring[i], b = ring[j];
+      if ((a.lat > lat) !== (b.lat > lat) && lon < (b.lon - a.lon) * (lat - a.lat) / (b.lat - a.lat) + a.lon) inside = !inside;
+    }
+    return inside;
+  }
+  function traceBuilding() {
+    var at = geo, around = '(around:40,' + at.lat + ',' + at.lon + ')[building];';
+    var q = '[out:json][timeout:10];(way' + around + 'relation' + around + ');out geom 25;';
+    function ask(url) {
+      var ctl = new AbortController();
+      var t = setTimeout(function () { ctl.abort(); }, 8000);
+      return fetch(url, { method: 'POST', body: 'data=' + encodeURIComponent(q), headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, signal: ctl.signal })
+        .then(function (r) { clearTimeout(t); if (!r.ok) throw new Error('lookup failed'); return r.json(); });
+    }
+    ask(GEO.footprints[0]).catch(function () { return ask(GEO.footprints[1]); })
+      .then(function (j) {
+        if (at !== geo) return;
+        var rings = [];
+        (j.elements || []).forEach(function (e) {
+          if (e.type === 'way' && e.geometry) rings.push(e.geometry);
+          if (e.type === 'relation') {
+            // Use the largest outer ring of a multi-part building.
+            var outer = null, big = 0;
+            (e.members || []).forEach(function (m) {
+              if (m.role !== 'outer' || !m.geometry || m.geometry.length < 4) return;
+              var a = ringAreaSqFt(m.geometry);
+              if (a > big) { big = a; outer = m.geometry; }
+            });
+            if (outer) rings.push(outer);
+          }
+        });
+        var best = null, bestD = Infinity;
+        rings.forEach(function (ring) {
+          if (ring.length < 4) return;
+          var cx = 0, cy = 0;
+          ring.forEach(function (p) { cx += p.lon; cy += p.lat; });
+          cx /= ring.length; cy /= ring.length;
+          var d = contains(ring, at.lon, at.lat) ? -1 : Math.pow((cx - at.lon) * Math.cos(at.lat * Math.PI / 180), 2) + Math.pow(cy - at.lat, 2);
+          if (d < bestD) { bestD = d; best = ring; }
+        });
+        if (best) {
+          footprint = { ring: best, sqft: Math.round(ringAreaSqFt(best) / 10) * 10 };
+          drawOverlay(best);
+          aerialNote.textContent = 'Is this your building? Its roof outline covers about ' + int(footprint.sqft) + ' sq. ft.';
+        } else {
+          aerialNote.textContent = 'Here’s the aerial view of your address.';
+        }
+        renderFootprint();
+      })
+      .catch(function () {
+        if (at !== geo) return;
+        aerialNote.textContent = 'Here’s the aerial view of your address.';
+        renderFootprint();
+      });
+  }
+
+  /* ---------- step 2: "I don't know the square footage" ---------- */
+  var help = byId('iq-sqft-help');
+  byId('iq-sqft-unknown').addEventListener('click', function () {
+    help.hidden = !help.hidden;
+    if (!help.hidden) { renderFootprint(); renderLookupLinks(); }
+  });
+  var floors = byId('iq-floors');
+  floors.addEventListener('input', renderFootprint);
+  function estimate() {
+    var f = Math.max(1, Math.round(parseFloat(floors.value) || 1));
+    return footprint ? Math.round(footprint.sqft * f / 10) * 10 : 0;
+  }
+  function renderFootprint() {
+    var has = !!footprint;
+    byId('iq-est-yes').hidden = !has;
+    byId('iq-est-no').hidden = has;
+    if (!has) {
+      byId('iq-est-no').textContent = geo
+        ? 'We couldn’t trace this building automatically. The listing links below usually show the square footage.'
+        : 'Pick your address above and we’ll measure the roof outline from the aerial view.';
+      return;
+    }
+    byId('iq-est-text').textContent = 'Roof outline ' + int(footprint.sqft) + ' sq. ft. × floors = about ' + int(estimate()) + ' sq. ft.';
+    byId('iq-est-use').textContent = 'Use ' + int(estimate()) + ' sq. ft.';
+  }
+  byId('iq-est-use').addEventListener('click', function () {
+    form.elements['building'].value = estimate();
+    stepError(2, '');
+    form.elements['building'].focus();
+  });
+
+  function renderLookupLinks() {
+    var ul = byId('iq-lookup');
+    ul.textContent = '';
+    var ok = val('street') && val('city');
+    byId('iq-lookup-wrap').hidden = !ok;
+    if (!ok) return;
+    var a = fullAddress(), t = form.elements['btype'].value;
+    var g = function (site) { return 'https://www.google.com/search?q=' + encodeURIComponent('"' + val('street') + '" ' + val('city') + ' ' + val('state') + ' ' + site); };
+    var links = t === 'res'
+      ? [['Zillow', 'https://www.zillow.com/homes/' + encodeURIComponent(a.replace(/[,#]/g, '').replace(/\s+/g, '-')) + '_rb/'],
+         ['Redfin', g('site:redfin.com')],
+         ['Realtor.com', g('site:realtor.com')]]
+      : [['LoopNet', g('site:loopnet.com')],
+         ['Crexi', g('site:crexi.com')],
+         ['PropertyShark', g('site:propertyshark.com')]];
+    links.push(['County assessor record', g('county assessor parcel building square feet lot size')]);
+    links.forEach(function (l) {
+      var li = el('li');
+      var link = el('a', null, l[0]);
+      link.href = l[1]; link.target = '_blank'; link.rel = 'noopener';
+      li.appendChild(link);
+      ul.appendChild(li);
+    });
+  }
+  ['street', 'city', 'state', 'zip'].forEach(function (n) { form.elements[n].addEventListener('change', renderLookupLinks); });
+
+  /* ---------- step 3: scopes and running total ---------- */
+  ['roofPlan', 'extElev', 'intElev', 'sections'].forEach(function (k) {
+    var cb = form.elements['scope_' + k];
+    var wrap = byId('iq-count-' + k);
+    function sync() { wrap.hidden = !cb.checked; }
+    cb.addEventListener('change', sync);
+    sync();
+  });
+  (function () {
+    var cb = form.elements['scope_sitePlan'];
+    var lot = byId('iq-lot-wrap');
+    function sync() { lot.hidden = !cb.checked; }
+    cb.addEventListener('change', sync);
+    sync();
+  })();
+  steps[2].addEventListener('input', updateRunningTotal);
+  steps[2].addEventListener('change', updateRunningTotal);
+  function updateRunningTotal() {
+    var d = collect(), bar = byId('iq-running'), numEl = byId('iq-running-num'), note = byId('iq-running-note');
+    var n = Object.keys(d.scopes).length;
+    if (customReason(d)) {
+      numEl.textContent = 'Custom quote';
+      note.textContent = 'We’ll price this one by hand and email it to you.';
+    } else {
+      var q = price(d);
+      numEl.textContent = money(q.total);
+      note.textContent = n ? n + (n === 1 ? ' item' : ' items') + (q.discount ? ' · ' + money(q.discount) + ' bundle discount applied' : '') + (q.minAdd ? ' · ' + money(PRICING.minimumJob) + ' job minimum applies' : '') : 'Pick what you need drawn.';
+    }
+    bar.classList.remove('is-bump');
+    void bar.offsetWidth;
+    bar.classList.add('is-bump');
+  }
+
+  /* ---------- next / back buttons ---------- */
+  Array.prototype.forEach.call(form.querySelectorAll('[data-back]'), function (b) {
+    b.addEventListener('click', function () { show(current - 1); });
+  });
+  Array.prototype.forEach.call(form.querySelectorAll('[data-next]'), function (b) {
+    b.addEventListener('click', function () {
+      var d = collect(), msg = '';
+      if (current === 2) {
+        if (!d.street && addr.value.trim()) { openManual(); msg = 'Please pick your address from the list, or fill in the address fields.'; }
+        else if (!d.street || !d.city || !d.state || !d.zip) { openManual(); msg = 'Please enter the full project address.'; }
+        else if (!d.building) msg = 'Please enter the building square footage. An estimate is fine.';
+      } else if (current === 3) {
+        if (!Object.keys(d.scopes).length) msg = 'Please choose at least one drawing or service.';
+        else if (d.scopes.sitePlan && !d.lot) msg = 'Please enter the lot square footage for the site plan. An estimate is fine.';
+      }
+      if (stepError(current, msg)) show(current + 1);
+    });
+  });
+
+  /* ---------- pricing ---------- */
+  function collect() {
+    var d = {
+      name: val('name'), company: val('company'), email: val('email'), phone: val('phone'),
+      street: val('street'), city: val('city'), state: val('state'), zip: val('zip'),
+      type: val('btype'), building: num('building'), spaces: val('btype') === 'res' ? Math.round(num('garage')) : 0, lot: num('lot'),
+      multi: form.elements['multi'].checked, notes: val('notes'), scopes: {}
+    };
+    d.garage = d.spaces * PRICING.garageSqFtPerSpace;
+    ORDER.forEach(function (k) {
+      if (form.elements['scope_' + k].checked) {
+        d.scopes[k] = PRICING[k].perView ? Math.max(1, Math.round(num('count_' + k)) || 1) : true;
+      }
+    });
+    return d;
+  }
+
+  function customReason(d) {
+    if (PRICING.instantStates.indexOf(d.state) === -1) return 'projects outside California include travel, which we price per job';
+    if (d.multi) return 'sites with more than one building are priced per building';
+    if (d.building + d.garage > PRICING.maxInstantSqFt) return 'buildings over ' + int(PRICING.maxInstantSqFt) + ' sq. ft. are priced per job';
+    return '';
+  }
+
+  // Everything is delivered within 3 days, except that elevations (exterior,
+  // interior or both) add 5 business days once.
+  function deliveryText(d) {
+    return d.scopes.extElev || d.scopes.intElev ? 'Up to 8 business days' : 'Up to 3 days';
+  }
+
+  function price(d) {
+    var sqft = d.building + d.garage;
+    var rows = [];
+    ORDER.forEach(function (k) {
+      if (!d.scopes[k]) return;
+      var p = PRICING[k];
+      if (p.perView) {
+        var n = d.scopes[k];
+        rows.push({ desc: p.label, base: money(p.perView), rate: p.unit, qty: String(n), extra: '', amount: p.perView * n });
+      } else if (p.flat) {
+        rows.push({ desc: p.label, base: money(p.base), rate: 'Flat rate', qty: '', extra: '', amount: p.base });
+      } else {
+        var area = p.useLot ? d.lot : sqft;
+        var base = pick(p.base, d.type);
+        var extra = Math.max(0, area - p.threshold);
+        var add = 0, rateText;
+        if (p.tiers) {
+          var from = p.threshold;
+          p.tiers.forEach(function (t) {
+            if (area > from) add += (Math.min(area, t.upTo) - from) * t.rate;
+            from = t.upTo;
+          });
+          rateText = '$' + p.tiers[0].rate.toFixed(2) + ' to $' + p.tiers[p.tiers.length - 1].rate.toFixed(2) +
+            ' sliding, after ' + int(p.threshold) + ' sq. ft.';
+        } else {
+          var rate = pick(p.rate, d.type);
+          add = extra * rate;
+          rateText = '$' + rate.toFixed(2) + ' after ' + int(p.threshold) + ' sq. ft.';
+        }
+        rows.push({
+          desc: p.label, base: money(base),
+          rate: rateText,
+          qty: int(area), extra: int(extra),
+          amount: Math.round((base + add) * 100) / 100
+        });
+      }
+    });
+    var subtotal = rows.reduce(function (s, r) { return s + r.amount; }, 0);
+    var discount = d.scopes.floorPlan && d.scopes.sitePlan ? PRICING.bundleDiscount : 0;
+    var total = Math.round((subtotal - discount) * 100) / 100;
+    var minAdd = rows.length && total < PRICING.minimumJob ? Math.round((PRICING.minimumJob - total) * 100) / 100 : 0;
+    total += minAdd;
+    return {
+      rows: rows, subtotal: subtotal, discount: discount, minAdd: minAdd, total: total,
+      deposit: Math.round(total * PRICING.depositPercent) / 100,
+      measure: sqft < 30000 ? '< 1 hour' : sqft < 100000 ? 'About 3 hours' : '< 1 day',
+      delivery: deliveryText(d, sqft)
+    };
+  }
+
+  /* ---------- the quote sheet ---------- */
+  function kv(parent, label, value) {
+    var r = el('div', 'iq-kv');
+    r.appendChild(el('span', 'iq-k', label));
+    r.appendChild(el('span', 'iq-v', value));
+    parent.appendChild(r);
+  }
+
+  function renderQuote(d, q) {
+    var now = new Date();
+    var exp = new Date(now.getTime() + PRICING.validDays * 86400000);
+    var sheet = el('div', 'iq-sheet');
+    sheet.id = 'iq-sheet';
+
+    var top = el('div', 'iq-top');
+    var dates = el('div', 'iq-dates');
+    kv(dates, 'Date', fmtDate(now));
+    kv(dates, 'Exp.', fmtDate(exp));
+    top.appendChild(dates);
+    var brand = el('div', 'iq-brand');
+    brand.appendChild(el('div', 'iq-brand-top', 'AS-BUILT'));
+    brand.appendChild(el('div', 'iq-brand-bottom', 'COMPANY'));
+    top.appendChild(brand);
+    top.appendChild(el('div', 'iq-word', 'QUOTE'));
+    sheet.appendChild(top);
+
+    var parties = el('div', 'iq-parties');
+    var from = el('div');
+    from.appendChild(el('div', 'iq-h', 'Quote from'));
+    ['As-Built Company', 'Jonathan Chen', 'Lead As-Built Surveyor', '(626) 625-9247', 'jonathan@asbuiltcompany.com', 'www.asbuiltcompany.com']
+      .forEach(function (t) { from.appendChild(el('div', null, t)); });
+    var to = el('div');
+    to.appendChild(el('div', 'iq-h', 'Quote to'));
+    to.appendChild(el('div', null, d.name));
+    if (d.company) to.appendChild(el('div', null, d.company));
+    to.appendChild(el('div', null, d.email));
+    if (d.phone) to.appendChild(el('div', null, d.phone));
+    to.appendChild(el('div', 'iq-h iq-h-gap', "Project's Address"));
+    to.appendChild(el('div', null, d.street));
+    to.appendChild(el('div', null, d.city + ', ' + d.state + ' ' + d.zip));
+    parties.appendChild(from);
+    parties.appendChild(to);
+    sheet.appendChild(parties);
+
+    var facts = el('div', 'iq-facts');
+    kv(facts, 'Building Type:', TYPE_LABEL[d.type]);
+    kv(facts, 'Building Sq. Ft.', int(d.building) + ' sq.ft.');
+    kv(facts, 'Garage Sq. Ft.', int(d.garage) + ' sq.ft.' + (d.spaces ? ' (' + d.spaces + (d.spaces === 1 ? ' space)' : ' spaces)') : ''));
+    kv(facts, 'Lot Sq. Ft.', int(d.lot) + ' sq.ft.');
+    sheet.appendChild(facts);
+
+    var wrap = el('div', 'iq-table-wrap');
+    var table = el('table', 'iq-table');
+    var thead = el('thead');
+    var hr = el('tr');
+    ['DESCRIPTION', 'BASE PRICE', '$/ S.F.', 'SQ. FT.', 'Extra', 'AMOUNT'].forEach(function (h) { hr.appendChild(el('th', null, h)); });
+    thead.appendChild(hr);
+    table.appendChild(thead);
+    var tb = el('tbody');
+    q.rows.forEach(function (r) {
+      var tr = el('tr');
+      [r.desc, r.base, r.rate, r.qty, r.extra, money(r.amount)].forEach(function (c) { tr.appendChild(el('td', null, c)); });
+      tb.appendChild(tr);
+    });
+    table.appendChild(tb);
+    wrap.appendChild(table);
+    sheet.appendChild(wrap);
+
+    var bottom = el('div', 'iq-bottom');
+    var est = el('div', 'iq-est');
+    kv(est, 'Estimated time to measure:', q.measure);
+    kv(est, 'Estimated time to delivery:', q.delivery);
+    var big = el('div', 'iq-big');
+    big.appendChild(el('div', 'iq-h', 'QUOTE TOTAL'));
+    big.appendChild(el('div', 'iq-big-num', money(q.total)));
+    est.appendChild(big);
+    bottom.appendChild(est);
+    var totals = el('div', 'iq-totals');
+    kv(totals, 'SUBTOTAL', money(q.subtotal));
+    if (q.discount) kv(totals, 'DISCOUNT', money(-q.discount));
+    if (q.minAdd) kv(totals, 'JOB MINIMUM', '+' + money(q.minAdd));
+    kv(totals, 'TOTAL', money(q.total));
+    kv(totals, PRICING.depositPercent + '% DEPOSIT', money(q.deposit));
+    totals.appendChild(el('div', 'iq-due', 'DUE ON SITE'));
+    bottom.appendChild(totals);
+    sheet.appendChild(bottom);
+
+    var terms = el('div', 'iq-terms');
+    if (q.discount) terms.appendChild(el('p', null, 'Discount applied for ordering a floor plan and site plan together.'));
+    if (q.minAdd) terms.appendChild(el('p', null, 'Every job has a ' + money(PRICING.minimumJob) + ' minimum, which has been applied to this quote.'));
+    terms.appendChild(el('p', null, 'Final price would be calculated through the completed as-built drawings total sq. ft.'));
+    terms.appendChild(el('p', null, 'The deposit is due on site. Payment instructions are sent with your booking confirmation.'));
+    terms.appendChild(el('p', null, 'If you accept this quote, please sign and send this form to jonathan@asbuiltcompany.com'));
+    sheet.appendChild(terms);
+
+    var sign = el('div', 'iq-sign');
+    sign.appendChild(el('div', 'iq-line', 'Signature of Authorized Person'));
+    sign.appendChild(el('div', 'iq-line iq-line-short', 'Date'));
+    sheet.appendChild(sign);
+    sheet.appendChild(el('p', 'iq-thanks', d.name + ', we thank you so much for considering us for your as-built needs!'));
+    return sheet;
+  }
+
+  /* ---------- email a copy to the team ---------- */
+  function summaryText(d, q, reason) {
+    var L = [];
+    L.push('Project: ' + d.street + ', ' + d.city + ', ' + d.state + ' ' + d.zip);
+    L.push('Building type: ' + TYPE_LABEL[d.type]);
+    L.push('Building ' + int(d.building) + ' sq ft, garage ' + int(d.garage) + ' sq ft (' + d.spaces + ' spaces), lot ' + int(d.lot) + ' sq ft');
+    if (footprint) L.push('Roof outline traced from aerial: ' + int(footprint.sqft) + ' sq ft');
+    if (d.multi) L.push('More than one building on site: yes');
+    L.push('');
+    if (q) {
+      q.rows.forEach(function (r) {
+        L.push(r.desc + ': ' + money(r.amount) + '  (' + r.base + ', ' + r.rate + (r.qty ? ', qty ' + r.qty : '') + ')');
+      });
+      L.push('Subtotal: ' + money(q.subtotal));
+      if (q.discount) L.push('Discount: ' + money(-q.discount));
+      if (q.minAdd) L.push('Job minimum adjustment: +' + money(q.minAdd));
+      L.push('TOTAL QUOTED ON SITE: ' + money(q.total) + '  (deposit ' + money(q.deposit) + ')');
+    } else {
+      L.push('NO INSTANT PRICE SHOWN. Reason: ' + reason + '.');
+      L.push('Requested: ' + Object.keys(d.scopes).map(function (k) {
+        return PRICING[k].label + (PRICING[k].perView ? ' x' + d.scopes[k] : '');
+      }).join(', '));
+    }
+    if (d.notes) { L.push(''); L.push('Notes: ' + d.notes); }
+    return L.join('\n');
+  }
+
+  function send(d, q, reason) {
+    var key = val('access_key');
+    if (!key) return Promise.resolve(false);
+    if (form.elements['botcheck'].checked) return Promise.resolve(false);
+    return fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        access_key: key,
+        subject: (q ? 'Instant quote ' + money(q.total) : 'Custom quote request') + ' - ' + d.street + ', ' + d.city,
+        from_name: 'As-Built Company Website',
+        name: d.name, email: d.email, phone: d.phone, company: d.company,
+        message: summaryText(d, q, reason)
+      })
+    }).then(function (r) { return r.ok; }).catch(function () { return false; });
+  }
+
+  /* ---------- final step: show the quote ---------- */
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (current !== 4) return;
+    var d = collect(), msg = '';
+    if (!d.name || !d.email) msg = 'Please enter your name and email so we know who the quote is for.';
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) msg = 'Please enter a valid email address.';
+    if (!stepError(4, msg)) return;
+
+    var reason = customReason(d);
+    var q = reason ? null : price(d);
+    out.textContent = '';
+
+    var bar = el('div', 'iq-actions');
+    if (q) {
+      var print = el('button', 'btn', 'Download / print PDF');
+      print.type = 'button';
+      print.addEventListener('click', function () { window.print(); });
+      bar.appendChild(print);
+    }
+    var again = el('button', 'btn btn-secondary', 'Change details');
+    again.type = 'button';
+    again.addEventListener('click', function () { out.hidden = true; wizard.hidden = false; show(3); });
+    bar.appendChild(again);
+
+    if (q) {
+      out.appendChild(el('h2', 'iq-result-title', 'Your quote'));
+      out.appendChild(bar);
+      out.appendChild(renderQuote(d, q));
+    } else {
+      var note = el('div', 'callout');
+      note.appendChild(el('div', 'callout-title', 'This one needs a custom quote'));
+      note.appendChild(el('p', null, 'Thanks, ' + d.name + '. We can’t price this instantly because ' + reason + '. We’ll email a written quote to ' + d.email + ' within one business day.'));
+      out.appendChild(note);
+      out.appendChild(bar);
+    }
+    var status = el('p', 'iq-status', 'Sending a copy to our team…');
+    out.appendChild(status);
+    wizard.hidden = true;
+    out.hidden = false;
+    out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    send(d, q, reason).then(function (ok) {
+      status.textContent = ok
+        ? 'A copy of this request has been sent to our team. We’ll follow up to schedule your site visit.'
+        : 'We couldn’t send your request automatically. Please email this quote to hello@asbuiltcompany.com or call (626) 625-9247.';
+    });
+  });
+
+  show(1, true);
+})();
