@@ -1,0 +1,274 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Web3Forms access key (public by design; same key as the contact form).
+const WEB3FORMS_ACCESS_KEY = 'fdb079ed-2f78-4cf2-992b-98848d3d8854';
+
+// Prices are NOT in this file. They live in public/js/instant-quote.js (the PRICING block at the top).
+---
+<BaseLayout
+  title="Instant As-Built Drawing Quote | As-Built Company"
+  description="Get an instant written quote for as-built floor plans, site plans, elevations, sections, RCP and MEP drawings. Pick your building type, enter the address and square footage."
+>
+  <link rel="stylesheet" href="/css/instant-quote.css" />
+
+  <section class="hero hero-compact iq-no-print">
+    <div class="container">
+      <div class="eyebrow">Instant Quote</div>
+      <h1>Get your quote <span class="accent">in under a minute.</span></h1>
+      <p class="lead">Four quick steps. You&rsquo;ll see the price build as you go and get a written quote to download at the end.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div id="iq" class="iq iq-no-print">
+        <ol class="iq-dots" aria-label="Progress">
+          <li><span>1</span> Property</li>
+          <li><span>2</span> Address &amp; size</li>
+          <li><span>3</span> Drawings</li>
+          <li><span>4</span> Your quote</li>
+        </ol>
+
+        <form id="iq-form" class="form iq-form" novalidate>
+          <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
+          <input type="hidden" name="btype" value="" />
+          <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off" />
+
+          <!-- STEP 1 -->
+          <div class="iq-step" data-step="1">
+            <h2 class="iq-q">What kind of property is it?</h2>
+            <div class="iq-types">
+              <button type="button" class="iq-type" data-type="res">
+                <svg viewBox="0 0 160 120" aria-hidden="true">
+                  <path d="M8 108h144" />
+                  <path d="M30 108V58l50-38 50 38v50" />
+                  <path d="M20 66l60-46 60 46" />
+                  <path d="M104 38V24h12v23" />
+                  <path d="M70 108V80h20v28" />
+                  <path d="M42 70h18v18H42zM51 70v18M42 79h18" />
+                  <path d="M100 70h18v18h-18zM109 70v18M100 79h18" />
+                  <path d="M74 46h12v10H74z" />
+                </svg>
+                <span class="iq-type-name">Residential</span>
+                <span class="iq-type-sub">House, Condo, ADU, Apartment</span>
+              </button>
+              <button type="button" class="iq-type" data-type="com">
+                <svg viewBox="0 0 160 120" aria-hidden="true">
+                  <path d="M8 108h144" />
+                  <path d="M48 108V16h64v92" />
+                  <path d="M42 16h76" />
+                  <path d="M112 108V52h28v56" />
+                  <path d="M20 108V68h28" />
+                  <path d="M60 28h10v10H60zM90 28h10v10H90zM75 28h10v10H75z" />
+                  <path d="M60 46h10v10H60zM90 46h10v10H90zM75 46h10v10H75z" />
+                  <path d="M60 64h10v10H60zM90 64h10v10H90zM75 64h10v10H75z" />
+                  <path d="M72 108V88h16v20M80 88v20" />
+                  <path d="M120 62h12M120 74h12M120 86h12M28 78h12M28 90h12" />
+                </svg>
+                <span class="iq-type-name">Commercial</span>
+                <span class="iq-type-sub">Office, Retail, Restaurant, Medical</span>
+              </button>
+              <button type="button" class="iq-type" data-type="ind">
+                <svg viewBox="0 0 160 120" aria-hidden="true">
+                  <path d="M8 108h144" />
+                  <path d="M16 108V56l26-16v16l26-16v16l26-16v16h50v52" />
+                  <path d="M120 56V22h14v34" />
+                  <path d="M118 22h18" />
+                  <path d="M30 108V78h36v30M30 86h36M30 94h36M30 102h36" />
+                  <path d="M82 78h16v14H82zM108 78h16v14h-16z" />
+                  <path d="M128 108V96h12v12" />
+                </svg>
+                <span class="iq-type-name">Industrial</span>
+                <span class="iq-type-sub">Warehouse, Manufacturing, Flex</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="iq-step" data-step="2" hidden>
+            <div class="iq-chip" id="iq-type-chip"></div>
+            <h2 class="iq-q">Where is it, and how big?</h2>
+
+            <div class="iq-addr">
+              <label for="iq-address">Project address</label>
+              <input id="iq-address" type="text" placeholder="Start typing the street address&hellip;" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="iq-suggest" aria-autocomplete="list" />
+              <ul id="iq-suggest" class="iq-suggest" role="listbox" hidden></ul>
+            </div>
+            <button type="button" class="iq-link" id="iq-manual-toggle">Enter the address by hand</button>
+
+            <div id="iq-manual" hidden>
+              <label for="iq-street">Street address</label>
+              <input id="iq-street" name="street" type="text" />
+              <div class="iq-row-3">
+                <div>
+                  <label for="iq-city">City</label>
+                  <input id="iq-city" name="city" type="text" />
+                </div>
+                <div>
+                  <label for="iq-state">State</label>
+                  <select id="iq-state" name="state">
+                    <option value="CA" selected>CA</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="iq-zip">ZIP</label>
+                  <input id="iq-zip" name="zip" type="text" inputmode="numeric" />
+                </div>
+              </div>
+            </div>
+
+            <figure class="iq-aerial" id="iq-aerial" hidden>
+              <div class="iq-aerial-frame">
+                <img id="iq-aerial-img" alt="" width="640" height="400" />
+                <svg id="iq-aerial-svg" viewBox="0 0 640 400" preserveAspectRatio="none" aria-hidden="true"></svg>
+              </div>
+              <figcaption id="iq-aerial-note"></figcaption>
+            </figure>
+
+            <div class="form-row">
+              <div>
+                <label for="iq-building">Building sq. ft. that needs plans</label>
+                <input id="iq-building" name="building" type="number" min="1" step="1" inputmode="numeric" />
+              </div>
+              <div id="iq-garage-wrap" hidden>
+                <label for="iq-garage">Garage parking spaces (if any)</label>
+                <input id="iq-garage" name="garage" type="number" min="0" max="20" step="1" inputmode="numeric" placeholder="0" />
+              </div>
+            </div>
+            <button type="button" class="iq-link" id="iq-sqft-unknown">I don&rsquo;t know the square footage</button>
+
+            <div class="iq-help" id="iq-sqft-help" hidden>
+              <div class="iq-help-title">Let&rsquo;s find it</div>
+              <div id="iq-est-yes" hidden>
+                <div class="iq-est-row">
+                  <label for="iq-floors">How many floors?</label>
+                  <input id="iq-floors" type="number" min="1" max="60" step="1" value="1" inputmode="numeric" />
+                </div>
+                <p id="iq-est-text"></p>
+                <button type="button" class="btn btn-secondary" id="iq-est-use"></button>
+              </div>
+              <p id="iq-est-no"></p>
+              <div id="iq-lookup-wrap" hidden>
+                <p class="iq-help-sub">Or check a listing for this address. Building and lot size are usually shown under property details.</p>
+                <ul class="iq-lookup" id="iq-lookup"></ul>
+              </div>
+            </div>
+
+            <p class="iq-hint">An estimate is fine. The final price is set by the measured square footage of the finished drawings.</p>
+            <label class="iq-choice"><input type="checkbox" name="multi" /> There is more than one building on the site</label>
+
+            <div class="iq-error" role="alert" hidden></div>
+            <div class="iq-nav">
+              <button type="button" class="iq-back" data-back>&larr; Back</button>
+              <button type="button" class="btn" data-next>Next <span class="arrow">→</span></button>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="iq-step" data-step="3" hidden>
+            <h2 class="iq-q">What do you need drawn?</h2>
+            <div class="iq-scopes">
+              <div>
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_floorPlan" checked /> <span>Floor plan</span></label>
+
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_sitePlan" /> <span>Site plan <small>$100 off when ordered with a floor plan</small></span></label>
+                <div class="iq-count" id="iq-lot-wrap" hidden>
+                  <label for="iq-lot">Lot sq. ft.</label>
+                  <input id="iq-lot" name="lot" type="number" min="1" step="1" inputmode="numeric" />
+                </div>
+
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_roofPlan" /> <span>Roof plan <small>$150 per story</small></span></label>
+                <div class="iq-count" id="iq-count-roofPlan" hidden>
+                  <label for="iq-count-roof">How many stories?</label>
+                  <input id="iq-count-roof" name="count_roofPlan" type="number" min="1" step="1" value="1" inputmode="numeric" />
+                </div>
+
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_extElev" /> <span>Exterior elevations</span></label>
+                <div class="iq-count" id="iq-count-extElev" hidden>
+                  <label for="iq-count-ext">How many views?</label>
+                  <input id="iq-count-ext" name="count_extElev" type="number" min="1" step="1" value="4" inputmode="numeric" />
+                </div>
+
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_intElev" /> <span>Interior elevations</span></label>
+                <div class="iq-count" id="iq-count-intElev" hidden>
+                  <label for="iq-count-int">How many views?</label>
+                  <input id="iq-count-int" name="count_intElev" type="number" min="1" step="1" value="4" inputmode="numeric" />
+                </div>
+
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_sections" /> <span>Sections</span></label>
+                <div class="iq-count" id="iq-count-sections" hidden>
+                  <label for="iq-count-sec">How many sections?</label>
+                  <input id="iq-count-sec" name="count_sections" type="number" min="1" step="1" value="2" inputmode="numeric" />
+                </div>
+              </div>
+              <div>
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_rcp" /> <span>Reflected ceiling plan (RCP)</span></label>
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_electrical" /> <span>Electrical plan <small>Outlets, switches, fixtures, panels</small></span></label>
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_mep" /> <span>M.E.P. <small>Mechanical, electrical and plumbing</small></span></label>
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_heights" /> <span>Window &amp; door heights</span></label>
+                <label class="iq-choice iq-scope"><input type="checkbox" name="scope_video360" /> <span>360&deg; video walkthrough</span></label>
+              </div>
+            </div>
+
+            <div class="iq-running" id="iq-running" aria-live="polite">
+              <div>
+                <div class="iq-running-label">Running total</div>
+                <div class="iq-running-note" id="iq-running-note"></div>
+              </div>
+              <div class="iq-running-num" id="iq-running-num"></div>
+            </div>
+
+            <div class="iq-error" role="alert" hidden></div>
+            <div class="iq-nav">
+              <button type="button" class="iq-back" data-back>&larr; Back</button>
+              <button type="button" class="btn" data-next>Next <span class="arrow">→</span></button>
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="iq-step" data-step="4" hidden>
+            <h2 class="iq-q">Who should we make the quote out to?</h2>
+            <div class="form-row">
+              <div>
+                <label for="iq-name">Your name</label>
+                <input id="iq-name" name="name" type="text" autocomplete="name" />
+              </div>
+              <div>
+                <label for="iq-company">Company (optional)</label>
+                <input id="iq-company" name="company" type="text" autocomplete="organization" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div>
+                <label for="iq-email">Email</label>
+                <input id="iq-email" name="email" type="email" autocomplete="email" />
+              </div>
+              <div>
+                <label for="iq-phone">Phone (optional)</label>
+                <input id="iq-phone" name="phone" type="tel" autocomplete="tel" />
+              </div>
+            </div>
+            <label for="iq-notes">Anything else we should know? (optional)</label>
+            <textarea id="iq-notes" name="notes" placeholder="Deadline, access, number of floors, special requests."></textarea>
+
+            <div class="iq-error" role="alert" hidden></div>
+            <div class="iq-nav">
+              <button type="button" class="iq-back" data-back>&larr; Back</button>
+              <button type="submit" class="btn">Show my quote <span class="arrow">→</span></button>
+            </div>
+            <p class="iq-fine">PDF and CAD files are included with every drawing. Your details and quote are sent to our team so we can schedule your site visit.</p>
+          </div>
+        </form>
+      </div>
+
+      <div id="iq-result" class="iq-result" hidden></div>
+
+      <noscript>
+        <p>The instant quote needs JavaScript. You can also <a href="/contact/">send us your project details</a> and we&rsquo;ll reply with a quote within one business day.</p>
+      </noscript>
+    </div>
+  </section>
+
+  <script is:inline src="/js/instant-quote.js" defer></script>
+</BaseLayout>
