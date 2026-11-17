@@ -126,6 +126,21 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://asbuiltcompany.com/resources/what-are-as-built-drawings/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/resources/why-every-project-starts-with-as-builts/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://asbuiltcompany.com/resources/as-built-drawings-vs-original-plans/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://asbuiltcompany.com/resources/scan-to-bim-workflow/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
