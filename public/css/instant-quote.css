@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 /* Styles for the instant quote page (/quote/). */
 .iq [hidden], .iq-result[hidden] { display: none !important; }
 .iq { max-width: 860px; margin: 0 auto; scroll-margin-top: 90px; }
@@ -92,39 +93,56 @@
 .iq-status { font-size: 0.95rem; color: var(--color-muted); margin-top: 1rem; }
 
 /* The quote sheet is always a white page with dark ink, on screen and on paper. */
-.iq-sheet { background: #fff; color: #0A1F3D; border: 1px solid #D5DCE6; border-left: 14px solid #2C7FF5; border-radius: 4px; padding: 2rem; font-size: 0.9rem; line-height: 1.45; box-shadow: 0 8px 30px rgba(10, 31, 61, 0.12); }
+.iq-sheet { --iq-band: 26px; display: flex; flex-direction: column; box-sizing: border-box; background: linear-gradient(to bottom, #8EC5F3, #0B7FE0) left top / var(--iq-band) 100% no-repeat, #fff; color: #0A1F3D; border: 1px solid #D5DCE6; border-left: 0; border-radius: 4px; padding: 2rem 2rem 2rem calc(2rem + var(--iq-band)); font-family: 'Poppins', 'Inter', sans-serif; font-size: 0.9rem; line-height: 1.45; box-shadow: 0 8px 30px rgba(10, 31, 61, 0.12); }
 .iq-sheet p { color: #0A1F3D; font-size: 0.85rem; margin: 0 0 0.35rem; }
 .iq-top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 1rem; border-bottom: 1px solid #0A1F3D; padding-bottom: 1rem; margin-bottom: 1.25rem; }
 .iq-brand { text-align: center; }
-.iq-brand-top { font-weight: 800; font-size: 1.6rem; letter-spacing: -0.02em; line-height: 1; }
+.iq-brand-top { font-family: 'Bebas Neue', 'Poppins', sans-serif; font-weight: 400; font-size: 2.6rem; letter-spacing: 0.02em; line-height: 0.95; }
 .iq-brand-bottom { font-size: 0.7rem; letter-spacing: 0.4em; margin-top: 0.25rem; }
-.iq-word { text-align: right; color: #D32F2F; font-size: 1.5rem; font-weight: 500; letter-spacing: 0.02em; }
+.iq-word { text-align: right; color: #EE1111; font-size: 1.7rem; font-weight: 400; letter-spacing: 0.02em; align-self: end; }
 .iq-kv { display: flex; gap: 1rem; justify-content: space-between; }
 .iq-dates .iq-kv { justify-content: flex-start; }
 .iq-dates .iq-k { min-width: 3rem; }
 .iq-k { color: #44546A; }
 .iq-v { font-weight: 600; text-align: right; }
+.iq-dates .iq-v { font-weight: 400; }
 .iq-h { font-weight: 700; margin-bottom: 0.2rem; }
 .iq-h-gap { margin-top: 0.75rem; }
-.iq-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1.25rem; overflow-wrap: anywhere; }
-.iq-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.15rem 2rem; margin-bottom: 1rem; }
+.iq-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 0.4rem; overflow-wrap: anywhere; line-height: 1.75; }
+.iq-from { display: flex; flex-direction: column; }
+.iq-from .iq-kv { margin-top: auto; justify-content: flex-start; gap: 0.6rem; }
+.iq-from .iq-kv .iq-k { color: #0A1F3D; }
+.iq-from .iq-kv .iq-v { font-weight: 400; }
+.iq-to { text-align: right; }
+.iq-label { font-size: 0.9rem; line-height: 1.3; }
+.iq-name { font-size: 1.4rem; font-weight: 400; line-height: 1.3; margin-bottom: 0.2rem; }
+.iq-facts .iq-kv { justify-content: flex-end; gap: 0.5rem; }
+.iq-facts .iq-k { color: #0A1F3D; }
+.iq-facts .iq-v { min-width: 6.5rem; font-weight: 700; }
 .iq-table-wrap { overflow-x: auto; }
 .iq-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-.iq-table th { text-align: left; font-size: 0.72rem; letter-spacing: 0.04em; border-bottom: 2px solid #0A1F3D; padding: 0.45rem 0.5rem; white-space: nowrap; color: #0A1F3D; background: none; }
-.iq-table td { border-bottom: 1px solid #E5E9F0; padding: 0.5rem; vertical-align: top; color: #0A1F3D; background: none; }
+.iq-table th { text-align: left; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; border-bottom: 0; padding: 0.45rem 0.5rem; white-space: nowrap; color: #0A1F3D; background: #55ACEE; }
+/* Blank ruled rows that fill the sheet down to the totals, like the paper quote form. */
+.iq-fill { display: flex; flex-direction: column; flex: 1 0 auto; border-bottom: 1.5px solid #0A1F3D; }
+.iq-fill-row { flex: 1 1 2.15rem; min-height: 2.15rem; border-bottom: 1px solid #AEB7C4; }
+.iq-fill-row:last-child { border-bottom: 0; }
+.iq-table td { border-bottom: 1px solid #AEB7C4; padding: 0.5rem; vertical-align: top; color: #0A1F3D; background: none; }
 .iq-table th:last-child, .iq-table td:last-child { text-align: right; font-weight: 600; white-space: nowrap; }
 .iq-table td:nth-child(4), .iq-table td:nth-child(5), .iq-table th:nth-child(4), .iq-table th:nth-child(5) { text-align: right; }
 .iq-bottom { display: grid; grid-template-columns: 1fr 260px; gap: 2rem; margin: 1.25rem 0; align-items: start; }
 .iq-est .iq-kv { justify-content: flex-start; }
 .iq-big { margin-top: 1rem; }
-.iq-big-num { font-size: 1.9rem; font-weight: 800; color: #2C7FF5; line-height: 1.1; }
-.iq-totals .iq-kv { padding: 0.3rem 0; border-bottom: 1px solid #E5E9F0; }
+.iq-big-num { font-size: 2.2rem; font-weight: 400; color: #2C7FF5; line-height: 1.2; }
+.iq-totals .iq-kv { padding: 0.45rem 0; }
+.iq-totals .iq-v { font-weight: 700; }
+.iq-deposit .iq-v { color: #EE1111; }
 .iq-totals .iq-k { font-weight: 700; color: #0A1F3D; font-size: 0.8rem; letter-spacing: 0.03em; }
 .iq-due { text-align: right; font-size: 0.72rem; letter-spacing: 0.06em; color: #44546A; margin-top: 0.2rem; }
-.iq-terms { margin-top: 0.5rem; }
+.iq-terms { margin-top: 0.5rem; text-align: center; }
+.iq-sheet .iq-final { font-weight: 700; text-decoration: underline; margin-bottom: 0.7rem; }
 .iq-sign { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin: 2.5rem 0 1rem; }
 .iq-line { border-top: 1px solid #0A1F3D; padding-top: 0.3rem; font-size: 0.75rem; color: #44546A; }
-.iq-sheet .iq-thanks { font-weight: 600; margin-top: 0.75rem; }
+.iq-sheet .iq-thanks { font-weight: 400; font-style: italic; text-align: center; margin-top: 0.75rem; }
 
 @media (max-width: 640px) {
   .iq-row-3, .iq-scopes, .iq-parties, .iq-facts, .iq-bottom, .iq-types { grid-template-columns: 1fr; }
@@ -132,9 +150,11 @@
   .iq-type svg { max-width: 90px; flex: none; }
   .iq-dots { font-size: 0; gap: 0.75rem; }
   .iq-dots span { font-size: 0.85rem; }
-  .iq-sheet { padding: 1.25rem 1rem; border-left-width: 8px; }
+  .iq-sheet { --iq-band: 10px; padding: 1.25rem 1rem 1.25rem calc(1rem + var(--iq-band)); }
   .iq-top { grid-template-columns: 1fr; text-align: left; }
-  .iq-brand, .iq-word { text-align: left; }
+  .iq-brand, .iq-word, .iq-to { text-align: left; }
+  .iq-facts .iq-kv { justify-content: flex-start; }
+  .iq-from .iq-kv { margin-top: 0.4rem; }
 }
 
 /* Printing: only the quote sheet goes on the page. */
@@ -144,6 +164,28 @@
   section { padding: 0 !important; }
   .container { max-width: none; padding: 0; }
   .iq-result { margin: 0; max-width: none; }
-  .iq-sheet { box-shadow: none; border-top: 0; border-right: 0; border-bottom: 0; border-radius: 0; font-size: 10.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  @page { margin: 12mm; }
+  html, body { margin: 0 !important; padding: 0 !important; }
+  main { margin: 0 !important; padding: 0 !important; }
+  /* The sheet is the whole page: no page margin, so the blue band runs edge to edge, top to bottom. */
+  .iq-sheet { --iq-band: 11mm; min-height: 100vh; box-shadow: none; border: 0; border-radius: 0; padding: 12mm 13mm 11mm calc(11mm + var(--iq-band)); font-size: 10pt; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .iq-table-wrap { overflow: visible; }
+  .iq-fill-row { flex: 1 1 0; min-height: 4.5mm; }
+  .iq-parties { line-height: 1.45; }
+  .iq-name { font-size: 15pt; }
+  .iq-table { font-size: 9pt; }
+  .iq-table td { padding: 0.38rem 0.5rem; }
+  .iq-bottom { margin: 4mm 0 3mm; }
+  .iq-totals .iq-kv { padding: 0.22rem 0; }
+  .iq-big { margin-top: 3mm; }
+  .iq-big-num { font-size: 22pt; }
+  .iq-sign { margin: 8mm 0 3mm; }
+  /* Long quotes: tighten everything so the sheet still fits one page. */
+  .iq-dense { font-size: 9pt; padding-top: 9mm; padding-bottom: 8mm; }
+  .iq-dense .iq-table { font-size: 8.5pt; }
+  .iq-dense .iq-table td { padding: 0.26rem 0.5rem; }
+  .iq-dense .iq-fill-row { min-height: 2.5mm; }
+  .iq-dense .iq-top { padding-bottom: 2mm; margin-bottom: 3mm; }
+  .iq-dense .iq-parties { line-height: 1.35; }
+  .iq-dense .iq-sign { margin-top: 6mm; }
+  @page { margin: 0; }
 }
