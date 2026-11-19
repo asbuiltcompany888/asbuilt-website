@@ -477,7 +477,7 @@
   // Everything is delivered within 3 days, except that elevations (exterior,
   // interior or both) add 5 business days once.
   function deliveryText(d) {
-    return d.scopes.extElev || d.scopes.intElev ? 'Up to 8 business days' : 'Up to 3 days';
+    return d.scopes.extElev || d.scopes.intElev ? '< 8 business days' : '< 3 days';
   }
 
   function price(d) {
@@ -525,7 +525,7 @@
     return {
       rows: rows, subtotal: subtotal, discount: discount, minAdd: minAdd, total: total,
       deposit: Math.round(total * PRICING.depositPercent) / 100,
-      measure: sqft < 30000 ? '< 1 hour' : sqft < 100000 ? 'About 3 hours' : '< 1 day',
+      measure: sqft < 10000 ? '< 1 hour' : sqft < 100000 ? 'About 3 hours' : '< 1 day',
       delivery: deliveryText(d, sqft)
     };
   }
@@ -543,6 +543,7 @@
     var exp = new Date(now.getTime() + PRICING.validDays * 86400000);
     var sheet = el('div', 'iq-sheet');
     sheet.id = 'iq-sheet';
+    if (q.rows.length > 5) sheet.className += ' iq-dense';
 
     var top = el('div', 'iq-top');
     var dates = el('div', 'iq-dates');
@@ -557,29 +558,29 @@
     sheet.appendChild(top);
 
     var parties = el('div', 'iq-parties');
-    var from = el('div');
-    from.appendChild(el('div', 'iq-h', 'Quote from'));
-    ['As-Built Company', 'Jonathan Chen', 'Lead As-Built Surveyor', '(626) 625-9247', 'jonathan@asbuiltcompany.com', 'www.asbuiltcompany.com']
+    var from = el('div', 'iq-from');
+    from.appendChild(el('div', 'iq-label', 'Quote from'));
+    from.appendChild(el('div', 'iq-name', 'As-Built Company'));
+    ['Jonathan Chen', 'Lead As-Built Surveyor', '(626) 625-9247', 'jonathan@asbuiltcompany.com', 'www.asbuiltcompany.com']
       .forEach(function (t) { from.appendChild(el('div', null, t)); });
-    var to = el('div');
-    to.appendChild(el('div', 'iq-h', 'Quote to'));
-    to.appendChild(el('div', null, d.name));
+    kv(from, 'Building', TYPE_LABEL[d.type]);
+    var to = el('div', 'iq-to');
+    to.appendChild(el('div', 'iq-label', 'Quote to'));
+    to.appendChild(el('div', 'iq-name', d.name));
     if (d.company) to.appendChild(el('div', null, d.company));
     to.appendChild(el('div', null, d.email));
     if (d.phone) to.appendChild(el('div', null, d.phone));
-    to.appendChild(el('div', 'iq-h iq-h-gap', "Project's Address"));
-    to.appendChild(el('div', null, d.street));
+    to.appendChild(el('div', 'iq-name iq-h-gap', "Project's Address"));
+    to.appendChild(el('div', null, d.street + ','));
     to.appendChild(el('div', null, d.city + ', ' + d.state + ' ' + d.zip));
+    var facts = el('div', 'iq-facts');
+    kv(facts, 'Lot Sq. Ft.', int(d.lot) + ' sq.ft.');
+    kv(facts, 'Building Sq. Ft.', int(d.building) + ' sq.ft.');
+    kv(facts, 'Garage Sq. Ft.', int(d.garage) + ' sq.ft.' + (d.spaces ? ' (' + d.spaces + (d.spaces === 1 ? ' space)' : ' spaces)') : ''));
+    to.appendChild(facts);
     parties.appendChild(from);
     parties.appendChild(to);
     sheet.appendChild(parties);
-
-    var facts = el('div', 'iq-facts');
-    kv(facts, 'Building Type:', TYPE_LABEL[d.type]);
-    kv(facts, 'Building Sq. Ft.', int(d.building) + ' sq.ft.');
-    kv(facts, 'Garage Sq. Ft.', int(d.garage) + ' sq.ft.' + (d.spaces ? ' (' + d.spaces + (d.spaces === 1 ? ' space)' : ' spaces)') : ''));
-    kv(facts, 'Lot Sq. Ft.', int(d.lot) + ' sq.ft.');
-    sheet.appendChild(facts);
 
     var wrap = el('div', 'iq-table-wrap');
     var table = el('table', 'iq-table');
@@ -597,6 +598,10 @@
     table.appendChild(tb);
     wrap.appendChild(table);
     sheet.appendChild(wrap);
+    // Blank ruled rows so the table fills the page like the paper quote form.
+    var fill = el('div', 'iq-fill');
+    for (var blank = Math.max(2, 7 - q.rows.length); blank > 0; blank--) fill.appendChild(el('div', 'iq-fill-row'));
+    sheet.appendChild(fill);
 
     var bottom = el('div', 'iq-bottom');
     var est = el('div', 'iq-est');
@@ -613,6 +618,7 @@
     if (q.minAdd) kv(totals, 'JOB MINIMUM', '+' + money(q.minAdd));
     kv(totals, 'TOTAL', money(q.total));
     kv(totals, PRICING.depositPercent + '% DEPOSIT', money(q.deposit));
+    totals.lastChild.className += ' iq-deposit';
     totals.appendChild(el('div', 'iq-due', 'DUE ON SITE'));
     bottom.appendChild(totals);
     sheet.appendChild(bottom);
@@ -620,7 +626,7 @@
     var terms = el('div', 'iq-terms');
     if (q.discount) terms.appendChild(el('p', null, 'Discount applied for ordering a floor plan and site plan together.'));
     if (q.minAdd) terms.appendChild(el('p', null, 'Every job has a ' + money(PRICING.minimumJob) + ' minimum, which has been applied to this quote.'));
-    terms.appendChild(el('p', null, 'Final price would be calculated through the completed as-built drawings total sq. ft.'));
+    terms.appendChild(el('p', 'iq-final', 'Final price would be calculated through the completed as-built drawings total sq. ft.'));
     terms.appendChild(el('p', null, 'The deposit is due on site. Payment instructions are sent with your booking confirmation.'));
     terms.appendChild(el('p', null, 'If you accept this quote, please sign and send this form to jonathan@asbuiltcompany.com'));
     sheet.appendChild(terms);
