@@ -386,6 +386,7 @@
       : [['LoopNet', g('site:loopnet.com')],
          ['Crexi', g('site:crexi.com')],
          ['PropertyShark', g('site:propertyshark.com')]];
+    links.unshift(['Google search', 'https://www.google.com/search?q=' + encodeURIComponent(a + ' sq. ft. estimate')]);
     links.push(['County assessor record', g('county assessor parcel building square feet lot size')]);
     links.forEach(function (l) {
       var li = el('li');
