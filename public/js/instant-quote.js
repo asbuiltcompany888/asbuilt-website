@@ -545,17 +545,18 @@
     sheet.id = 'iq-sheet';
     if (q.rows.length > 5) sheet.className += ' iq-dense';
 
+    // Same layout as the invoice and receipt: company name top left, red document word top right.
     var top = el('div', 'iq-top');
-    var dates = el('div', 'iq-dates');
-    kv(dates, 'Date', fmtDate(now));
-    kv(dates, 'Exp.', fmtDate(exp));
-    top.appendChild(dates);
     var brand = el('div', 'iq-brand');
     brand.appendChild(el('div', 'iq-brand-top', 'AS-BUILT'));
     brand.appendChild(el('div', 'iq-brand-bottom', 'COMPANY'));
     top.appendChild(brand);
     top.appendChild(el('div', 'iq-word', 'QUOTE'));
     sheet.appendChild(top);
+    var dates = el('div', 'iq-dates');
+    kv(dates, 'Date', fmtDate(now));
+    kv(dates, 'Exp.', fmtDate(exp));
+    sheet.appendChild(dates);
 
     var parties = el('div', 'iq-parties');
     var from = el('div', 'iq-from');
@@ -605,12 +606,12 @@
 
     var bottom = el('div', 'iq-bottom');
     var est = el('div', 'iq-est');
-    kv(est, 'Estimated time to measure:', q.measure);
-    kv(est, 'Estimated time to delivery:', q.delivery);
     var big = el('div', 'iq-big');
     big.appendChild(el('div', 'iq-h', 'QUOTE TOTAL'));
     big.appendChild(el('div', 'iq-big-num', money(q.total)));
     est.appendChild(big);
+    kv(est, 'Estimated time to measure:', q.measure);
+    kv(est, 'Estimated time to delivery:', q.delivery);
     bottom.appendChild(est);
     var totals = el('div', 'iq-totals');
     kv(totals, 'SUBTOTAL', money(q.subtotal));
@@ -628,14 +629,65 @@
     if (q.minAdd) terms.appendChild(el('p', null, 'Every job has a ' + money(PRICING.minimumJob) + ' minimum, which has been applied to this quote.'));
     terms.appendChild(el('p', 'iq-final', 'Final price would be calculated through the completed as-built drawings total sq. ft.'));
     terms.appendChild(el('p', null, 'The deposit is due on site. Payment instructions are sent with your booking confirmation.'));
-    terms.appendChild(el('p', null, 'If you accept this quote, please sign and send this form to jonathan@asbuiltcompany.com'));
+    terms.appendChild(el('p', null, 'If you accept this quote, please sign below and send this form to jonathan@asbuiltcompany.com'));
     sheet.appendChild(terms);
 
+    // Signature: a box the customer signs on screen with a finger or mouse. It prints with the sheet.
     var sign = el('div', 'iq-sign');
-    sign.appendChild(el('div', 'iq-line', 'Signature of Authorized Person'));
-    sign.appendChild(el('div', 'iq-line iq-line-short', 'Date'));
+    var sigCol = el('div', 'iq-sigcol');
+    var sigWrap = el('div', 'iq-sigwrap');
+    var pad = el('canvas', 'iq-sigpad');
+    pad.setAttribute('aria-label', 'Signature box: sign here with your finger or mouse');
+    sigWrap.appendChild(pad);
+    var hint = el('div', 'iq-sighint', 'Sign here with your finger or mouse');
+    sigWrap.appendChild(hint);
+    sigCol.appendChild(sigWrap);
+    sigCol.appendChild(el('div', 'iq-line', 'Signature of Authorized Person'));
+    var dateCol = el('div', 'iq-sigcol');
+    var dateVal = el('div', 'iq-dateval', '');
+    dateCol.appendChild(dateVal);
+    dateCol.appendChild(el('div', 'iq-line iq-line-short', 'Date'));
+    sign.appendChild(sigCol);
+    sign.appendChild(dateCol);
     sheet.appendChild(sign);
     sheet.appendChild(el('p', 'iq-thanks', d.name + ', we thank you so much for considering us for your as-built needs!'));
+
+    var ctx = null, drawing = false, signed = false, locked = false;
+    function setup() {
+      if (ctx) return;
+      var r = pad.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+      pad.width = Math.max(1, Math.round(r.width * dpr));
+      pad.height = Math.max(1, Math.round(r.height * dpr));
+      ctx = pad.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#0A1F3D';
+    }
+    function at(e) { var r = pad.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+    pad.addEventListener('pointerdown', function (e) {
+      if (locked) return;
+      e.preventDefault(); setup();
+      drawing = true;
+      try { pad.setPointerCapture(e.pointerId); } catch (err) {}
+      var p = at(e);
+      ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0] + 0.1, p[1] + 0.1); ctx.stroke();
+      if (!signed) { signed = true; hint.hidden = true; dateVal.textContent = fmtDate(new Date()); sheet.className += ' iq-signed'; }
+    });
+    pad.addEventListener('pointermove', function (e) {
+      if (!drawing) return;
+      e.preventDefault();
+      var p = at(e); ctx.lineTo(p[0], p[1]); ctx.stroke();
+    });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (n) { pad.addEventListener(n, function () { drawing = false; }); });
+    sheet.iqSign = {
+      isSigned: function () { return signed; },
+      lock: function () { locked = true; sheet.className += ' iq-sign-locked'; },
+      clear: function () {
+        if (locked) return;
+        if (ctx) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, pad.width, pad.height); ctx.restore(); }
+        signed = false; hint.hidden = false; dateVal.textContent = '';
+        sheet.className = sheet.className.replace(' iq-signed', '');
+      }
+    };
     return sheet;
   }
 
@@ -688,19 +740,27 @@
     return 'ABQ1:' + (b64.match(/.{1,64}/g) || []).join('\n') + ':END';
   }
 
-  function send(d, q, reason) {
+  /* signedAt: set when the customer has signed the quote on screen and is sending their acceptance. */
+  function send(d, q, reason, signedAt) {
     var key = val('access_key');
     if (!key) return Promise.resolve(false);
     if (form.elements['botcheck'].checked) return Promise.resolve(false);
+    var subject = (q ? 'Instant quote ' + money(q.total) : 'Custom quote request') + ' - ' + d.street + ', ' + d.city;
+    var message = summaryText(d, q, reason);
+    if (signedAt) {
+      subject = 'QUOTE ACCEPTED AND SIGNED ' + money(q.total) + ' - ' + d.street + ', ' + d.city;
+      message = 'QUOTE ACCEPTED. ' + d.name + ' signed this quote on screen on ' + signedAt + '.\n' +
+        'The drawn signature is on the customer\'s copy of the quote; it cannot be attached to this email.\n\n' + message;
+    }
     return fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
         access_key: key,
-        subject: (q ? 'Instant quote ' + money(q.total) : 'Custom quote request') + ' - ' + d.street + ', ' + d.city,
+        subject: subject,
         from_name: 'As-Built Company Website',
         name: d.name, email: d.email, phone: d.phone, company: d.company,
-        message: summaryText(d, q, reason)
+        message: message
       })
     }).then(function (r) { return r.ok; }).catch(function () { return false; });
   }
@@ -733,7 +793,43 @@
     if (q) {
       out.appendChild(el('h2', 'iq-result-title', 'Your quote'));
       out.appendChild(bar);
-      out.appendChild(renderQuote(d, q));
+      var sheetEl = renderQuote(d, q);
+      out.appendChild(sheetEl);
+      // Accept the quote: sign in the box on the sheet, then send.
+      var accept = el('div', 'iq-accept iq-no-print');
+      accept.appendChild(el('div', 'iq-accept-title', 'Ready to go ahead?'));
+      accept.appendChild(el('p', null, 'Sign in the box on the quote with your finger or mouse, then send it to us. You can still print or save a signed copy for yourself.'));
+      var abar = el('div', 'iq-actions');
+      var sendBtn = el('button', 'btn', 'Send signed quote');
+      sendBtn.type = 'button';
+      var clearBtn = el('button', 'btn btn-secondary', 'Clear signature');
+      clearBtn.type = 'button';
+      abar.appendChild(sendBtn);
+      abar.appendChild(clearBtn);
+      accept.appendChild(abar);
+      var astatus = el('p', 'iq-accept-status', '');
+      astatus.setAttribute('role', 'status');
+      accept.appendChild(astatus);
+      out.appendChild(accept);
+      clearBtn.addEventListener('click', function () { sheetEl.iqSign.clear(); astatus.textContent = ''; });
+      sendBtn.addEventListener('click', function () {
+        if (!sheetEl.iqSign.isSigned()) {
+          astatus.textContent = 'Please sign in the box on the quote first.';
+          sheetEl.querySelector('.iq-sign').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        sendBtn.disabled = true; clearBtn.disabled = true;
+        astatus.textContent = 'Sending your signed quote…';
+        send(d, q, null, new Date().toLocaleString('en-US')).then(function (ok) {
+          if (ok) {
+            sheetEl.iqSign.lock();
+            astatus.textContent = 'Thank you, ' + d.name + '. Your signed quote has been sent. We’ll contact you to schedule the site visit. Use “Download / print PDF” to keep your signed copy.';
+          } else {
+            sendBtn.disabled = false; clearBtn.disabled = false;
+            astatus.textContent = 'We couldn’t send it automatically. Please use “Download / print PDF” and email the signed quote to jonathan@asbuiltcompany.com.';
+          }
+        });
+      });
     } else {
       var note = el('div', 'callout');
       note.appendChild(el('div', 'callout-title', 'This one needs a custom quote'));
