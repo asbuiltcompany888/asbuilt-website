@@ -663,7 +663,29 @@
       }).join(', '));
     }
     if (d.notes) { L.push(''); L.push('Notes: ' + d.notes); }
+    if (q) {
+      L.push('');
+      L.push('Job code (paste this whole email into the job ledger to add the quote):');
+      L.push(jobCode(d, q));
+    }
     return L.join('\n');
+  }
+
+  /* The quote packed into one line of text, so the private job ledger can read it back
+     from a pasted email. The ledger looks for "ABQ1:" ... ":END" and ignores line breaks. */
+  function jobCode(d, q) {
+    var o = {
+      v: 1, d: new Date().toISOString().slice(0, 10),
+      n: d.name, e: d.email, p: d.phone, c: d.company,
+      st: d.street, ci: d.city, s: d.state, z: d.zip, tl: TYPE_LABEL[d.type],
+      lot: d.lot, b: d.building, g: d.garage,
+      r: q.rows.map(function (r) { return [r.desc, r.base, r.rate, r.qty, r.extra, r.amount]; }),
+      disc: q.discount || 0, min: q.minAdd || 0, tot: q.total
+    };
+    var b64;
+    try { b64 = btoa(unescape(encodeURIComponent(JSON.stringify(o)))); } catch (e) { return ''; }
+    b64 = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return 'ABQ1:' + (b64.match(/.{1,64}/g) || []).join('\n') + ':END';
   }
 
   function send(d, q, reason) {
