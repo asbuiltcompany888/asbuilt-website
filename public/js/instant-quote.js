@@ -32,7 +32,7 @@
     garageSqFtPerSpace: 225,    // residential only: each garage parking space adds this many sq ft
     minimumJob: 750,            // every job costs at least this; the quote is the higher of this and the items' total
     bundleDiscount: 100,        // $ off when Floor Plan and Site Plan are ordered together
-    depositPercent: 20,        // deposit due on site
+    depositPercent: 20,        // deposit due before the project starts (Jonathan, 2026-11-22; was "on site")
     validDays: 7,               // quote expiry
     instantStates: ['CA'],      // other states get a custom quote instead of an instant price
     maxInstantSqFt: 50000       // larger buildings get a custom quote
@@ -623,7 +623,7 @@
     kv(totals, 'TOTAL', money(q.total));
     kv(totals, PRICING.depositPercent + '% DEPOSIT', money(q.deposit));
     totals.lastChild.className += ' iq-deposit';
-    totals.appendChild(el('div', 'iq-due', 'DUE ON SITE'));
+    totals.appendChild(el('div', 'iq-due', 'DUE BEFORE THE PROJECT STARTS'));
     bottom.appendChild(totals);
     sheet.appendChild(bottom);
 
@@ -631,7 +631,7 @@
     if (q.discount) terms.appendChild(el('p', null, 'Discount applied for ordering a floor plan and site plan together.'));
     if (q.minAdd) terms.appendChild(el('p', null, 'Every job has a ' + money(PRICING.minimumJob) + ' minimum, which has been applied to this quote.'));
     terms.appendChild(el('p', 'iq-final', 'Final price would be calculated through the completed as-built drawings total sq. ft.'));
-    terms.appendChild(el('p', null, 'The deposit is due on site. Payment instructions are sent with your booking confirmation.'));
+    terms.appendChild(el('p', null, 'The deposit is due now, before the project starts. Payment instructions are sent as soon as you accept this quote.'));
     terms.appendChild(el('p', null, 'If you accept this quote, please sign below and send this form to jonathan@asbuiltcompany.com'));
     sheet.appendChild(terms);
 
@@ -710,7 +710,7 @@
       L.push('Subtotal: ' + money(q.subtotal));
       if (q.discount) L.push('Discount: ' + money(-q.discount));
       if (q.minAdd) L.push('Job minimum adjustment: +' + money(q.minAdd));
-      L.push('TOTAL QUOTED ON SITE: ' + money(q.total) + '  (deposit ' + money(q.deposit) + ')');
+      L.push('TOTAL QUOTED ON SITE: ' + money(q.total) + '  (deposit ' + money(q.deposit) + ', due before the project starts)');
     } else {
       L.push('NO INSTANT PRICE SHOWN. Reason: ' + reason + '.');
       L.push('Requested: ' + Object.keys(d.scopes).map(function (k) {
