@@ -525,7 +525,10 @@
     return {
       rows: rows, subtotal: subtotal, discount: discount, minAdd: minAdd, total: total,
       deposit: Math.round(total * PRICING.depositPercent) / 100,
-      measure: sqft < 10000 ? '< 1 hour' : sqft < 100000 ? 'About 3 hours' : '< 1 day',
+      // Electrical adds at least an hour on site (Jonathan, 2026-11-22).
+      measure: d.scopes.electrical
+        ? (sqft < 10000 ? 'About 2 hours' : sqft < 100000 ? 'About 4 hours' : '< 1 day')
+        : (sqft < 10000 ? '< 1 hour' : sqft < 100000 ? 'About 3 hours' : '< 1 day'),
       delivery: deliveryText(d, sqft)
     };
   }
