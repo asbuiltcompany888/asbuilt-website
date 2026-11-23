@@ -141,7 +141,7 @@
 .iq-totals .iq-k { color: #0A1F3D; font-size: 0.82rem; }
 .iq-totals .iq-v { font-weight: 400; }
 .iq-totals .iq-deposit .iq-k, .iq-totals .iq-deposit .iq-v { color: #EE1111; font-weight: 700; }
-.iq-due { text-align: right; font-size: 0.7rem; letter-spacing: 0.06em; color: #6B7A90; margin-top: 0.3rem; padding-right: 0.45rem; }
+.iq-due { text-align: right; white-space: nowrap; font-size: 0.7rem; letter-spacing: 0.04em; color: #6B7A90; margin-top: 0.3rem; padding-right: 0.45rem; }
 .iq-terms { margin-top: 0.5rem; text-align: center; }
 .iq-sheet .iq-final { font-weight: 700; text-decoration: underline; margin-bottom: 0.5rem; }
 .iq-sign { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: end; margin: 1.5rem 0 1rem; }
