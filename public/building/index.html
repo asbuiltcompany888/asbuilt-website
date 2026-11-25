@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Customer's Building | As-Built Company</title>
+<style>
+  :root { --navy: #0A1F3D; --blue: #2C7FF5; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: #F5F8FC; color: var(--navy); }
+  main { max-width: 900px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.25rem; margin: 0.5rem 0 0.25rem; }
+  p { margin: 0.25rem 0 0.75rem; color: #3a4a63; font-size: 0.95rem; }
+  .frame { position: relative; width: 100%; aspect-ratio: 640 / 400; background: #dfe6ef; border-radius: 10px; overflow: hidden; }
+  .frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .dot { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%;
+         background: #E0262B; border: 3px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,.35); }
+  .zoom { position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .zoom button { width: 40px; height: 40px; font-size: 1.4rem; border: 0; border-radius: 8px; background: #fff; color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,.3); cursor: pointer; }
+  .links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+  .links a { color: #fff; background: var(--blue); text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; }
+  .err { display: none; padding: 16px; background: #fff; border-radius: 10px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>The customer's building</h1>
+  <p id="note">The red dot is where the customer marked their building on the quote page.</p>
+  <div class="frame" id="frame">
+    <img id="img" alt="Aerial photo of the customer's building">
+    <div class="dot" aria-hidden="true"></div>
+    <div class="zoom">
+      <button type="button" id="zin" aria-label="Zoom in">+</button>
+      <button type="button" id="zout" aria-label="Zoom out">&minus;</button>
+    </div>
+  </div>
+  <div class="links"><a id="gmap" href="#" target="_blank" rel="noopener">Open in Google Maps</a></div>
+  <div class="err" id="err">This link is missing the building's location.</div>
+</main>
+<script>
+(function () {
+  // Link format: /building/#<lat>,<lon>,<width in metres>,<m = customer moved the dot | a = dot left on the address>
+  var p = location.hash.replace(/^#/, '').split(',');
+  var lat = parseFloat(p[0]), lon = parseFloat(p[1]), width = parseFloat(p[2]) || 170;
+  if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) {
+    document.getElementById('frame').style.display = 'none';
+    document.querySelector('.links').style.display = 'none';
+    document.getElementById('err').style.display = 'block';
+    return;
+  }
+  if (p[3] === 'a') document.getElementById('note').textContent =
+    'The customer left the dot on their address, so the red dot is the geocoded address, not a building they picked.';
+  var W = 640, H = 400;
+  function load() {
+    var hM = width * H / W;
+    var dLon = (width / 2) / (111320 * Math.cos(lat * Math.PI / 180)), dLat = (hM / 2) / 110540;
+    document.getElementById('img').src = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export' +
+      '?f=image&format=jpg&bboxSR=4326&imageSR=4326&size=' + W + ',' + H +
+      '&bbox=' + [lon - dLon, lat - dLat, lon + dLon, lat + dLat].join(',');
+  }
+  document.getElementById('zin').onclick = function () { width = Math.max(40, width / 2); load(); };
+  document.getElementById('zout').onclick = function () { width = Math.min(3000, width * 2); load(); };
+  document.getElementById('gmap').href = 'https://www.google.com/maps?q=' + lat + ',' + lon;
+  load();
+})();
+</script>
+</body>
+</html>
