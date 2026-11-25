@@ -210,10 +210,11 @@
   var box = null;
   var zoom = 1;            // aerial zoom-out factor (1 = closest)
   var SVGNS = 'http://www.w3.org/2000/svg';
+  var pick = null;         // where the customer moved the dot to mark their building
 
   function loadAerial(keep) {
     if (!geo) return;
-    var widthM = (form.elements['btype'].value === 'res' ? 110 : 240) * zoom;
+    var widthM = (form.elements['btype'].value === 'res' ? 170 : 360) * zoom;
     var heightM = widthM * IMG_H / IMG_W;
     var dLon = (widthM / 2) / (111320 * Math.cos(geo.lat * Math.PI / 180));
     var dLat = (heightM / 2) / 110540;
@@ -224,10 +225,9 @@
     aerial.hidden = false;
     if (keep === true) { drawOverlay(footprint ? footprint.ring : null); return; }
     footprint = null;
+    pick = null;
     drawOverlay(null);
-    aerialNote.textContent = 'Looking for your building…';
-    renderFootprint();
-    traceBuilding(geo, 40, false);
+    aerialNote.textContent = 'The dot marks your address. Wrong building? Tap yours to move the dot.';
   }
   function toXY(lon, lat) {
     return [(lon - box.w) / (box.e - box.w) * IMG_W, (box.n - lat) / (box.n - box.s) * IMG_H];
@@ -240,83 +240,16 @@
       poly.setAttribute('class', 'iq-outline');
       aerialSvg.appendChild(poly);
     } else {
-      var c = toXY(geo.lon, geo.lat);
+      var at = pick || geo;
+      var c = toXY(at.lon, at.lat);
       var pin = document.createElementNS(SVGNS, 'circle');
       pin.setAttribute('cx', c[0]); pin.setAttribute('cy', c[1]); pin.setAttribute('r', 9);
       pin.setAttribute('class', 'iq-pin');
       aerialSvg.appendChild(pin);
     }
   }
-  function ringAreaSqFt(ring) {
-    var lat0 = ring[0].lat, lon0 = ring[0].lon, k = Math.cos(lat0 * Math.PI / 180), a = 0;
-    for (var i = 0; i < ring.length; i++) {
-      var p = ring[i], q = ring[(i + 1) % ring.length];
-      var x1 = (p.lon - lon0) * 111320 * k, y1 = (p.lat - lat0) * 110540;
-      var x2 = (q.lon - lon0) * 111320 * k, y2 = (q.lat - lat0) * 110540;
-      a += x1 * y2 - x2 * y1;
-    }
-    return Math.abs(a) / 2 * 10.7639;
-  }
-  function contains(ring, lon, lat) {
-    var inside = false;
-    for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      var a = ring[i], b = ring[j];
-      if ((a.lat > lat) !== (b.lat > lat) && lon < (b.lon - a.lon) * (lat - a.lat) / (b.lat - a.lat) + a.lon) inside = !inside;
-    }
-    return inside;
-  }
-  // Find the building outline nearest to a point. `picked` is true when the customer tapped the photo.
-  function traceBuilding(pt, radiusM, picked) {
-    var at = geo;
-    var ctl = new AbortController();
-    var t = setTimeout(function () { ctl.abort(); }, 10000);
-    var url = GEO.structures + '?f=json&geometryType=esriGeometryPoint&inSR=4326&outSR=4326&spatialRel=esriSpatialRelIntersects' +
-      '&units=esriSRUnit_Meter&outFields=SQFEET&returnGeometry=true&resultRecordCount=25&distance=' + radiusM +
-      '&geometry=' + pt.lon + ',' + pt.lat;
-    fetch(url, { signal: ctl.signal })
-      .then(function (r) { clearTimeout(t); if (!r.ok) throw new Error('lookup failed'); return r.json(); })
-      .then(function (j) {
-        if (at !== geo) return;
-        if (j.error) throw new Error('lookup failed');
-        var best = null, bestD = Infinity, bestSqFt = 0;
-        (j.features || []).forEach(function (f) {
-          // Use the largest ring of each building (its outer wall line).
-          var ring = null, big = 0;
-          ((f.geometry && f.geometry.rings) || []).forEach(function (r) {
-            if (r.length < 4) return;
-            var g = r.map(function (c) { return { lon: c[0], lat: c[1] }; });
-            var area = ringAreaSqFt(g);
-            if (area > big) { big = area; ring = g; }
-          });
-          if (!ring) return;
-          var cx = 0, cy = 0;
-          ring.forEach(function (c) { cx += c.lon; cy += c.lat; });
-          cx /= ring.length; cy /= ring.length;
-          var d = contains(ring, pt.lon, pt.lat) ? -1 : Math.pow((cx - pt.lon) * Math.cos(pt.lat * Math.PI / 180), 2) + Math.pow(cy - pt.lat, 2);
-          if (d < bestD) { bestD = d; best = ring; bestSqFt = big; }
-        });
-        if (best) {
-          footprint = { ring: best, sqft: Math.round(bestSqFt / 10) * 10 };
-          drawOverlay(best);
-          aerialNote.textContent = (picked ? 'Got it. This' : 'Is this your building? Its') + ' roof outline covers about ' + int(footprint.sqft) +
-            ' sq. ft. Wrong building? Tap yours on the photo.';
-          if (picked) { help.hidden = false; renderLookupLinks(); }
-        } else if (picked) {
-          aerialNote.textContent = 'We couldn’t find a building outline there. Tap the middle of the roof, or zoom out if your building isn’t in view.';
-        } else {
-          aerialNote.textContent = 'Tap your building on the photo and we’ll measure its roof. Zoom out if it isn’t in view.';
-        }
-        renderFootprint();
-      })
-      .catch(function () {
-        clearTimeout(t);
-        if (at !== geo) return;
-        aerialNote.textContent = 'Here’s the aerial view of your address.';
-        renderFootprint();
-      });
-  }
-
-  // Tap the photo to pick a building; zoom buttons for large or rural lots.
+  // Zoom buttons for large or rural lots. Tapping the photo moves the dot onto the right building;
+  // nothing is measured from it (the roof outline estimate was removed, Jonathan 2026-11-24).
   var frame = aerialImg.parentNode;
   var zoomBox = el('div');
   zoomBox.className = 'iq-zoom';
@@ -336,46 +269,23 @@
     if (!box || !geo) return;
     var r = frame.getBoundingClientRect();
     var fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
-    aerialNote.textContent = 'Measuring that roof…';
-    traceBuilding({ lon: box.w + fx * (box.e - box.w), lat: box.n - fy * (box.n - box.s) }, 10, true);
+    pick = { lon: box.w + fx * (box.e - box.w), lat: box.n - fy * (box.n - box.s) };
+    drawOverlay(null);
+    aerialNote.textContent = 'Got it. The dot now marks your building.';
   });
 
   /* ---------- step 2: "I don't know the square footage" ---------- */
   var help = byId('iq-sqft-help');
   byId('iq-sqft-unknown').addEventListener('click', function () {
     help.hidden = !help.hidden;
-    if (!help.hidden) { renderFootprint(); renderLookupLinks(); }
+    if (!help.hidden) renderLookupLinks();
   });
-  var floors = byId('iq-floors');
-  floors.addEventListener('input', renderFootprint);
-  function estimate() {
-    var f = Math.max(1, Math.round(parseFloat(floors.value) || 1));
-    return footprint ? Math.round(footprint.sqft * f / 10) * 10 : 0;
-  }
-  function renderFootprint() {
-    var has = !!footprint;
-    byId('iq-est-yes').hidden = !has;
-    byId('iq-est-no').hidden = has;
-    if (!has) {
-      byId('iq-est-no').textContent = geo
-        ? 'Tap your building on the aerial photo above and we’ll measure its roof outline.'
-        : 'Pick your address above and we’ll measure the roof outline from the aerial view.';
-      return;
-    }
-    byId('iq-est-text').textContent = 'Roof outline ' + int(footprint.sqft) + ' sq. ft. × floors = about ' + int(estimate()) + ' sq. ft.';
-    byId('iq-est-use').textContent = 'Use ' + int(estimate()) + ' sq. ft.';
-  }
-  byId('iq-est-use').addEventListener('click', function () {
-    form.elements['building'].value = estimate();
-    stepError(2, '');
-    form.elements['building'].focus();
-  });
-
   function renderLookupLinks() {
     var ul = byId('iq-lookup');
     ul.textContent = '';
     var ok = val('street') && val('city');
     byId('iq-lookup-wrap').hidden = !ok;
+    byId('iq-lookup-empty').hidden = !!ok;
     if (!ok) return;
     var a = fullAddress(), t = form.elements['btype'].value;
     var g = function (site) { return 'https://www.google.com/search?q=' + encodeURIComponent(val('street') + ' ' + val('city') + ' ' + val('state') + ' ' + val('zip') + ' ' + site); };
@@ -546,7 +456,7 @@
     var exp = new Date(now.getTime() + PRICING.validDays * 86400000);
     var sheet = el('div', 'iq-sheet');
     sheet.id = 'iq-sheet';
-    if (q.rows.length > 5) sheet.className += ' iq-dense';
+    if (q.rows.length > 4) sheet.className += ' iq-dense';
 
     // Same layout as the invoice and receipt: company name top left, red document word top right.
     var top = el('div', 'iq-top');
@@ -700,7 +610,7 @@
     L.push('Project: ' + d.street + ', ' + d.city + ', ' + d.state + ' ' + d.zip);
     L.push('Building type: ' + TYPE_LABEL[d.type]);
     L.push('Building ' + int(d.building) + ' sq ft, garage ' + int(d.garage) + ' sq ft (' + d.spaces + ' spaces), lot ' + int(d.lot) + ' sq ft');
-    if (footprint) L.push('Roof outline traced from aerial: ' + int(footprint.sqft) + ' sq ft');
+    if (pick) L.push('Customer marked their building on the photo: https://www.google.com/maps?q=' + pick.lat.toFixed(6) + ',' + pick.lon.toFixed(6));
     if (d.multi) L.push('More than one building on site: yes');
     L.push('');
     if (q) {
