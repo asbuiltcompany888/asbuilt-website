@@ -49,6 +49,10 @@
     structures: 'https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query'
   };
 
+  /* Emails the customer a copy of their quote with a link to open and sign it.
+   * Uses EmailJS (emailjs.com) connected to the business Gmail. Leave any ID blank to switch this off. */
+  var EMAILJS = { publicKey: 'hMbOCVd9AfP8-QQv7', serviceId: 'service_d2kbywg', templateId: 'template_3k6v99g', from: 'hello@asbuiltcompany.com' };
+
   var ORDER = ['floorPlan', 'sitePlan', 'roofPlan', 'extElev', 'intElev', 'sections', 'rcp', 'electrical', 'mep', 'heights', 'video360'];
   var TYPE_LABEL = { res: 'Residential', com: 'Commercial', ind: 'Industrial' };
   var IMG_W = 640, IMG_H = 400;
@@ -451,8 +455,8 @@
     parent.appendChild(r);
   }
 
-  function renderQuote(d, q) {
-    var now = new Date();
+  function renderQuote(d, q, when) {
+    var now = when ? new Date(when) : new Date();
     var exp = new Date(now.getTime() + PRICING.validDays * 86400000);
     var sheet = el('div', 'iq-sheet');
     sheet.id = 'iq-sheet';
@@ -653,13 +657,64 @@
     return 'ABQ1:' + (b64.match(/.{1,64}/g) || []).join('\n') + ':END';
   }
 
+  /* The whole quote packed into a link, so the customer can reopen it later and sign it.
+     It rides in the part of the address after "#", which browsers never send to a server. */
+  function packQuote(d, q) {
+    var dd = {};
+    Object.keys(d).forEach(function (k) { if (k !== 'notes') dd[k] = d[k]; });
+    var o = { v: 1, t: Date.now(), d: dd, q: { rows: q.rows, subtotal: q.subtotal, discount: q.discount, minAdd: q.minAdd,
+      total: q.total, deposit: q.deposit, measure: q.measure, delivery: q.delivery } };
+    try {
+      return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    } catch (e) { return ''; }
+  }
+  function unpackQuote(code) {
+    try {
+      var b = code.replace(/-/g, '+').replace(/_/g, '/');
+      while (b.length % 4) b += '=';
+      var o = JSON.parse(decodeURIComponent(escape(atob(b))));
+      return o && o.v === 1 && o.t && o.d && o.d.name && o.q && o.q.rows && o.q.rows.length ? o : null;
+    } catch (e) { return null; }
+  }
+  function quoteLink(d, q) {
+    var c = packQuote(d, q);
+    return c ? location.origin + '/quote/#q=' + c : '';
+  }
+
+  /* Email the customer their quote and the link to sign it. Resolves true only when it was sent. */
+  function emailCustomer(d, q, link) {
+    if (!EMAILJS.publicKey || !EMAILJS.serviceId || !EMAILJS.templateId || !link) return Promise.resolve(false);
+    // Only the live site sends real email; local test copies never do.
+    if (!/(^|\.)asbuiltcompany\.com$/.test(location.hostname)) return Promise.resolve(false);
+    if (form.elements['botcheck'].checked) return Promise.resolve(false);
+    var lines = q.rows.map(function (r) { return r.desc + ': ' + money(r.amount); });
+    if (q.discount) lines.push('Discount: ' + money(-q.discount));
+    if (q.minAdd) lines.push('Job minimum adjustment: +' + money(q.minAdd));
+    return fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: EMAILJS.serviceId, template_id: EMAILJS.templateId, user_id: EMAILJS.publicKey,
+        template_params: {
+          to_email: d.email, to_name: d.name, from_email: EMAILJS.from, reply_to: EMAILJS.from,
+          address: d.street + ', ' + d.city + ', ' + d.state + ' ' + d.zip,
+          items: lines.join('\n'), total: money(q.total), deposit: money(q.deposit),
+          measure: q.measure, delivery: q.delivery,
+          expires: fmtDate(new Date(Date.now() + PRICING.validDays * 86400000)),
+          quote_link: link
+        }
+      })
+    }).then(function (r) { return r.ok; }).catch(function () { return false; });
+  }
+
   /* signedAt: set when the customer has signed the quote on screen and is sending their acceptance. */
-  function send(d, q, reason, signedAt) {
+  function send(d, q, reason, signedAt, link) {
     var key = val('access_key');
     if (!key) return Promise.resolve(false);
     if (form.elements['botcheck'].checked) return Promise.resolve(false);
     var subject = (q ? 'Instant quote ' + money(q.total) : 'Custom quote request') + ' - ' + d.street + ', ' + d.city;
     var message = summaryText(d, q, reason);
+    if (link) message += '\n\nCustomer link to open and sign this quote:\n' + link;
     if (signedAt) {
       subject = 'QUOTE ACCEPTED AND SIGNED ' + money(q.total) + ' - ' + d.street + ', ' + d.city;
       message = 'QUOTE ACCEPTED. ' + d.name + ' signed this quote on screen on ' + signedAt + '.\n' +
@@ -689,6 +744,21 @@
 
     var reason = customReason(d);
     var q = reason ? null : price(d);
+    var link = q ? quoteLink(d, q) : '';
+    var status = present(d, q, reason);
+    send(d, q, reason, null, link).then(function (ok) {
+      status.textContent = ok
+        ? 'A copy of this request has been sent to our team. We’ll follow up to schedule your site visit.'
+        : 'We couldn’t send your request automatically. Please email this quote to hello@asbuiltcompany.com or call (626) 625-9247.';
+      if (!q) return;
+      emailCustomer(d, q, link).then(function (sent) {
+        if (sent) status.textContent += ' We also emailed this quote to ' + d.email + ' with a link to sign it later.';
+      });
+    });
+  });
+
+  /* Draw the result screen. `when` is set when a quote is reopened from its emailed link. */
+  function present(d, q, reason, when) {
     out.textContent = '';
 
     var bar = el('div', 'iq-actions');
@@ -698,15 +768,18 @@
       print.addEventListener('click', function () { window.print(); });
       bar.appendChild(print);
     }
-    var again = el('button', 'btn btn-secondary', 'Change details');
+    var again = el('button', 'btn btn-secondary', when ? 'Start a new quote' : 'Change details');
     again.type = 'button';
-    again.addEventListener('click', function () { out.hidden = true; wizard.hidden = false; show(3); });
+    again.addEventListener('click', function () {
+      if (when) { history.replaceState(null, '', location.pathname); location.reload(); return; }
+      out.hidden = true; wizard.hidden = false; show(3);
+    });
     bar.appendChild(again);
 
     if (q) {
       out.appendChild(el('h2', 'iq-result-title', 'Your quote'));
       out.appendChild(bar);
-      var sheetEl = renderQuote(d, q);
+      var sheetEl = renderQuote(d, q, when);
       out.appendChild(sheetEl);
       // Accept the quote: sign in the box on the sheet, then send.
       var accept = el('div', 'iq-accept iq-no-print');
@@ -750,18 +823,29 @@
       out.appendChild(note);
       out.appendChild(bar);
     }
-    var status = el('p', 'iq-status', 'Sending a copy to our team…');
+    var status = el('p', 'iq-status', when ? '' : 'Sending a copy to our team…');
     out.appendChild(status);
     wizard.hidden = true;
     out.hidden = false;
-    out.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    send(d, q, reason).then(function (ok) {
-      status.textContent = ok
-        ? 'A copy of this request has been sent to our team. We’ll follow up to schedule your site visit.'
-        : 'We couldn’t send your request automatically. Please email this quote to hello@asbuiltcompany.com or call (626) 625-9247.';
-    });
-  });
+    out.scrollIntoView({ behavior: when ? 'auto' : 'smooth', block: 'start' });
+    return status;
+  }
 
   show(1, true);
+
+  // Opened from the link in the customer's quote email: show that quote again so it can be signed.
+  (function () {
+    var m = /^#q=([A-Za-z0-9_-]+)$/.exec(location.hash);
+    var saved = m ? unpackQuote(m[1]) : null;
+    if (!saved) return;
+    var expires = saved.t + PRICING.validDays * 86400000;
+    if (Date.now() > expires) {
+      var gone = el('div', 'callout');
+      gone.appendChild(el('div', 'callout-title', 'This quote has expired'));
+      gone.appendChild(el('p', null, 'It was valid until ' + fmtDate(new Date(expires)) + '. Fill in the steps below for a new quote, or call (626) 625-9247.'));
+      wizard.parentNode.insertBefore(gone, wizard);
+      return;
+    }
+    present(saved.d, saved.q, '', saved.t);
+  })();
 })();
