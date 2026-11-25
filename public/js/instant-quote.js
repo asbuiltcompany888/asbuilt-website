@@ -210,7 +210,7 @@
   var box = null;
   var zoom = 1;            // aerial zoom-out factor (1 = closest)
   var SVGNS = 'http://www.w3.org/2000/svg';
-  var pick = null;         // where the customer moved the dot to mark their building
+  var marked = null;       // where the customer moved the dot to mark their building
 
   function loadAerial(keep) {
     if (!geo) return;
@@ -225,7 +225,7 @@
     aerial.hidden = false;
     if (keep === true) { drawOverlay(footprint ? footprint.ring : null); return; }
     footprint = null;
-    pick = null;
+    marked = null;
     drawOverlay(null);
     aerialNote.textContent = 'The dot marks your address. Wrong building? Tap yours to move the dot.';
   }
@@ -240,7 +240,7 @@
       poly.setAttribute('class', 'iq-outline');
       aerialSvg.appendChild(poly);
     } else {
-      var at = pick || geo;
+      var at = marked || geo;
       var c = toXY(at.lon, at.lat);
       var pin = document.createElementNS(SVGNS, 'circle');
       pin.setAttribute('cx', c[0]); pin.setAttribute('cy', c[1]); pin.setAttribute('r', 9);
@@ -269,7 +269,7 @@
     if (!box || !geo) return;
     var r = frame.getBoundingClientRect();
     var fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
-    pick = { lon: box.w + fx * (box.e - box.w), lat: box.n - fy * (box.n - box.s) };
+    marked = { lon: box.w + fx * (box.e - box.w), lat: box.n - fy * (box.n - box.s) };
     drawOverlay(null);
     aerialNote.textContent = 'Got it. The dot now marks your building.';
   });
@@ -610,7 +610,7 @@
     L.push('Project: ' + d.street + ', ' + d.city + ', ' + d.state + ' ' + d.zip);
     L.push('Building type: ' + TYPE_LABEL[d.type]);
     L.push('Building ' + int(d.building) + ' sq ft, garage ' + int(d.garage) + ' sq ft (' + d.spaces + ' spaces), lot ' + int(d.lot) + ' sq ft');
-    if (pick) L.push('Customer marked their building on the photo: https://www.google.com/maps?q=' + pick.lat.toFixed(6) + ',' + pick.lon.toFixed(6));
+    if (marked) L.push('Customer marked their building on the photo: https://www.google.com/maps?q=' + marked.lat.toFixed(6) + ',' + marked.lon.toFixed(6));
     if (d.multi) L.push('More than one building on site: yes');
     L.push('');
     if (q) {
