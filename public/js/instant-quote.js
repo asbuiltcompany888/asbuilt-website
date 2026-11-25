@@ -373,6 +373,10 @@
       multi: form.elements['multi'].checked, notes: val('notes'), scopes: {}
     };
     d.garage = d.spaces * PRICING.garageSqFtPerSpace;
+    // Where the dot is (moved by the customer, or still on the address). Rides in the signing link too,
+    // so the "quote accepted" email can show the same building photo.
+    var at = marked || geo;
+    if (at) { d.spot = { lat: +at.lat.toFixed(6), lon: +at.lon.toFixed(6) }; d.marked = !!marked; }
     ORDER.forEach(function (k) {
       if (form.elements['scope_' + k].checked) {
         d.scopes[k] = PRICING[k].perView ? Math.max(1, Math.round(num('count_' + k)) || 1) : true;
@@ -632,13 +636,25 @@
   }
 
   /* ---------- email a copy to the team ---------- */
+  // A link to /building/ (public/building/index.html): the same aerial photo the customer saw,
+  // centred on their building with the red dot on it. The location rides after "#".
+  function buildingPhoto(d) {
+    return location.origin + '/building/#' + d.spot.lat + ',' + d.spot.lon + ',' +
+      (d.type === 'res' ? 170 : 360) + ',' + (d.marked ? 'm' : 'a');
+  }
   function summaryText(d, q, reason) {
     var L = [];
     L.push('Quote number: #' + quoteNumber(d));
     L.push('Project: ' + d.street + ', ' + d.city + ', ' + d.state + ' ' + d.zip);
     L.push('Building type: ' + TYPE_LABEL[d.type]);
     L.push('Building ' + int(d.building) + ' sq ft, garage ' + int(d.garage) + ' sq ft (' + d.spaces + ' spaces), lot ' + int(d.lot) + ' sq ft');
-    if (marked) L.push('Customer marked their building on the photo: https://www.google.com/maps?q=' + marked.lat.toFixed(6) + ',' + marked.lon.toFixed(6));
+    if (d.spot) {
+      L.push('');
+      L.push(d.marked ? 'The customer tapped the photo to mark their building (red dot):'
+                      : 'The customer left the dot on the address (red dot):');
+      L.push('Photo: ' + buildingPhoto(d));
+      L.push('Google Maps: https://www.google.com/maps?q=' + d.spot.lat + ',' + d.spot.lon);
+    }
     if (d.multi) L.push('More than one building on site: yes');
     L.push('');
     if (q) {
