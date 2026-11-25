@@ -447,6 +447,26 @@
     };
   }
 
+  /* Quote number (Jonathan, 2026-11-24): first letter of the building type, the street number,
+     the suite or unit number if there is one, the first letter of each word of the street name
+     (the ending such as St or Ave is left out), the first letter of each word of the city, then the state.
+     Residential at 1361 La Mirada St, Laguna Beach, CA is R1361LMLBCA. */
+  var STREET_ENDINGS = /^(st|street|ave|av|avenue|blvd|boulevard|dr|drive|rd|road|ln|lane|ct|court|pl|place|way|cir|circle|ter|terrace|pkwy|parkway|hwy|highway|trl|trail|sq|square|loop|aly|alley|plz|plaza|cres|crescent|row|run|path|pass|walk)$/i;
+  function initials(words) {
+    return words.map(function (w) { return (/[a-z0-9]/i.exec(w) || [''])[0]; }).join('');
+  }
+  function quoteNumber(d) {
+    var street = String(d.street || '').trim();
+    var unit = '';
+    var m = /(?:#|\b(?:suite|ste|unit|apt|apartment|bldg|building|rm|room|no)\b\.?)\s*#?\s*([a-z0-9][a-z0-9-]*)\s*$/i.exec(street);
+    if (m) { unit = m[1].replace(/[^a-z0-9]/gi, ''); street = street.slice(0, m.index).replace(/[\s,]+$/, ''); }
+    var num = (/^\s*(\d+)/.exec(street) || [])[1] || '';
+    var words = street.replace(/^\s*\d+[a-z]?\b[\s-]*/i, '').split(/[\s,]+/).filter(Boolean);
+    if (words.length > 1 && STREET_ENDINGS.test(words[words.length - 1].replace(/\.$/, ''))) words.pop();
+    var city = String(d.city || '').split(/[\s,-]+/).filter(Boolean);
+    return ((TYPE_LABEL[d.type] || '').charAt(0) + num + unit + initials(words) + initials(city) + String(d.state || '')).toUpperCase();
+  }
+
   /* ---------- the quote sheet ---------- */
   function kv(parent, label, value) {
     var r = el('div', 'iq-kv');
@@ -468,7 +488,10 @@
     brand.appendChild(el('div', 'iq-brand-top', 'AS-BUILT'));
     brand.appendChild(el('div', 'iq-brand-bottom', 'COMPANY'));
     top.appendChild(brand);
-    top.appendChild(el('div', 'iq-word', 'QUOTE'));
+    var word = el('div', 'iq-wordwrap');
+    word.appendChild(el('div', 'iq-word', 'QUOTE'));
+    word.appendChild(el('div', 'iq-num', '#' + quoteNumber(d)));
+    top.appendChild(word);
     sheet.appendChild(top);
     var dates = el('div', 'iq-dates');
     kv(dates, 'Date', fmtDate(now));
@@ -611,6 +634,7 @@
   /* ---------- email a copy to the team ---------- */
   function summaryText(d, q, reason) {
     var L = [];
+    L.push('Quote number: #' + quoteNumber(d));
     L.push('Project: ' + d.street + ', ' + d.city + ', ' + d.state + ' ' + d.zip);
     L.push('Building type: ' + TYPE_LABEL[d.type]);
     L.push('Building ' + int(d.building) + ' sq ft, garage ' + int(d.garage) + ' sq ft (' + d.spaces + ' spaces), lot ' + int(d.lot) + ' sq ft');
@@ -701,6 +725,7 @@
           items: lines.join('\n'), total: money(q.total), deposit: money(q.deposit),
           measure: q.measure, delivery: q.delivery,
           expires: fmtDate(new Date(Date.now() + PRICING.validDays * 86400000)),
+          quote_number: '#' + quoteNumber(d),
           quote_link: link
         }
       })
