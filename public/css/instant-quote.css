@@ -99,6 +99,7 @@
 .iq-brand-top { font-weight: 700; font-size: 3rem; letter-spacing: 0; line-height: 1; }
 .iq-brand-bottom { font-size: 0.68rem; letter-spacing: 0.8em; margin-top: 0.35rem; padding-left: 0.2em; }
 .iq-word { text-align: right; color: #EE1111; font-size: 3rem; font-weight: 700; line-height: 1; }
+.iq-num { text-align: right; margin-top: 0.3rem; font-size: 1rem; font-weight: 700; letter-spacing: 0.04em; color: #0A1F3D; }
 .iq-kv { display: flex; gap: 1rem; justify-content: space-between; }
 .iq-dates { margin-bottom: 1.4rem; }
 .iq-dates .iq-kv { justify-content: flex-start; gap: 0; }
