@@ -33,7 +33,6 @@
     minimumJob: 750,            // every job costs at least this; the quote is the higher of this and the items' total
     bundleDiscount: 100,        // $ off when Floor Plan and Site Plan are ordered together
     depositPercent: 20,        // deposit due before the project starts (Jonathan, 2026-11-22; was "on site")
-    validDays: 7,               // quote expiry
     instantStates: ['CA'],      // other states get a custom quote instead of an instant price
     maxInstantSqFt: 50000       // larger buildings get a custom quote
   };
@@ -481,7 +480,6 @@
 
   function renderQuote(d, q, when) {
     var now = when ? new Date(when) : new Date();
-    var exp = new Date(now.getTime() + PRICING.validDays * 86400000);
     var sheet = el('div', 'iq-sheet');
     sheet.id = 'iq-sheet';
     if (q.rows.length > 4) sheet.className += ' iq-dense';
@@ -499,7 +497,6 @@
     sheet.appendChild(top);
     var dates = el('div', 'iq-dates');
     kv(dates, 'Date', fmtDate(now));
-    kv(dates, 'Exp.', fmtDate(exp));
     sheet.appendChild(dates);
 
     var parties = el('div', 'iq-parties');
@@ -740,7 +737,7 @@
           address: d.street + ', ' + d.city + ', ' + d.state + ' ' + d.zip,
           items: lines.join('\n'), total: money(q.total), deposit: money(q.deposit),
           measure: q.measure, delivery: q.delivery,
-          expires: fmtDate(new Date(Date.now() + PRICING.validDays * 86400000)),
+          quote_date: fmtDate(new Date()),
           quote_number: '#' + quoteNumber(d),
           quote_link: link
         }
@@ -879,14 +876,6 @@
     var m = /^#q=([A-Za-z0-9_-]+)$/.exec(location.hash);
     var saved = m ? unpackQuote(m[1]) : null;
     if (!saved) return;
-    var expires = saved.t + PRICING.validDays * 86400000;
-    if (Date.now() > expires) {
-      var gone = el('div', 'callout');
-      gone.appendChild(el('div', 'callout-title', 'This quote has expired'));
-      gone.appendChild(el('p', null, 'It was valid until ' + fmtDate(new Date(expires)) + '. Fill in the steps below for a new quote, or call (626) 625-9247.'));
-      wizard.parentNode.insertBefore(gone, wizard);
-      return;
-    }
     present(saved.d, saved.q, '', saved.t);
   })();
 })();
